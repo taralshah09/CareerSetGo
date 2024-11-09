@@ -38,7 +38,7 @@ const HomePage = () => {
           </div>
         </div>
         <div className="box">
-          <div className="img-box">
+          <div className="img-box" style={{background:"#0a65cc"}}>
             <img src="../images/company.png" alt="" />
           </div>
           <div className="text-box">
