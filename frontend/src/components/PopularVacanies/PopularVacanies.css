@@ -1,0 +1,64 @@
+/* Container styling for popular vacancies section */
+.popular-vacancies {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 70px 100px;
+  gap: 20px;
+  width: 100%;
+  background: #ffffff;
+  box-shadow: inset 0px -1px 0px #e4e5e8;
+}
+
+/* Header styling */
+.popular-vacanies-header {
+  font-size: 24px;
+  font-weight: 400;
+  color: #333333;
+  width: 100%;
+}
+
+.popular-vacanies-header h2 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 600;
+  text-align: left;
+}
+
+/* Footer styling for job positions */
+.popular-vacanies-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  width: 100%;
+}
+
+/* Individual job listing styling */
+.popular-vacanies-footer div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 20px;
+  /* border: 1px solid #E4E5E8; */
+  border-radius: 8px;
+  width: 300px;
+  text-align: center;
+  line-height: 20px;
+  background-color: #f9fafb;
+}
+
+.popular-vacanies-footer p {
+  margin: 0;
+  font-size: 18px;
+  line-height: 20px;
+  color: #333333;
+  font-weight: 600;
+}
+
+.popular-vacanies-footer span {
+  font-size: 14px;
+  color: #777777;
+  font-weight: 400;
+}

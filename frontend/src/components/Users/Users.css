@@ -1,0 +1,94 @@
+/* Users section styling */
+
+:root {
+    --primary-grey: #f1f2f4;
+    --primary-white: #ffffff;
+    --primary-blue: #0a65cc;
+    --dark-text: #18191c;
+    --light-text: #5e6670;
+  }
+
+  
+.users {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    padding: 50px 100px;
+    position: relative;
+    width: 100%;
+  }
+
+  .users::before{
+    content: "";
+    width: 100%;
+    background: var(--light-text);
+    height: 1px;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  
+  .users .candidate-box,
+  .users .employer-box {
+    flex: 1;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    transition: transform 0.3s ease;
+  }
+  
+  .candidate-box {
+    background-color: #e6e7ea; /* Light gray background */
+    color: #333;
+  }
+  
+  .employer-box {
+    background-color: #0851A3; /* Blue background */
+    color: #fff;
+  }
+  
+  .users h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+  
+  .users p {
+    font-size: 16px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  
+  .users button {
+    background-color: transparent;
+    color: inherit;
+    border: 1px solid currentColor;
+    padding: 10px 16px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .candidate-box button:hover,
+  .employer-box button:hover {
+    background-color: #fff;
+    color: #0851A3;
+  }
+  
+  .employer-box button:hover {
+    background-color: #fff;
+    color: #0851A3;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .users {
+      flex-direction: column;
+    }
+  }
+  

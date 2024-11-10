@@ -1,0 +1,186 @@
+:root {
+    --primary-grey: #f1f2f4;
+    --primary-white: #ffffff;
+    --primary-blue: #0a65cc;
+    --dark-text: #18191c;
+    --light-text: #5e6670;
+  }
+  
+  .featured-job {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 100px 200px;
+    gap: 50px;
+    width: 100%; /* Ensure it is responsive */
+    height: auto;
+    background-color: var(--primary-grey); /* White background */
+  }
+  
+  /* Featured Job Header */
+  .featured-job-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .featured-job-header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333; /* Dark gray text */
+  }
+  
+  .featured-job-header button {
+    background-color: var(--primary-blue); /* Green background */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: 0.3s;
+  }
+  
+  .featured-job-header button i {
+    margin-left: 10px;
+  }
+  
+  .featured-job-header button:hover {
+    opacity: 0.8;
+  }
+  
+  .featured-job-footer {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      gap: 15px;
+    }
+    
+    .job-box {
+      display: grid;
+      grid-template-columns: 1fr 7fr 1.5fr;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      align-items: center;
+      gap: 20px;
+      padding: 5px 15px;
+    }
+    
+    /* Image Box Styling */
+    .job-box .img-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .job-box .img-box img {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+    
+    /* Info Box Styling */
+    .job-box .info-box {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 10px;
+      width: 100%;
+    }
+    
+    .info-box-header {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .info-box-header .text  {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .info-box-header .text p {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin: 0;
+    }
+    
+    .info-box-header .text button {
+      background-color: #e0f0ff;
+      color: #007bff;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+    }
+    
+    .info-box-header .logo-box img {
+      width: 20px;
+      height: 20px;
+    }
+    
+    .info-box-footer {
+      display: flex;
+      gap: 15px;
+      font-size: 14px;
+      color: #555;
+      /* background: #000; */
+      margin-bottom: -10px;
+    }
+    
+    .info-box-footer .location, .salary, .time-left {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 5px;
+    }
+    .info-box-footer .location p, .salary  p, .time-left  p{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .location img, .salary img, .time-left img {
+      width: 16px;
+      height: 16px;
+      margin-top: 2px;
+    }
+    
+    /* Apply Button Styling */
+    .btn-box{
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+    }
+    .btn-box button {
+      background-color: #007bff;
+      color: #ffffff;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    .btn-box button i {
+      font-size: 14px;
+    }
+    
+    .btn-box button:hover {
+      background-color: #005bb5;
+    }
+    
+  
