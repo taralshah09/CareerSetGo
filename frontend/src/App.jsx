@@ -7,6 +7,7 @@ import JobPage from "./pages/JobPage/JobPage"
 import EmployerPage from "./pages/EmployerPage/EmployerPage"
 import LoginPage from './pages/LoginPage/LoginPage'
 import SignupPage from "./pages/SignupPage/SignupPage"
+import FindJob from './pages/FindJob/FindJob'
 
 function App() {
   const location = useLocation();
@@ -18,6 +19,7 @@ function App() {
     <>
       {!hideNavbarFooter && <Navbar />}
       <Routes>
+        <Route path="/find-job" element={<FindJob/>}></Route>
         <Route path="/" element={<HomePage />}></Route>
         <Route path="/login" element={<LoginPage />}></Route>
         <Route path="/signup" element={<SignupPage />}></Route>
