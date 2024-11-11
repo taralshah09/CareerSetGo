@@ -9,8 +9,8 @@ const FormWrapper = () => {
       display="flex"
       flexDirection="column"
       gap={2}
-      width={350}
-      margin="0 auto"
+      width={500}
+      margin="15px auto"
       padding={3}
     >
       <Grid container justifyContent="space-between" alignItems= "center">
@@ -22,8 +22,9 @@ const FormWrapper = () => {
         </Link>
         </Grid>
         <Grid item xs={4}>
-          <Select defaultValue="Employers" variant="outlined" fullWidth>
+          <Select defaultValue="Candidate" variant="outlined" fullWidth>
             <MenuItem value="Employers">Employers</MenuItem>
+            <MenuItem value="Candidate">Candidate</MenuItem>
           </Select>
         </Grid>
       </Grid>

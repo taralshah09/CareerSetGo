@@ -1,29 +1,30 @@
 import { useState } from 'react'
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, useLocation } from "react-router-dom"
 import HomePage from './pages/HomePage/HomePage'
-import LoginPage from "./pages/LoginPage/LoginPage"
-import RegisterPage from "./pages/RegisterPage/RegisterPage"
 import Navbar from './components/Navbar/Navbar'
 import Footer from "./components/Footer/Footer"
-import JobPage from './pages/JobPage/JobPage.jsx';
-import EmployerPage from './pages/EmployerPage/EmployerPage.jsx'
-
+import JobPage from "./pages/JobPage/JobPage"
+import EmployerPage from "./pages/EmployerPage/EmployerPage"
+import LoginPage from './pages/LoginPage/LoginPage'
+import SignupPage from "./pages/SignupPage/SignupPage"
 
 function App() {
+  const location = useLocation();
+
+  // Check if the current path is "/login" or "/signup"
+  const hideNavbarFooter = location.pathname === "/login" || location.pathname === "/signup";
 
   return (
     <>
-      {/* <Navbar />
+      {!hideNavbarFooter && <Navbar />}
       <Routes>
         <Route path="/" element={<HomePage />}></Route>
         <Route path="/login" element={<LoginPage />}></Route>
-        <Route path="/register" element={<RegisterPage />}></Route>
+        <Route path="/signup" element={<SignupPage />}></Route>
+        <Route path="/jobs" element={<JobPage />}></Route>
+        <Route path="/employers" element={<EmployerPage />}></Route>
       </Routes>
-      <Footer /> */}
-      <JobPage></JobPage>
-      {/* <EmployerPage></EmployerPage> */}
-      
-      {/* biju kayu hatu page signup login job and employer wait hu karu import  */}
+      {!hideNavbarFooter && <Footer />}
     </>
   )
 }
