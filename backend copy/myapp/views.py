@@ -8,14 +8,17 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
 from django.views.decorators.csrf import csrf_exempt
 
-
 class RegisterUser(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
+        
         if serializer.is_valid():
-            serializer.save()
+            # Save the user through the serializer's create method
+            serializer.save()  # This will call the create method in UserSerializer
             return Response({"message": "User registered successfully."}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)  
+
         
 class LoginView(APIView):
 

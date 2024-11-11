@@ -3,6 +3,12 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
+
+from django.core.validators import validate_email
+
+
+
+
 JOB_DOMAIN_CHOICES = [
         ('ai_ml', 'Artificial Intelligence & Machine Learning'),
         ('data_science', 'Data Science'),
@@ -26,7 +32,7 @@ class UserManager(BaseUserManager):
     def create_user(self, username, email, password=None, **extra_fields):
         if not email:
             raise ValueError('The Email field must be set')
-        email = self.normalize_email(email)
+        email = email
         user = self.model(username=username, email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
@@ -44,10 +50,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_social_account = models.BooleanField(default=False)
     
     
-    userid = models.AutoField(primary_key=True)
+    userid = models.AutoField(primary_key=True,unique=True)
     fullname = models.CharField(max_length=255)
     username = models.CharField(max_length=255, unique=True)
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True,validators=[validate_email])
+    def clean_email(self):
+        email = self['email']
+        # Add your custom cleaning logic here, e.g., stripping whitespace
+        return email
     createdat = models.DateTimeField(default=timezone.now)
     updatedat = models.DateTimeField(auto_now=True)
     is_staff = models.BooleanField(default=False)  # Allows user to access the admin interface
