@@ -1,4 +1,3 @@
-```markdown
 # CareerSetGo
 
 ## Overview
@@ -36,12 +35,6 @@ pip install django djangorestframework django-cors-headers
 
 ### Setting Up the Backend
 
-#### Create a Django Project:
-```bash
-django-admin startproject backend
-cd backend
-```
-
 #### Add DRF and CORS Headers to Installed Apps:
 Open `settings.py` in your Django project and add the following to `INSTALLED_APPS`:
 ```python
@@ -54,6 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
+    'backend',
+    'myapp,
 ]
 ```
 
@@ -109,4 +104,4 @@ To run the backend server, navigate to the backend directory and use:
 ```bash
 python manage.py runserver
 ```
-```
+
