@@ -12,6 +12,12 @@ Before installing the project, ensure you have the following installed:
 - **Django**: Version 4.2 or 5.0
 - **npm**: Node package manager
 
+
+#### Clone the Repository:
+```bash
+git clone https://github.com/taralshah09/CareerSetGo.git
+```
+
 ### Creating a Virtual Environment (for Django)
 It is recommended to install Django and DRF within a virtual environment. Follow these steps based on your operating system:
 
@@ -46,10 +52,6 @@ python manage.py migrate
 
 ## How to Run the Frontend
 
-#### Clone the Repository:
-```bash
-git clone https://github.com/taralshah09/CareerSetGo.git
-```
 
 #### Navigate to the Frontend Directory:
 ```bash
