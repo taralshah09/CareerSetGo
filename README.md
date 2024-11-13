@@ -12,6 +12,12 @@ Before installing the project, ensure you have the following installed:
 - **Django**: Version 4.2 or 5.0
 - **npm**: Node package manager
 
+
+#### Clone the Repository:
+```bash
+git clone https://github.com/taralshah09/CareerSetGo.git
+```
+
 ### Creating a Virtual Environment (for Django)
 It is recommended to install Django and DRF within a virtual environment. Follow these steps based on your operating system:
 
@@ -30,47 +36,14 @@ source env/bin/activate
 ### Installing Django and Django REST Framework
 Once your virtual environment is activated, install Django and DRF using pip:
 ```bash
-pip install django djangorestframework django-cors-headers
+cd backend
+pip install -r requirements.txt
 ```
 
 ### Setting Up the Backend
 
 #### Add DRF and CORS Headers to Installed Apps:
 Open `settings.py` in your Django project and add the following to `INSTALLED_APPS`:
-```python
-INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'rest_framework',
-    'corsheaders',
-    'backend',
-    'myapp,
-]
-```
-
-#### Configure CORS:
-Add the following settings in `settings.py`:
-```python
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # React app's origin
-    "https://*.127.0.0.1"
-]
-```
-
-#### Database Configuration:
-Using SQLite for development, add this in `settings.py`:
-```python
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-```
 
 #### Run Migrations:
 ```bash
@@ -79,10 +52,6 @@ python manage.py migrate
 
 ## How to Run the Frontend
 
-#### Clone the Repository:
-```bash
-git clone https://github.com/taralshah09/CareerSetGo.git
-```
 
 #### Navigate to the Frontend Directory:
 ```bash
