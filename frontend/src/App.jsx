@@ -7,6 +7,8 @@ import JobPage from "./pages/JobPage/JobPage"
 import EmployerPage from "./pages/EmployerPage/EmployerPage"
 import LoginPage from './pages/LoginPage/LoginPage'
 import SignupPage from "./pages/SignupPage/SignupPage"
+import UserProfile from './components/Users/UserProfile';
+
 
 function App() {
   const location = useLocation();
@@ -23,6 +25,10 @@ function App() {
         <Route path="/signup" element={<SignupPage />}></Route>
         <Route path="/jobs" element={<JobPage />}></Route>
         <Route path="/employers" element={<EmployerPage />}></Route>
+        <Route path="/*" element={<h1>page not found</h1>}></Route>
+        <Route path="/user-dashboard" element={<UserProfile />} /> 
+
+
       </Routes>
       {!hideNavbarFooter && <Footer />}
     </>
