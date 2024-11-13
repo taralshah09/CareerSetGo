@@ -34,7 +34,7 @@ const LoginForm = () => {
         const userData = await fetchWithAuth("http://127.0.0.1:8000/api/user/profile/");
         console.log("User data:", userData);  // You can store the user data as needed, like in state
         // Redirect to the profile or home page after successful login
-        navigate("/profile");  // You can change this to another route
+        navigate("/");  // You can change this to another route
       } catch (error) {
         setErrorMessage("Failed to fetch user data.");
       }
