@@ -1,80 +1,62 @@
-// import { Box, Typography, TextField, Button, FormControlLabel, Checkbox, Stack, Link } from '@mui/material';
-// import SocialButtons from '../SocialButtons';
-
-// const LoginForm = () => {
-//   return (
-//     <Box component="form" display="flex" flexDirection="column" gap={2}>
-//       <Typography variant="h5">Sign in</Typography>
-//       <Typography variant="body2">
-//         Don’t have an account? <Link href="#">Create Account</Link>
-//       </Typography>
-//       <TextField label="Email address" variant="outlined" fullWidth />
-//       <Box display="flex" alignItems="center" gap={1}>
-//         <TextField label="Password" type="password" variant="outlined" fullWidth />
-//       </Box>
-//       <FormControlLabel control={<Checkbox />} label="Remember Me" />
-//       <Link href="#" variant="body2">Forgot password</Link>
-//       <Button variant="contained" color="primary" fullWidth>
-//         Sign In
-//       </Button>
-//       <Typography align="center" variant="body2">or</Typography>
-//       <SocialButtons />
-//     </Box>
-//   );
-// };
-
-// export default LoginForm;
-
-
-
-
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Button, TextField, Typography, Link } from '@mui/material';
 import { useNavigate } from "react-router-dom";
+import { fetchWithAuth } from 'C:/Users/Admin/Desktop/Django Projects/drf sih/new version/CareerSetGo/frontend/src/utils/fetchWithAuth.js'; // Import the fetchWithAuth utility
 
 const LoginForm = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // Function to handle login
+  async function handleLogin(email, password) {
+    // Sending login request to the backend
+    const response = await fetch("http://127.0.0.1:8000/api/login/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: email,
+        password: password,
+      }),
+    });
 
-    const loginData = {
-      email: emailRef.current.value,
-      password: passwordRef.current.value,
-    };
+    const data = await response.json();
 
-    // Retrieve the CSRF token from cookies
-    const csrfToken = document.cookie
-      .split('; ')
-      .find(row => row.startsWith('csrftoken='))
-      ?.split('=')[1];
+    if (response.ok) {
+      // Store the JWT token in localStorage
+      localStorage.setItem("access_token", data.access_token);
 
-    try {
-      const response = await fetch('http://127.0.0.1:8000/api/login/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken,
-        },
-        body: JSON.stringify(loginData),
-      });
-
-      if (response.ok) {
-        // Redirect to user dashboard upon successful login
-        navigate('/user-dashboard');
-        
-        // Clear input fields after successful login
-        emailRef.current.value = '';
-        passwordRef.current.value = '';
-      } else {
-        const data = await response.json();
-        alert(data.error || 'Login failed! Please check your credentials.');
+      // Fetch user data after successful login
+      try {
+        const userData = await fetchWithAuth("http://127.0.0.1:8000/api/user/profile/");
+        console.log("User data:", userData);  // You can store the user data as needed, like in state
+        // Redirect to the profile or home page after successful login
+        navigate("/profile");  // You can change this to another route
+      } catch (error) {
+        setErrorMessage("Failed to fetch user data.");
       }
-    } catch (error) {
-      console.error('Error:', error);
-      alert('An error occurred. Please try again later.');
+    } else {
+      console.error(data.error);
+      setErrorMessage("Invalid credentials. Please try again.");
+      return false;
+    }
+    return true;
+  }
+
+  // Handle form submit
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const email = emailRef.current.value;
+    const password = passwordRef.current.value;
+
+    // Call login handler
+    const loginSuccess = await handleLogin(email, password);
+    if (!loginSuccess) {
+      setErrorMessage("Invalid credentials. Please try again.");
     }
   };
 
@@ -85,6 +67,7 @@ const LoginForm = () => {
         <TextField
           label="Email"
           type="email"
+          name="email"
           required
           placeholder="John@gmail.com"
           inputRef={emailRef}
@@ -94,22 +77,35 @@ const LoginForm = () => {
         <TextField
           label="Password"
           type="password"
+          name="password"
           required
           placeholder="JGreen@25"
           inputRef={passwordRef}
           fullWidth
           margin="normal"
         />
+
         <Button type="submit" variant="contained" color="primary" fullWidth>
           Login
         </Button>
       </form>
-      <Typography variant="body2" align="center" style={{ marginTop: '1rem' }}>or</Typography>
+
+      {errorMessage && (
+        <Typography color="error" align="center" style={{ marginTop: '1rem' }}>
+          {errorMessage}
+        </Typography>
+      )}
+
+      <Typography variant="body2" align="center" style={{ marginTop: '1rem' }}>
+        or
+      </Typography>
+
       <div style={{ textAlign: 'center', marginTop: 16 }}>
         <Button variant="outlined" startIcon={<img src="./google.png" alt="Google Icon" style={{ width: 20 }} />}>
           Continue with Google
         </Button>
       </div>
+
       <Typography variant="body2" align="center" style={{ marginTop: '1rem' }}>
         Don't have an account? <Link href="/signup">Create account</Link>
       </Typography>

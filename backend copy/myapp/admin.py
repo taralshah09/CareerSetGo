@@ -7,7 +7,7 @@ from .models import User, Profile, Course, Job
 # Custom User Admin
 class UserAdmin(BaseUserAdmin):
     model = User
-    list_display = ('userid', 'username', 'email', 'fullname', 'createdat', 'updatedat', 'is_staff', 'is_active')
+    list_display = ('id', 'username', 'email', 'fullname', 'createdat', 'updatedat', 'is_staff', 'is_active')
     search_fields = ('username', 'email')
     ordering = ('-createdat',)
 

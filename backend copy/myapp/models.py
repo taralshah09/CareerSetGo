@@ -50,21 +50,20 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_social_account = models.BooleanField(default=False)
     
     
-    userid = models.AutoField(primary_key=True,unique=True)
+    id = models.AutoField(primary_key=True,unique=True)
     fullname = models.CharField(max_length=255)
     username = models.CharField(max_length=255, unique=True)
     email = models.EmailField(unique=True,validators=[validate_email])
     def clean_email(self):
         email = self['email']
-        # Add your custom cleaning logic here, e.g., stripping whitespace
         return email
     createdat = models.DateTimeField(default=timezone.now)
     updatedat = models.DateTimeField(auto_now=True)
-    is_staff = models.BooleanField(default=False)  # Allows user to access the admin interface
-    is_active = models.BooleanField(default=True)   # Determines if the user is active
-
+    is_staff = models.BooleanField(default=False)  
+    is_active = models.BooleanField(default=True)   
     objects = UserManager()
 
+    USER_ID_FIELD = 'userid'
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
@@ -73,11 +72,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 
-class Profile(models.Model):
-  
+class Profile(models.Model):  
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
     profile_id = models.AutoField(primary_key=True)
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
+    # user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
     education = models.TextField(blank=True)
     age = models.IntegerField(blank=True, null=True)
     experience = models.TextField(blank=True)
@@ -94,7 +93,7 @@ class Profile(models.Model):
     #Added Later feed will be made on base of these 3
     domain_of_interest = models.CharField(max_length=30, choices=JOB_DOMAIN_CHOICES, blank=True)
     job_type = models.CharField(max_length=30, choices=JOB_TYPE_CHOICES)  # New domain field 
-    skills = models.TextField(blank=True) #This can be handled as a list & we will do that
+    skills = models.JSONField(blank=True, null=True) #This can be handled as a list & we will do that
    
     # New field for domain of interest
     def __str__(self):

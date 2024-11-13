@@ -1,7 +1,5 @@
-// FormWrapper.js
 import React, { useRef, useState } from 'react';
 import { Box, Typography, TextField, Button, Checkbox, FormControlLabel, Link, Grid } from '@mui/material';
-import SocialButtons from '../SocialButtons'; // Ensure this component exists
 import { useNavigate } from 'react-router-dom';
 
 const FormWrapper = () => {
@@ -30,11 +28,10 @@ const FormWrapper = () => {
       username: usernameRef.current.value,
     };
 
-    // Get CSRF token from cookies
+    // Get CSRF token from cookies (important for CSRF protection)
     const csrfToken = document.cookie
       .split('; ')
-      .find(row => row.startsWith('csrftoken='))
-      ?.split('=')[1];
+      .find(row => row.startsWith('csrftoken='))?.split('=')[1];
 
     try {
       // Send POST request to Django backend for registration
@@ -42,8 +39,9 @@ const FormWrapper = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken,
+          'X-CSRFToken': csrfToken, // Send CSRF token with the request
         },
+        credentials: 'include',  // Include credentials (cookies)
         body: JSON.stringify(registrationData),
       });
 
@@ -90,8 +88,6 @@ const FormWrapper = () => {
       <Button variant="contained" color="primary" onClick={handleSubmit} fullWidth>
         Create Account
       </Button>
-
-      <SocialButtons />
     </Box>
   );
 };

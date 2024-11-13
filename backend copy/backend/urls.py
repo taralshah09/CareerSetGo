@@ -8,6 +8,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('myapp.urls')),  # Including URLs from 'myapp'
+
+    path('api-auth/', include('rest_framework.urls')),
 ]
 
 # Serve media files during development
