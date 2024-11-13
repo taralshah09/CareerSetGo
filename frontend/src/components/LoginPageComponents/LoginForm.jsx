@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Button, TextField, Typography, Link } from '@mui/material';
 import { useNavigate } from "react-router-dom";
-import { fetchWithAuth } from 'C:/Users/Admin/Desktop/Django Projects/drf sih/new version/CareerSetGo/frontend/src/utils/fetchWithAuth.js'; // Import the fetchWithAuth utility
+import { fetchWithAuth } from "../../utils/fetchWithAuth";
 
 const LoginForm = () => {
   const emailRef = useRef();
@@ -12,7 +12,7 @@ const LoginForm = () => {
   // Function to handle login
   async function handleLogin(email, password) {
     // Sending login request to the backend
-    const response = await fetch("http://127.0.0.1:8000/api/login/", {
+    const response = await fetch("http://localhost:8000/api/login/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

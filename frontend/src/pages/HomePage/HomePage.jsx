@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchWithAuth } from 'C:/Users/Admin/Desktop/Django Projects/drf sih/new version/CareerSetGo/frontend/src/utils/fetchWithAuth.js'; // Import the fetchWithAuth utility
- // Import fetchWithAuth utility
+import { fetchWithAuth } from "../../utils/fetchWithAuth";
 import "./HomePage.css"; // Import your styles
 import HeroSection from '../../components/HeroSection/HeroSection';
 import PopularVacanies from '../../components/PopularVacanies/PopularVacanies';

@@ -11,7 +11,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 class RegisterUser(APIView):
     permission_classes = [] 
     def post(self, request):
-        serializer = UserSerializer(data=request.data)
+        serializer = UserSerializer(data=request.data, context={'request': request})  # Add context here
         if serializer.is_valid():
             serializer.save()
             return Response({"message": "User registered successfully."}, status=status.HTTP_201_CREATED)
@@ -94,11 +94,10 @@ class UserProfileView(APIView):
         if Profile.objects.filter(user=request.user).exists():
             return Response({"detail": "Profile already exists."}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = ProfileSerializer(data=request.data)
+        serializer = ProfileSerializer(data=request.data, context={'request': request})  # Add context here
         if serializer.is_valid():
-            serializer.validated_data['user'] = request.user
-            profile = serializer.save()
-            return Response(ProfileSerializer(profile).data, status=status.HTTP_201_CREATED)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request):
@@ -108,8 +107,8 @@ class UserProfileView(APIView):
         except Profile.DoesNotExist:
             return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ProfileSerializer(profile, data=request.data, partial=True) 
+        serializer = ProfileSerializer(profile, data=request.data, partial=True, context={'request': request})  # Add context here
         if serializer.is_valid():
-            serializer.save()  #
-            return Response(serializer.data)  
+            serializer.save()
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
