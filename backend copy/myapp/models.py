@@ -28,6 +28,8 @@ JOB_TYPE_CHOICES = [
         ('onsite', 'Onsite'),
         ('remote', 'Remote'),
     ]
+
+
 class UserManager(BaseUserManager):
     def create_user(self, username, email, password=None, **extra_fields):
         if not email:
@@ -93,7 +95,7 @@ class Profile(models.Model):
     #Added Later feed will be made on base of these 3
     domain_of_interest = models.CharField(max_length=30, choices=JOB_DOMAIN_CHOICES, blank=True)
     job_type = models.CharField(max_length=30, choices=JOB_TYPE_CHOICES)  # New domain field 
-    skills = models.JSONField(blank=True, null=True) #This can be handled as a list & we will do that
+    skills = models.TextField(blank=True, null=True) #This can be handled as a list & we will do that
    
     # New field for domain of interest
     def __str__(self):
@@ -116,6 +118,7 @@ class Course(models.Model):
 
 
 class Job(models.Model):
+    
  
     
     job_id = models.AutoField(primary_key=True)
