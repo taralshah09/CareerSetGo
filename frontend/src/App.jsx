@@ -7,6 +7,8 @@ import Navbar from './components/Navbar/Navbar'
 import Footer from "./components/Footer/Footer"
 import JobPage from './pages/JobPage/JobPage.jsx';
 import EmployerPage from './pages/EmployerPage/EmployerPage.jsx'
+import ResetPasswordPage from './pages/ResetPasswordPage/ResetPasswordPage.jsx'
+import BrowseCandidatePage from './pages/BrowseCandidatePage/BrowseCandidatePage.jsx'
 
 
 function App() {
@@ -20,7 +22,9 @@ function App() {
         <Route path="/register" element={<RegisterPage />}></Route>
       </Routes>
       <Footer /> */}
-      <JobPage></JobPage>
+      {/* <JobPage></JobPage> */}
+      {/* <ResetPasswordPage></ResetPasswordPage> */}
+      <BrowseCandidatePage></BrowseCandidatePage>
       {/* <EmployerPage></EmployerPage> */}
       
       {/* biju kayu hatu page signup login job and employer wait hu karu import  */}
