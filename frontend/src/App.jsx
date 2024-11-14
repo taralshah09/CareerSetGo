@@ -10,9 +10,7 @@ import SignupPage from "./pages/SignupPage/SignupPage"
 import FindJob from './pages/FindJob/FindJob'
 
 function App() {
-  const location = useLocation();
-
-  // Check if the current path is "/login" or "/signup"
+  const location = useLocation() 
   const hideNavbarFooter = location.pathname === "/login" || location.pathname === "/signup";
 
   return (
@@ -26,7 +24,7 @@ function App() {
         <Route path="/jobs" element={<JobPage />}></Route>
         <Route path="/employers" element={<EmployerPage />}></Route>
       </Routes>
-      {!hideNavbarFooter && <Footer />}
+      {!hideNavbarFooter && <Footer />} 
     </>
   )
 }
