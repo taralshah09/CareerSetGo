@@ -1,30 +1,38 @@
 import { useState } from 'react'
-import { Routes, Route } from "react-router-dom"
+import { Routes, Route, useLocation } from "react-router-dom"
 import HomePage from './pages/HomePage/HomePage'
-import LoginPage from "./pages/LoginPage/LoginPage"
-import RegisterPage from "./pages/RegisterPage/RegisterPage"
 import Navbar from './components/Navbar/Navbar'
 import Footer from "./components/Footer/Footer"
-import JobPage from './pages/JobPage/JobPage.jsx';
-import EmployerPage from './pages/EmployerPage/EmployerPage.jsx'
+import JobPage from "./pages/JobPage/JobPage"
+import EmployerPage from "./pages/EmployerPage/EmployerPage"
+import LoginPage from './pages/LoginPage/LoginPage'
+import SignupPage from "./pages/SignupPage/SignupPage"
+import FindJob from './pages/FindJob/FindJob'
+import Dashboard from './pages/Dashboard/Dashboard'
 import ResetPasswordPage from './pages/ResetPasswordPage/ResetPasswordPage.jsx'
 import BrowseCandidatePage from './pages/BrowseCandidatePage/BrowseCandidatePage.jsx'
 
 
 function App() {
+  const location = useLocation();
+
+  // Check if the current path is "/login" or "/signup"
+  const hideNavbarFooter = location.pathname === "/login" || location.pathname === "/signup";
 
   return (
     <>
-      {/* <Navbar />
+      {!hideNavbarFooter && <Navbar />}
       <Routes>
+        <Route path="/find-job" element={<FindJob />}></Route>
         <Route path="/" element={<HomePage />}></Route>
         <Route path="/login" element={<LoginPage />}></Route>
-        <Route path="/register" element={<RegisterPage />}></Route>
+        <Route path="/signup" element={<SignupPage />}></Route>
+        <Route path="/jobs" element={<JobPage />}></Route>
+        <Route path="/employers" element={<EmployerPage />}></Route>
+        <Route path="/dashboard" element={<Dashboard />}></Route>
       </Routes>
-      <Footer /> */}
-      {/* <JobPage></JobPage> */}
-      {/* <ResetPasswordPage></ResetPasswordPage> */}
-      <BrowseCandidatePage></BrowseCandidatePage>
+      <Footer /> 
+      <JobPage></JobPage>
       {/* <EmployerPage></EmployerPage> */}
       
       {/* biju kayu hatu page signup login job and employer wait hu karu import  */}
