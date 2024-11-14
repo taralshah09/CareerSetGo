@@ -7,6 +7,7 @@ import PopularCategory from '../../components/PopularCategory/PopularCategory'
 import FeaturedJobs from '../../components/FeaturedJobs/FeaturedJobs'
 import Users from '../../components/Users/Users'
 
+
 const HomePage = () => {
   return (
     <>
@@ -15,8 +16,7 @@ const HomePage = () => {
       <FlowChart />
       <PopularCategory />
       <FeaturedJobs />
-      <Users/>
-
+      <Users />
     </>
   )
 }

@@ -1,0 +1,70 @@
+:root {
+  --primary-grey: #f1f2f4;
+  --primary-white: #ffffff;
+  --primary-blue: #0a65cc;
+  --dark-text: #18191c;
+  --light-text: #5e6670;
+}
+
+.profile {
+  width: 100%;
+  flex: 1;
+  padding: 0px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+
+.profile-box-1, .profile-box-2, .profile-box-3, .profile-box-4, .profile-box-5 {
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.profile-box-1-left, .profile-box-1-right,
+.profile-box-2-left, .profile-box-2-right,
+.profile-box-3-left, .profile-box-3-right {
+    flex: 1;
+    min-width: 45%;
+}
+
+.profile label {
+    display: block;
+    font-weight: 400;
+    color: var(--light-text);
+    margin-bottom: 5px;
+}
+
+.profile input, .profile select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+.profile-box-4{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.profile-box-4 .ql-container {
+    height: 150px;
+}
+
+.profile-box-5 button {
+    padding: 10px 20px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.profile-box-5 button:hover {
+    background-color: #0056b3;
+}
