@@ -32,7 +32,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />}></Route>
       </Routes>
       <Footer /> 
-      <JobPage></JobPage>
+      {/* <JobPage></JobPage> */}
       {/* <EmployerPage></EmployerPage> */}
       
       {/* biju kayu hatu page signup login job and employer wait hu karu import  */}
