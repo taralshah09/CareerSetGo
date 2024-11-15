@@ -25,7 +25,7 @@ class RegisterUser(APIView):
             html_message = f"""
             <html>
                 <body>
-                    <h1 style="color: #4CAF50;">Welcome to CareerSetGo!</h1>
+                    <h1 style="color: #0465CC;">Welcome to CareerSetGo!</h1>
                     <p>Hello <strong>{serializer.data['fullname']}</strong>,</p>
                     <p>Thank you for registering on <strong>CareerSetGo</strong>. We're thrilled to have you on board!</p>
                     <p>Explore exciting opportunities and start your career journey with us.</p>
@@ -60,7 +60,7 @@ class LoginView(APIView):
                 html_message = f"""
                 <html>
                     <body>
-                        <h2 style="color: #4CAF50;">Login Notification</h2>
+                        <h2 style="color: #0A65CC;">Login Notification</h2>
                         <p>Hello <strong>{user.fullname}</strong>,</p>
                         <p>You have successfully logged into <strong>CareerSetGo</strong>.</p>
                         <p>If this wasn't you, please secure your account immediately.</p>
