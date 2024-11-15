@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import InvalidToken
 from django.shortcuts import get_object_or_404
-
+from .utils import send_email
 
 class RegisterUser(APIView):
     permission_classes = []
@@ -16,9 +16,29 @@ class RegisterUser(APIView):
         serializer = UserSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
+
+            # Send registration email
+            user_email = serializer.data['email']
+            subject = "Welcome to CareerSetGo!"
+            plain_message = f"Hello {serializer.data['fullname']},\n\nThank you for registering on CareerSetGo. We're excited to have you!"
+
+            html_message = f"""
+            <html>
+                <body>
+                    <h1 style="color: #4CAF50;">Welcome to CareerSetGo!</h1>
+                    <p>Hello <strong>{serializer.data['fullname']}</strong>,</p>
+                    <p>Thank you for registering on <strong>CareerSetGo</strong>. We're thrilled to have you on board!</p>
+                    <p>Explore exciting opportunities and start your career journey with us.</p>
+                    <hr>
+                    <p style="font-size: 12px; color: gray;">This is an automated message. Please do not reply.</p>
+                </body>
+            </html>
+            """
+
+            send_email(subject, plain_message, [user_email], html_message)
+
             return Response({"message": "User registered successfully."}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
@@ -32,6 +52,26 @@ class LoginView(APIView):
             if user.check_password(password):
                 refresh = RefreshToken.for_user(user)
                 access_token = str(refresh.access_token)
+
+                # Send login notification email
+                subject = "Login Notification"
+                plain_message = f"Hello {user.fullname},\n\nYou have successfully logged into CareerSetGo."
+
+                html_message = f"""
+                <html>
+                    <body>
+                        <h2 style="color: #4CAF50;">Login Notification</h2>
+                        <p>Hello <strong>{user.fullname}</strong>,</p>
+                        <p>You have successfully logged into <strong>CareerSetGo</strong>.</p>
+                        <p>If this wasn't you, please secure your account immediately.</p>
+                        <hr>
+                        <p style="font-size: 12px; color: gray;">This is an automated message. Please do not reply.</p>
+                    </body>
+                </html>
+                """
+
+                send_email(subject, plain_message, [email], html_message)
+
                 return Response({"access_token": access_token, "message": "Login successful!"}, status=status.HTTP_200_OK)
             return Response({"error": "Invalid email or password."}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
