@@ -3,10 +3,10 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  padding: 100px 100px;
+  padding: 100px 150px;
   gap: 50px;
   width: 100%; /* Adjusted for responsive width */
-  max-width: 1920px;
+  /* max-width: 1920px; */
   min-height: 504px;
   background: #f1f2f4;
 }
