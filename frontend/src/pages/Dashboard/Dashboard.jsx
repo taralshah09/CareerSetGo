@@ -7,14 +7,14 @@ import FavJobs from '../../components/FavJobs/FavJobs';
 import JobAlerts from '../../components/JobAlerts/JobAlerts';
 import SettingsComp from "../../components/SettingsComp/SettingsComp"
 const Dashboard = () => {
-    const [selectedOption, setSelectedOption] = useState('overview');
+    const [selectedOption, setSelectedOption] = useState('settings');
 
     const options = [
+        { id: 'settings', label: 'Settings', icon: <FaCog /> },
         { id: 'overview', label: 'Overview', icon: <FaLayerGroup /> },
         { id: 'appliedJobs', label: 'Applied Jobs', icon: <FaBriefcase /> },
         { id: 'favoriteJobs', label: 'Favorite Jobs', icon: <FaHeart /> },
         { id: 'jobAlert', label: 'Job Alert', icon: <FaBell /> },
-        { id: 'settings', label: 'Settings', icon: <FaCog /> },
     ];
 
     const renderContent = () => {
@@ -36,7 +36,7 @@ const Dashboard = () => {
 
     return (
         <div className="dashboard-container">
-            {/* Sidebar */}
+
             <div className="sidebar">
                 <div className="sidebar-header">
                     <p>Candidate Dashboard</p>

@@ -85,7 +85,7 @@ const LoginForm = () => {
           margin="normal"
         />
 
-        <Button type="submit" variant="contained" color="primary" fullWidth>
+        <Button type="submit" variant="contained" color="primary" fullWidth style={{ color: "white", background: "#0A65CC" }}>
           Login
         </Button>
       </form>
@@ -96,17 +96,17 @@ const LoginForm = () => {
         </Typography>
       )}
 
-      <Typography variant="body2" align="center" style={{ marginTop: '1rem' }}>
+      <Typography variant="body2" align="center" style={{ marginTop: '1rem', width: "100%" }}>
         or
       </Typography>
 
-      <div style={{ textAlign: 'center', marginTop: 16 }}>
-        <Button variant="outlined" startIcon={<img src="./google.png" alt="Google Icon" style={{ width: 20 }} />}>
+      <div style={{ textAlign: 'center', marginTop: 16, width: "100%" }}>
+        <Button style={{ width: "100%" }} variant="outlined" startIcon={<img src="../images/google.png" alt="Google Icon" style={{ width: 20 }} />}>
           Continue with Google
         </Button>
-      </div>
+      </div >
 
-      <Typography variant="body2" align="center" style={{ marginTop: '1rem' }}>
+      <Typography variant="body2" align="center" style={{ marginTop: '1rem', width: "100%" }}>
         Don't have an account? <Link href="/signup">Create account</Link>
       </Typography>
     </>

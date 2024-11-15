@@ -46,7 +46,7 @@ const FormWrapper = () => {
       });
 
       if (response.ok) {
-        navigate('/login'); // Navigate to login page on successful registration
+        navigate('/dashboard'); // Navigate to login page on successful registration
 
         // Clear input fields after successful registration
         emailRef.current.value = '';
@@ -79,15 +79,31 @@ const FormWrapper = () => {
       <TextField label="Email address" inputRef={emailRef} variant="outlined" fullWidth />
       <TextField label="Password" type="password" inputRef={passwordRef} variant="outlined" fullWidth />
       <TextField label="Confirm Password" type="password" inputRef={confirmPasswordRef} variant="outlined" fullWidth />
-      
+
       <FormControlLabel
         control={<Checkbox />}
         label={<Typography variant="body2">I’ve read and agree with your <Link href="#">Terms of Services</Link></Typography>}
       />
 
-      <Button variant="contained" color="primary" onClick={handleSubmit} fullWidth>
+      <Button variant="contained" color="primary" onClick={handleSubmit} fullWidth style={{ background: "#0A65CC", color: "White" }}>
         Create Account
       </Button>
+
+      <Typography variant="body2" align="center" >
+        or
+      </Typography>
+
+      <div style={{ textAlign: 'center', display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
+        <Button variant="outlined" style={{ width: "100%" }} startIcon={<img src="../images/google.png" alt="Google Icon" style={{ width: 20 }} />}>
+          Continue with Google
+        </Button>
+      </div>
+      <Typography variant="body2" align="center" >
+        Already have an account?{' '}
+        <Link href="/login" style={{ textDecoration: 'none', color: '#3f51b5', fontWeight: 'bold' }}>
+          Login here
+        </Link>
+      </Typography>
     </Box>
   );
 };
