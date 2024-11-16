@@ -27,7 +27,7 @@ function App() {
         <Route path="/employers" element={<EmployerPage />}></Route>
         <Route path="/dashboard" element={<Dashboard />}></Route>
       </Routes>
-      {!hideNavbarFooter && <Navbar />}
+      {/* {!hideNavbarFooter && <Navbar />} */}
     </>
   )
 }
