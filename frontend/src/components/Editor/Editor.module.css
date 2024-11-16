@@ -1,0 +1,259 @@
+.container {
+  /* min-width: 550px;  add while media queires*/
+  /* min-width: fit-content;  */
+  min-height: 450px;
+  /* max-width: 750px; */
+  display: flex;
+  flex-direction: column;
+  width: 55vw;
+  gap: 30px;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  padding-top: 5px;
+  height: fit-content;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  gap: 10px;
+  padding: 0 10px;
+  overflow-x: auto;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  font-family: "Archivo", sans-serif;
+}
+
+.header::-webkit-scrollbar {
+  height: 7px;
+}
+
+.header::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+  background-color: #6b46c1;
+}
+
+.header .section {
+  padding: 10px;
+  border-bottom: 2px solid transparent;
+  font-weight: 500;
+  font-size: 1rem;
+  white-space: nowrap;
+  cursor: pointer;
+  font-family: "Archivo", sans-serif;
+}
+
+.header .active {
+  border-bottom: 2px solid #6b46c1;
+  color: #6b46c1;
+}
+
+.body {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 0;
+}
+
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.detail .row {
+  display: flex;
+  gap: 20px;
+}
+
+.detail .column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.detail .row > div {
+  flex: 1;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 15px;
+}
+
+.chips .new {
+  color: #6b46c1;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  padding: 8px 10px;
+}
+
+.chip {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  padding: 8px 10px;
+  background-color: #808080;
+  border-radius: 20px;
+  cursor: default;
+}
+
+.chip p {
+  font-weight: 500;
+  line-height: 1.25rem;
+  font-family: "Archivo", sans-serif;
+  color: #fff;
+}
+.chip svg {
+  color: #fff;
+  height: 18px;
+  width: 18px;
+  cursor: pointer;
+}
+
+.chips .active {
+  background-color: #6b46c1;
+}
+
+.body button {
+  width: fit-content;
+  padding: 8px 16px;
+  border-radius: 5px;
+  background-color: #6b46c1;
+  color: #fff;
+  outline: none;
+  border: none;
+  font-weight: 500;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  cursor: pointer;
+  transition: 200ms;
+}
+
+.body button:active {
+  transform: translateY(2px);
+}
+
+@media only screen and (min-width: 960px) and (max-width: 1390px){
+  .container{
+    min-width: fit-content; 
+    max-width: 750px;
+    min-height: 450px;
+  }
+}
+
+
+@media only screen and (min-width: 700px) and (max-width: 959px){
+  .container {
+    min-width: 550px;
+    min-height: 450px;
+    max-width: 750px;
+    padding-top: 5px;
+    height: fit-content;
+    margin: 0 auto;
+  }
+  .chip {
+    padding: 4px 8px;
+  }
+}
+
+@media only screen and (min-width: 600px) and (max-width: 699px) {
+  .container {
+    min-width: 550px;
+    min-height: 450px;
+    max-width: 750px;
+    padding-top: 5px;
+    height: fit-content;
+    margin: 0 auto;
+  }
+  .chip {
+    padding: 4px 8px;
+  }
+}
+
+@media only screen and (min-width: 550px) and (max-width: 599px) {
+  .container {
+    min-width: 500px;
+    min-height: 450px;
+    max-width: 750px;
+    padding-top: 5px;
+    height: fit-content;
+    margin: 0 auto;
+  }
+  .chip {
+    padding: 4px 8px;
+  }
+}
+
+@media only screen and (min-width: 550px) and (max-width: 599px) {
+  .container {
+    min-width: 500px;
+    min-height: 450px;
+    max-width: 750px;
+    padding-top: 5px;
+    height: fit-content;
+    margin: 0 auto;
+  }
+  .row{
+    flex-direction: column;
+  }
+  .chip {
+    padding: 4px 8px;
+  }
+}
+
+@media only screen and (min-width: 500px) and (max-width: 549px) {
+  .container {
+    min-width: 450px;
+    min-height: 450px;
+    max-width: 750px;
+    padding-top: 5px;
+    height: fit-content;
+    margin: 0 auto;
+  }
+  .row{
+    flex-direction: column;
+  }
+  .chip {
+    padding: 4px 8px;
+  }
+}
+
+@media only screen and (min-width: 400px) and (max-width: 499px) {
+  .container {
+    min-width: 350px;
+    min-height: 450px;
+    max-width: 750px;
+    padding-top: 5px;
+    height: fit-content;
+    margin: 0 auto;
+  }
+  .row{
+    flex-direction: column;
+  }
+  .chip {
+    padding: 4px 8px;
+  }
+}
+
+@media only screen and (min-width: 300px) and (max-width: 399px) {
+  .container {
+    min-width: 250px;
+    min-height: 450px;
+    max-width: 750px;
+    padding-top: 5px;
+    height: fit-content;
+    margin: 0 auto;
+  }
+  .row{
+    flex-direction: column;
+  }
+  .chip {
+    padding: 4px 8px;
+  }
+}
