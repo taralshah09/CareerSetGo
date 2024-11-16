@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegisterUser, RecentJobsView,LoginView,LogoutView, AddToWishlistView, UpdateProfile, CurrentUserView, UserProfileView,PostJobView
+from .views import *
 
 urlpatterns = [
     path('api/register/', RegisterUser.as_view(), name='register_user'),
@@ -8,7 +8,9 @@ urlpatterns = [
     path('api/user/profile/', UserProfileView.as_view(), name='user-profile'),  
     path('api/post-job/', PostJobView.as_view(), name='post_job'),
     path('api/current_user/', CurrentUserView.as_view(), name='current_user'),
-      path('logout/', LogoutView.as_view(), name='logout'),  
-        path('api/recent-jobs/', RecentJobsView.as_view(), name='recent-jobs'),
-          path('wishlist/add/<int:job_id>/', AddToWishlistView.as_view(), name='add_to_wishlist'),
+    path('logout/', LogoutView.as_view(), name='logout'),  
+    path('api/recent-jobs/', RecentJobsView.as_view(), name='recent-jobs'),
+    path('wishlist/add/<int:job_id>/', AddToWishlistView.as_view(), name='add_to_wishlist'),
+    path('gemini/', GeminiLink.as_view(), name='gemini'),
+
 ]

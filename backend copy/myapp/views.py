@@ -8,6 +8,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import InvalidToken
 from django.shortcuts import get_object_or_404
 from .utils import send_email
+from django.conf import settings
+import google.generativeai as genai
+from decouple import config
 
 class RegisterUser(APIView):
     permission_classes = []
@@ -210,3 +213,21 @@ class AddToWishlistView(APIView):
 
         Wishlist.objects.create(user=user, job=job)
         return Response({"detail": "Job added to wishlist."}, status=status.HTTP_201_CREATED)
+
+genai.configure(api_key=config("GEMINI_API_KEY"))
+
+class GeminiLink(APIView):
+    permission_classes = [AllowAny]  
+
+    def post(self, request):
+        prompt = request.data.get('prompt', 'Top 10 skills for web developer comma seperated')
+        
+        if not isinstance(prompt, str) or not prompt.strip():
+            return Response({"error": "Prompt must be a non-empty string."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            model = genai.GenerativeModel("gemini-1.5-flash")
+            response = model.generate_content(prompt)
+            return Response({"reponse": response.text}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
