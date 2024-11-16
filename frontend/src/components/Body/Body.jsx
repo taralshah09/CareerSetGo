@@ -1,22 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-// import ReactToPrint from "react-to-print"; // Print React components in the browser
 import { useReactToPrint } from 'react-to-print';
-import { ArrowDown } from "react-feather"; //collection of simply beautiful open source icons
+import { ArrowDown } from "react-feather"; 
 import styles from "./Body.module.css";
 import Editor from "../Editor/Editor";
 import Resume from "../Resume/Resume";
 
 const Body = () => {
-  //multiple color options
   const colors = ["#6b46c1", "#48bb78", "#0bc5ea", "#a0aec0", "#ed8936", "#239ce2"];
-  //state denotes the current selected color for resume
   const [activeColor, setActiveColor] = useState(colors[0]);
-  //to store the current reference of resume
-  const resumeRef = useRef();
-  //object of different sections of resume
-  //this will show the banner heading for different sections
+
   const sections = {
-    //Key --> value
     basicInfo: "Basic Info",
     workExp: "Work Experience",
     project: "Projects",
@@ -26,14 +19,10 @@ const Body = () => {
     other: "Other",
   };
 
-  const handlePrint = useReactToPrint({
-    content: () => resumeRef.current,
-    documentTitle: 'My Resume',
-  });
+  const contentRef = useRef();
 
+  const reactToPrintFn = useReactToPrint({ contentRef , documentTitle:"My Resume"});
 
-  //this state will store all the information of the resume
-  //to set user input to the resume object
   const [resumeInformation, setResumeInformation] = useState({
     [sections.basicInfo]: {
       id: sections.basicInfo, //section title is unique
@@ -72,15 +61,13 @@ const Body = () => {
     },
   });
 
-  //When resume information changes
-  //update the section information
   useEffect(() => {
-    // console.log(resumeInformation);
+    console.log(resumeInformation);
   }, [resumeInformation]);
 
   return (
-    <div className={styles.container} style={{width:"100%"}}>
-      <p style={{textAlign:"left",fontSize:"35px"}}>Resume Builder</p>
+    <div className={styles.container} style={{ width: "100%" }}>
+      <p style={{ textAlign: "left", fontSize: "35px" }}>Resume Builder</p>
       <div className={styles.toolbar}>
         <div className={styles.colors}>
           {colors.map((item) => (
@@ -93,7 +80,7 @@ const Body = () => {
             />
           ))}
         </div>
-        <button onClick={handlePrint}>Download</button>
+        <button onClick={reactToPrintFn}>Print</button>
       </div>
       <div className={styles.main}>
         <Editor
@@ -103,7 +90,7 @@ const Body = () => {
         />
 
         <Resume
-          ref={resumeRef}
+          ref={contentRef}
           sections={sections}
           information={resumeInformation}
           activeColor={activeColor}

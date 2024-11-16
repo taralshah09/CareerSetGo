@@ -11,10 +11,9 @@ import {
   Phone,
 } from "react-feather";
 
-//to make resume downloadable using react-to-print
-//we need to wrap the component with forward Ref
-//and pass the input ref to the html component
 const Resume = forwardRef((props, ref) => {
+
+  console.log("Resume's comp ref : " + ref.current)
   //information entered by the user
   const information = props.information;
   const sections = props.sections;
@@ -58,9 +57,8 @@ const Resume = forwardRef((props, ref) => {
         draggable
         onDragOver={() => setTarget(info.workExp?.id)}
         onDragEnd={() => setSource(info.workExp?.id)}
-        className={`${styles.section} ${
-          info.workExp?.sectionTitle ? "" : styles.hidden
-        }`}
+        className={`${styles.section} ${info.workExp?.sectionTitle ? "" : styles.hidden
+          }`}
       >
         <div className={styles.sectionTitle}>{info.workExp.sectionTitle}</div>
         <div className={styles.content}>
@@ -123,9 +121,8 @@ const Resume = forwardRef((props, ref) => {
         draggable
         onDragOver={() => setTarget(info.project?.id)}
         onDragEnd={() => setSource(info.project?.id)}
-        className={`${styles.section} ${
-          info.project?.sectionTitle ? "" : styles.hidden
-        }`}
+        className={`${styles.section} ${info.project?.sectionTitle ? "" : styles.hidden
+          }`}
       >
         <div className={styles.sectionTitle}>{info.project.sectionTitle}</div>
         <div className={styles.content}>
@@ -181,9 +178,8 @@ const Resume = forwardRef((props, ref) => {
         draggable
         onDragOver={() => setTarget(info.education?.id)}
         onDragEnd={() => setSource(info.education?.id)}
-        className={`${styles.section} ${
-          info.education?.sectionTitle ? "" : styles.hidden
-        }`}
+        className={`${styles.section} ${info.education?.sectionTitle ? "" : styles.hidden
+          }`}
       >
         <div className={styles.sectionTitle}>
           {info.education?.sectionTitle}
@@ -222,9 +218,8 @@ const Resume = forwardRef((props, ref) => {
         draggable
         onDragOver={() => setTarget(info.achievement?.id)}
         onDragEnd={() => setSource(info.achievement?.id)}
-        className={`${styles.section} ${
-          info.achievement?.sectionTitle ? "" : styles.hidden
-        }`}
+        className={`${styles.section} ${info.achievement?.sectionTitle ? "" : styles.hidden
+          }`}
       >
         <div className={styles.sectionTitle}>
           {info.achievement?.sectionTitle}
@@ -252,9 +247,8 @@ const Resume = forwardRef((props, ref) => {
         draggable
         onDragOver={() => setTarget(info.summary?.id)}
         onDragEnd={() => setSource(info.summary?.id)}
-        className={`${styles.section} ${
-          info.summary?.sectionTitle ? "" : styles.hidden
-        }`}
+        className={`${styles.section} ${info.summary?.sectionTitle ? "" : styles.hidden
+          }`}
       >
         <div className={styles.sectionTitle}>{info.summary?.sectionTitle}</div>
         <div className={styles.content}>
@@ -270,9 +264,8 @@ const Resume = forwardRef((props, ref) => {
         draggable
         onDragOver={() => setTarget(info.other?.id)}
         onDragEnd={() => setSource(info.other?.id)}
-        className={`${styles.section} ${
-          info.other?.sectionTitle ? "" : styles.hidden
-        }`}
+        className={`${styles.section} ${info.other?.sectionTitle ? "" : styles.hidden
+          }`}
       >
         <div className={styles.sectionTitle}>{info.other?.sectionTitle}</div>
         <div className={styles.content}>
