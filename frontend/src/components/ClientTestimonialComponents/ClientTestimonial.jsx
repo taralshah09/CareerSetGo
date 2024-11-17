@@ -51,15 +51,7 @@ const testimonials = [
     rating: 5,
     comment:
       "Mauris eget lorem odio. Mauris convallis justo molestie metus aliquam lacinia. Suspendisse ut dui vulputate.",
-  },
-  {
-    name: "Jane Cooper",
-    designation: "Photographer",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfHjGUrjPdrvGLWYSegpkeW6RH7xGxYPdZaA&s",
-    rating: 5,
-    comment:
-      "Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse magna.",
-  },
+  }
 ];
 
 const ClientTestimonials = () => {
@@ -95,45 +87,45 @@ const ClientTestimonials = () => {
         Clients Testimonial
       </Typography>
       <Grid container justifyContent="center" alignItems="center">
-  <IconButton
-    onClick={handlePrevPage}
-    disabled={page === 1}
-    sx={{
-      width: "40px",  
-      height: "40px", 
-      backgroundColor: "#FFFFFF", 
-      color : "#0A65CC",
-      borderRadius: "8px",
-      '&:hover': {
-        backgroundColor: "#FFFFFF", 
-      },
-      
-    }}
-  >
-    <ArrowBack />
-  </IconButton>
+        <IconButton
+          onClick={handlePrevPage}
+          disabled={page === 1}
+          sx={{
+            width: "40px",
+            height: "40px",
+            backgroundColor: "#FFFFFF",
+            color: "#0A65CC",
+            borderRadius: "8px",
+            '&:hover': {
+              backgroundColor: "#FFFFFF",
+            },
 
-  {selectedTestimonials.map((testimonial, index) => (
-    <TestimonialCard key={index} {...testimonial} />
-  ))}
+          }}
+        >
+          <ArrowBack />
+        </IconButton>
 
-  <IconButton
-    onClick={handleNextPage}
-    disabled={page === totalPages}
-    sx={{
-      width: "40px", 
-      height: "40px",
-      backgroundColor: "#FFFFFF", 
-      color : "#0A65CC",
-      borderRadius: "8px", 
-      '&:hover': {
-        backgroundColor: "#FFFFFF", 
-      },
-    }}
-  >
-    <ArrowForward />
-  </IconButton>
-</Grid>
+        {selectedTestimonials.map((testimonial, index) => (
+          <TestimonialCard key={index} {...testimonial} />
+        ))}
+
+        <IconButton
+          onClick={handleNextPage}
+          disabled={page === totalPages}
+          sx={{
+            width: "40px",
+            height: "40px",
+            backgroundColor: "#FFFFFF",
+            color: "#0A65CC",
+            borderRadius: "8px",
+            '&:hover': {
+              backgroundColor: "#FFFFFF",
+            },
+          }}
+        >
+          <ArrowForward />
+        </IconButton>
+      </Grid>
 
 
       <Box sx={{ mt: 2 }}>
@@ -142,15 +134,15 @@ const ClientTestimonials = () => {
             key={index}
             onClick={() => handleDotClick(index + 1)}
             sx={{
-                width: "8px",
-                height: "8px", 
-                padding : 0 ,
-                margin: "0 4px",
-                borderRadius: "50%",
+              width: "8px",
+              height: "8px",
+              padding: 0,
+              margin: "0 4px",
+              borderRadius: "50%",
+              backgroundColor: page === index + 1 ? "#0066FF" : "#99C2FF",
+              '&:hover': {
                 backgroundColor: page === index + 1 ? "#0066FF" : "#99C2FF",
-                '&:hover': {
-                    backgroundColor: page === index + 1 ? "#0066FF" : "#99C2FF",
-                },
+              },
             }}
           />
         ))}

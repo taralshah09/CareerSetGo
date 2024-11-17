@@ -35,9 +35,9 @@ const HomePage = () => {
       <FlowChart />
       <PopularCategory />
       <FeaturedJobs />
-      <ClientTestimonial></ClientTestimonial>
       <Users />
-
+      <ClientTestimonial />
+    
       {userData && (
         <div>
           <h2>Welcome, {userData.fullname}</h2>
