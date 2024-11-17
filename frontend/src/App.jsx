@@ -9,12 +9,13 @@ import LoginPage from './pages/LoginPage/LoginPage'
 import SignupPage from "./pages/SignupPage/SignupPage"
 import FindJob from './pages/FindJob/FindJob'
 import Dashboard from './pages/Dashboard/Dashboard'
-import ResetPasswordPage from './pages/ResetPasswordPage/ResetPasswordPage.jsx'
-import BrowseCandidatePage from './pages/BrowseCandidatePage/BrowseCandidatePage.jsx'
-
+import FindEmployer from './components/FindEmployers/FindEmployer'
+import BrowseCandidate from './pages/BrowseCandidatePage/BrowseCandidatePage'
 
 function App() {
-  const location = useLocation() 
+  const location = useLocation();
+
+  // Check if the current path is "/login" or "/signup"
   const hideNavbarFooter = location.pathname === "/login" || location.pathname === "/signup";
 
   return (
@@ -29,7 +30,12 @@ function App() {
         <Route path="/employers" element={<EmployerPage />}></Route>
         <Route path="/dashboard" element={<Dashboard />}></Route>
       </Routes>
-      {!hideNavbarFooter && <Footer />}
+      <Footer />
+      {/* <FindEmployer></FindEmployer> */}
+      {/* <BrowseCandidate></BrowseCandidate> */}
+      {/* <EmployerPage></EmployerPage> */}
+      
+      
     </>
   )
 }

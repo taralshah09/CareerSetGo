@@ -10,15 +10,15 @@ const LoginPage = () => {
       <Grid item xs={12} md={6} style={{ position: 'relative' }}>
         <Box
           sx={{
-            position: 'absolute', 
-            top: 15,  
+            position: 'absolute',
+            top: 15,
             left: 120,
             zIndex: 10,
           }}
         >
           <Logo />
         </Box>
-        
+
         <Box
           padding={15}
           sx={{
