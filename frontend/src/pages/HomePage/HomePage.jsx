@@ -1,11 +1,13 @@
-import React from 'react'
-import "./HomePage.css"
-import HeroSection from '../../components/HeroSection/HeroSection'
-import PopularVacanies from '../../components/PopularVacanies/PopularVacanies'
-import FlowChart from '../../components/FlowChart/FlowChart'
-import PopularCategory from '../../components/PopularCategory/PopularCategory'
-import FeaturedJobs from '../../components/FeaturedJobs/FeaturedJobs'
-import Users from '../../components/Users/Users'
+import React, { useEffect, useState } from 'react';
+import { fetchWithAuth } from "../../utils/fetchWithAuth";
+import "./HomePage.css"; // Import your styles
+import HeroSection from '../../components/HeroSection/HeroSection';
+import PopularVacanies from '../../components/PopularVacanies/PopularVacanies';
+import FlowChart from '../../components/FlowChart/FlowChart';
+import PopularCategory from '../../components/PopularCategory/PopularCategory';
+import FeaturedJobs from '../../components/FeaturedJobs/FeaturedJobs';
+import Users from '../../components/Users/Users';
+import ClientTestimonial from '../../components/ClientTestimonialComponents/ClientTestimonial'
 
 
 const HomePage = () => {
@@ -34,6 +36,15 @@ const HomePage = () => {
       <PopularCategory />
       <FeaturedJobs />
       <Users />
+      <ClientTestimonial />
+
+      {userData && (
+        <div>
+          <h2>Welcome, {userData.fullname}</h2>
+          <p>Email: {userData.email}</p>
+        </div>
+      )}
+      {errorMessage && <p>{errorMessage}</p>}
     </>
   );
 };
