@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import "./FavJobs.css"
 import { Box, Grid, Typography, Container, List, ListItem, ListItemText, Link  } from '@mui/material';
 import JobCard from '../FavJobCardComponent/FavJobCard.jsx';
 import PaginationComponent from '../BrowseCandidateComponents/Pagination.jsx';
