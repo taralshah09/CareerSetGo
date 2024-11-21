@@ -1,7 +1,6 @@
 from pathlib import Path
 import os
 from decouple import config
-
 # Base directory path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -17,10 +16,11 @@ ALLOWED_HOSTS = []  # Add hostnames for production
 # settings.py
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',  # React app
+    'http://127.0.0.1:5173',  # React app
     'http://127.0.0.1:8000',  # Django API
 ]
 
-
+# eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMyMjE0MzkxLCJpYXQiOjE3MzIyMTM0OTEsImp0aSI6Ijg3YThiMDg5MTdmYzQzNmNiMGRlMTZkYjA1NWE4NWYzIiwidXNlcl9pZCI6MX0.EM1McdKgK_PrhttiAPve2oZQEXa8DYzJzok5qHzwOHM
 # Installed apps
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -110,9 +110,10 @@ SESSION_COOKIE_SAMESITE = 'Lax'  # Or 'Strict' or 'None' if you're using cross-o
 from datetime import timedelta
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=25),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
+     'TOKEN_TYPE': 'access',
     'BLACKLIST_AFTER_ROTATION': True,
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': SECRET_KEY,
@@ -120,6 +121,9 @@ SIMPLE_JWT = {
     'AUDIENCE': None,
     'ISSUER': None,
     'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'TOKEN_OBTAIN_SERIALIZER': 'myapp.serializers.CustomTokenObtainPairSerializer',
 }
 
 # CSRF settings: remove CSRF-related configurations since JWT doesn't use CSRF

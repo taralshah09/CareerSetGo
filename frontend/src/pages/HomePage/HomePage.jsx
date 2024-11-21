@@ -37,7 +37,7 @@ const HomePage = () => {
       <FeaturedJobs />
       <Users />
       <ClientTestimonial />
-    
+
       {userData && (
         <div>
           <h2>Welcome, {userData.fullname}</h2>

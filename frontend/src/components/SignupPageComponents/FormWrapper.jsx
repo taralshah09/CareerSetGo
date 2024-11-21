@@ -8,6 +8,7 @@ const FormWrapper = () => {
   const confirmPasswordRef = useRef();
   const nameRef = useRef();
   const usernameRef = useRef();
+  const roleRef = useRef();
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
@@ -26,6 +27,7 @@ const FormWrapper = () => {
       password: passwordRef.current.value,
       fullname: nameRef.current.value,
       username: usernameRef.current.value,
+      role: roleRef.current.value,
     };
 
     // Get CSRF token from cookies (important for CSRF protection)
@@ -54,6 +56,7 @@ const FormWrapper = () => {
         confirmPasswordRef.current.value = '';
         nameRef.current.value = '';
         usernameRef.current.value = '';
+        roleRef.current.value = '';
       } else {
         const data = await response.json();
         setErrorMessage(data.error || 'Registration failed! Please check your details.');
@@ -79,6 +82,9 @@ const FormWrapper = () => {
       <TextField label="Email address" inputRef={emailRef} variant="outlined" fullWidth />
       <TextField label="Password" type="password" inputRef={passwordRef} variant="outlined" fullWidth />
       <TextField label="Confirm Password" type="password" inputRef={confirmPasswordRef} variant="outlined" fullWidth />
+      <TextField label="Role" inputRef={roleRef} variant="outlined" fullWidth />
+
+
 
       <FormControlLabel
         control={<Checkbox />}

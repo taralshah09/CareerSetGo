@@ -9,6 +9,8 @@ import LoginPage from './pages/LoginPage/LoginPage'
 import SignupPage from "./pages/SignupPage/SignupPage"
 import FindJob from './pages/FindJob/FindJob'
 import Dashboard from './pages/Dashboard/Dashboard'
+import FindEmployer from './components/FindEmployers/FindEmployer'
+import BrowseCandidate from './pages/BrowseCandidatePage/BrowseCandidatePage'
 import ResumeBuilder from './pages/ResumeBuilder/ResumeBuilder'
 import PostJobForm from './pages/PostJobForm/PostJobForm'
 import ProfileForm from './pages/ProfileForm/ProfileForm'
@@ -36,6 +38,11 @@ function App() {
         <Route path="/course" element={<CourseList />}></Route>
         
       </Routes>
+      {/* <FindEmployer></FindEmployer> */}
+      {/* <BrowseCandidate></BrowseCandidate> */}
+      {/* <EmployerPage></EmployerPage> */}
+
+
       {!hideNavbarFooter && <Footer />}
     </>
   )
