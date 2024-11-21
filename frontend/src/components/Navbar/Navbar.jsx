@@ -15,25 +15,36 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      // Call the logout API using the fetchWithAuth function
+      const refreshToken = localStorage.getItem('refresh_token');
+      if (!refreshToken) {
+        console.error('No refresh token found');
+        return;
+      }
+  
       const response = await fetchWithAuth('http://localhost:8000/logout/', {
         method: 'POST',
-        body: JSON.stringify({}),
+        body: JSON.stringify({ refresh_token: refreshToken }), 
+        headers: {
+          'Content-Type': 'application/json', 
+        },
       });
-
-      // Clear tokens from localStorage
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refreshtoken');
-
-      // Update the state to reflect logout
-      setIsLoggedIn(false);
-
-      // Redirect the user to the home page or login page after logout
-      navigate('/');  // Use navigate() instead of history.push()
+  
+      console.log('Raw Response:', response); // Log the response to verify
+  
+      if (response && response.message === "Logged out successfully!") {
+        console.log('Clearing tokens...');
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        setIsLoggedIn(false);
+        navigate('/');
+      } else {
+        console.error('Logout failed:', response.message || 'Unknown error');
+      }
     } catch (error) {
       console.error('Logout failed:', error);
     }
   };
+  
 
   return (
     <div className='header-div'>

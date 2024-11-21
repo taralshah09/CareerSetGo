@@ -10,6 +10,9 @@ import SignupPage from "./pages/SignupPage/SignupPage"
 import FindJob from './pages/FindJob/FindJob'
 import Dashboard from './pages/Dashboard/Dashboard'
 import ResumeBuilder from './pages/ResumeBuilder/ResumeBuilder'
+import PostJobForm from './pages/PostJobForm/PostJobForm'
+import ProfileForm from './pages/ProfileForm/ProfileForm'
+import CourseList from './pages/Courses/course'
 
 function App() {
   const location = useLocation();
@@ -28,6 +31,10 @@ function App() {
         <Route path="/employers" element={<EmployerPage />}></Route>
         <Route path="/dashboard" element={<Dashboard />}></Route>
         <Route path="/resume-builder" element={<ResumeBuilder />}></Route>
+        <Route path="/post" element={<PostJobForm />}></Route>
+        <Route path="/me" element={<ProfileForm />}></Route>
+        <Route path="/course" element={<CourseList />}></Route>
+        
       </Routes>
       {!hideNavbarFooter && <Footer />}
     </>

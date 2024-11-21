@@ -11,39 +11,42 @@ const LoginForm = () => {
 
   // Function to handle login
   async function handleLogin(email, password) {
-    // Sending login request to the backend
-    const response = await fetch("http://localhost:8000/api/login/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-      }),
-    });
+    try {
+      // Sending login request to the backend
+      const response = await fetch("http://localhost:8000/api/login/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (response.ok) {
-      // Store the JWT token in localStorage
-      localStorage.setItem("access_token", data.access_token);
+      if (response.ok) {
+        // Store the JWT token in localStorage
+        localStorage.setItem("access_token", data.access_token);
+        localStorage.setItem("refresh_token", data.refresh_token); 
 
-      // Fetch user data after successful login
-      try {
-        const userData = await fetchWithAuth("http://127.0.0.1:8000/api/user/profile/");
-        console.log("User data:", userData);  // You can store the user data as needed, like in state
-        // Redirect to the profile or home page after successful login
-        navigate("/");  // You can change this to another route
-      } catch (error) {
-        setErrorMessage("Failed to fetch user data.");
+        // Fetch user data after successful login
+        try {
+          const userData = await fetchWithAuth("http://127.0.0.1:8000/api/user/profile/");
+          console.log("User data:", userData);  // You can store the user data as needed, like in state
+          // Redirect to the profile or home page after successful login
+          navigate("/");  // You can change this to another route
+        } catch (error) {
+          setErrorMessage("Failed to fetch user data.");
+        }
+      } else {
+        setErrorMessage(data.error || "Invalid credentials. Please try again.");
       }
-    } else {
-      console.error(data.error);
-      setErrorMessage("Invalid credentials. Please try again.");
-      return false;
+    } catch (error) {
+      setErrorMessage("Login failed. Please try again.");
+      console.error(error);
     }
-    return true;
   }
 
   // Handle form submit
@@ -54,10 +57,7 @@ const LoginForm = () => {
     const password = passwordRef.current.value;
 
     // Call login handler
-    const loginSuccess = await handleLogin(email, password);
-    if (!loginSuccess) {
-      setErrorMessage("Invalid credentials. Please try again.");
-    }
+    await handleLogin(email, password);
   };
 
   return (
@@ -104,7 +104,7 @@ const LoginForm = () => {
         <Button style={{ width: "100%" }} variant="outlined" startIcon={<img src="../images/google.png" alt="Google Icon" style={{ width: 20 }} />}>
           Continue with Google
         </Button>
-      </div >
+      </div>
 
       <Typography variant="body2" align="center" style={{ marginTop: '1rem', width: "100%" }}>
         Don't have an account? <Link href="/signup">Create account</Link>

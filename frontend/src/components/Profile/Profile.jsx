@@ -12,7 +12,7 @@ const Profile = () => {
 
     return (
         <form className='profile'>
-            <div className="profile-box-1">
+            <div className="profile-box-1"> 
                 <div className='profile-box-1-left'>
                     <label htmlFor="nationality">Nationality</label>
                     <select name="nationality" id="nationality">
