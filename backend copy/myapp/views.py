@@ -1,3 +1,5 @@
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -13,6 +15,14 @@ import requests
 import json
 import os
 from pathlib import Path
+from django.conf import settings
+import requests
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from a .env file
+load_dotenv()
+YOUTUBE_API_KEY = os.getenv('YOUTUBE_API_KEY')
 
 class RegisterUser(APIView):
     permission_classes = []
@@ -171,8 +181,6 @@ class UserProfileView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 
 
 class LogoutView(APIView):
@@ -245,7 +253,8 @@ class fetchcourses(APIView):
             domain_of_interest = profile.domain_of_interest
             
             q = ', '.join(skills) if skills else domain_of_interest
-            api_key = "your_api_key"
+            api_key = YOUTUBE_API_KEY
+
             response_data = []
             
             if not api_key:
