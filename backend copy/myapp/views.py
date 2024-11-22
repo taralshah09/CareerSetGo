@@ -149,15 +149,14 @@ class UpdateProfile(APIView):
 
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
-
     def get(self, request):
-        try:
-            profile = Profile.objects.get(user=request.user)
-            serializer = ProfileSerializer(profile)
-            return Response(serializer.data)
-        except Profile.DoesNotExist:
-            return Response({"detail": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
-
+        user = request.user
+        profile, created = Profile.objects.get_or_create(user=user)
+        if created:
+            profile.save()
+        serializer = ProfileSerializer(profile)
+        return Response(serializer.data)
+   
     def post(self, request):
         if Profile.objects.filter(user=request.user).exists():
             return Response({"detail": "Profile already exists."}, status=status.HTTP_400_BAD_REQUEST)
