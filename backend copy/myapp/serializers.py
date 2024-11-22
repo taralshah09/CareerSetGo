@@ -1,10 +1,22 @@
 from rest_framework import serializers
 from .models import User, Profile
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        # Add custom claims
+        token['username'] = user.username
+        print(f"Logged in as: {user.username}")
+
+        return token
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('email', 'password', 'username', 'fullname')
+        fields = ('email', 'password', 'username', 'fullname','role')
 
     def create(self, validated_data):
         user = User.objects.create_user(
@@ -12,6 +24,7 @@ class UserSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
             password=validated_data['password'],
             fullname=validated_data['fullname'],
+            role=validated_data.get('role', 'recruiter')
         )
         return user
 

@@ -31,13 +31,8 @@ function App() {
         <Route path="/employers" element={<EmployerPage />}></Route>
         <Route path="/dashboard" element={<Dashboard />}></Route>
         <Route path="/resume-builder" element={<ResumeBuilder />}></Route>
-        <Route path="/post" element={<PostJobForm/>}></Route>
+        <Route path="/post" element={<PostJobForm />}></Route>
       </Routes>
-      {/* <FindEmployer></FindEmployer> */}
-      {/* <BrowseCandidate></BrowseCandidate> */}
-      {/* <EmployerPage></EmployerPage> */}
-
-
       {!hideNavbarFooter && <Footer />}
     </>
   )
