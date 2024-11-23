@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './OtherFields.css';
 
 const OtherFields = () => {
@@ -14,35 +14,97 @@ const OtherFields = () => {
         gender: '',
         maritalStatus: '',
         biography: '',
-        facebookLink: '',
-        linkedinLink: '',
-        twitterLink: '',
-        instagramLink: '',
         professionalSkills: [],
         domainOfInterest: [],
         certifications: [''],
+        preferredWorkEnvironment: '',
+        availabilityStatus: '',
+        languages: '',
+        location: ''
     });
 
+    const [profileData, setProfileData] = useState(null);
     const [skillName, setSkillName] = useState("");
     const [domainSearch, setDomainSearch] = useState("");
 
+    // Fetch existing profile data when component mounts
+    useEffect(() => {
+        const fetchProfileData = async () => {
+            const token = localStorage.getItem('access_token');
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/user/profile/', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    // Convert comma-separated strings to arrays where needed
+                    setProfileData(data);
+                    setFormData(prev => ({
+                        ...prev,
+                        fullName: data.fullname || '',
+                        headline: data.title || '',
+                        experience: data.experience || '',
+                        education: data.education || '',
+                        personalWebsite: data.personal_website || '',
+                        nationality: data.nationality || '',
+                        dateOfBirth: data.date_of_birth || '',
+                        gender: data.gender || '',
+                        maritalStatus: data.marital_status || '',
+                        biography: data.biography || '',
+                        professionalSkills: data.skills ? data.skills.split(',') : [],
+                        domainOfInterest: data.domain_of_interest ? data.domain_of_interest.split(',') : [],
+                        certifications: data.certifications ? data.certifications.split(',') : [''],
+                        preferredWorkEnvironment: data.preferred_work_environment || '',
+                        availabilityStatus: data.availability_status || '',
+                        languages: data.languages || '',
+                        location: data.location || ''
+                    }));
+                }
+            } catch (error) {
+                console.error('Error fetching profile data:', error);
+            }
+        };
+        fetchProfileData();
+    }, []);
+
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({ ...prevData, [name]: value }));
+        const { name, value, type, files } = e.target;
+        if (type === 'file') {
+            setFormData(prev => ({
+                ...prev,
+                [name]: files[0]
+            }));
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                [name]: value
+            }));
+        }
     };
 
     const handleFileChange = (e) => {
-        setFormData((prevData) => ({ ...prevData, resume: e.target.files[0] }));
+        setFormData(prev => ({
+            ...prev,
+            resume: e.target.files[0]
+        }));
     };
 
     const addCertification = () => {
-        setFormData((prevData) => ({ ...prevData, certifications: [...prevData.certifications, ''] }));
+        setFormData(prev => ({
+            ...prev,
+            certifications: [...prev.certifications, '']
+        }));
     };
 
     const handleCertificationChange = (index, value) => {
         const updatedCertifications = [...formData.certifications];
         updatedCertifications[index] = value;
-        setFormData((prevData) => ({ ...prevData, certifications: updatedCertifications }));
+        setFormData(prev => ({
+            ...prev,
+            certifications: updatedCertifications
+        }));
     };
 
     const skillOptions = ["HTML", "CSS", "Javascript", "Python", "React", "Node.js", "C++", "Java", "SQL", "Machine Learning", "Data Structures", "Algorithms"];
@@ -55,19 +117,19 @@ const OtherFields = () => {
     const filteredSkills = skillOptions.filter(
         skill =>
             skill.toLowerCase().includes(skillName.toLowerCase()) &&
-            !formData.professionalSkills.includes(skill)  // Exclude already selected skills
+            !formData.professionalSkills.includes(skill)
     );
 
     const filteredDomains = domainOptions.filter(
         domain =>
             domain.toLowerCase().includes(domainSearch.toLowerCase()) &&
-            !formData.domainOfInterest.includes(domain)  // Exclude already selected domains
+            !formData.domainOfInterest.includes(domain)
     );
 
     const addSkills = (e, skill) => {
         e.preventDefault();
         if (!formData.professionalSkills.includes(skill)) {
-            setFormData((prev) => ({
+            setFormData(prev => ({
                 ...prev,
                 professionalSkills: [...prev.professionalSkills, skill]
             }));
@@ -78,7 +140,7 @@ const OtherFields = () => {
     const addDomain = (e, domain) => {
         e.preventDefault();
         if (!formData.domainOfInterest.includes(domain)) {
-            setFormData((prev) => ({
+            setFormData(prev => ({
                 ...prev,
                 domainOfInterest: [...prev.domainOfInterest, domain]
             }));
@@ -86,8 +148,72 @@ const OtherFields = () => {
         setDomainSearch("");
     };
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const token = localStorage.getItem('access_token');
+        
+        // Create FormData object to handle file uploads
+        const formDataToSend = new FormData();
+
+        // Map the form fields to match the serializer structure
+        const mappedData = {
+            fullname: formData.fullName,
+            title: formData.headline,
+            experience: formData.experience,
+            education: formData.education,
+            personal_website: formData.personalWebsite,
+            nationality: formData.nationality,
+            date_of_birth: formData.dateOfBirth,
+            gender: formData.gender,
+            marital_status: formData.maritalStatus,
+            biography: formData.biography,
+            skills: formData.professionalSkills.join(','),
+            domain_of_interest: formData.domainOfInterest.join(','),
+            certifications: formData.certifications.join(','),
+            preferred_work_environment: formData.preferredWorkEnvironment,
+            availability_status: formData.availabilityStatus,
+            languages: formData.languages,
+            location: formData.location
+        };
+
+        // Append all fields to FormData
+        Object.keys(mappedData).forEach(key => {
+            if (mappedData[key]) {
+                formDataToSend.append(key, mappedData[key]);
+            }
+        });
+
+        // Append files if they exist
+        if (formData.resume) {
+            formDataToSend.append('resume', formData.resume);
+        }
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/user/profile/', {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: formDataToSend,
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Profile updated successfully:', data);
+                // Add success notification here
+            } else {
+                const errorData = await response.json();
+                console.error('Error updating profile:', errorData);
+                // Add error notification here
+            }
+        } catch (error) {
+            console.error('Error submitting profile:', error);
+        }
+    };
+
     return (
-        <form className="profile-form">
+        <form className="profile-form" onSubmit={handleSubmit}>
             {/* Professional Skills */}
             <label className="form-label">Professional Skills</label>
             <div className="input-group">
@@ -158,9 +284,14 @@ const OtherFields = () => {
                 </ul>
             )}
 
-            {/* Other fields remain the same */}
+            {/* Languages */}
             <label className="form-label">Languages</label>
-            <select name="languages" value={formData.languages} onChange={handleInputChange} className="form-select">
+            <select 
+                name="languages" 
+                value={formData.languages} 
+                onChange={handleInputChange} 
+                className="form-select"
+            >
                 <option value="">Select a language</option>
                 <option value="English">English</option>
                 <option value="Spanish">Spanish</option>
@@ -168,22 +299,35 @@ const OtherFields = () => {
                 <option value="Mandarin">Mandarin</option>
             </select>
 
+            {/* Availability Status */}
             <label className="form-label">Availability Status</label>
-            <select name="availabilityStatus" value={formData.availabilityStatus} onChange={handleInputChange} className="form-select">
+            <select 
+                name="availabilityStatus" 
+                value={formData.availabilityStatus} 
+                onChange={handleInputChange} 
+                className="form-select"
+            >
                 <option value="">Select availability</option>
                 <option value="Actively looking for opportunities">Actively looking for opportunities</option>
                 <option value="Open to opportunities">Open to opportunities</option>
                 <option value="Not looking for opportunities">Not looking for opportunities</option>
             </select>
 
+            {/* Preferred Work Environment */}
             <label className="form-label">Preferred Work Environment</label>
-            <select name="workEnvironment" value={formData.workEnvironment} onChange={handleInputChange} className="form-select">
+            <select 
+                name="preferredWorkEnvironment" 
+                value={formData.preferredWorkEnvironment} 
+                onChange={handleInputChange} 
+                className="form-select"
+            >
                 <option value="">Select work environment</option>
                 <option value="Remote">Remote</option>
                 <option value="In-Office">In-Office</option>
                 <option value="Hybrid">Hybrid</option>
             </select>
 
+            {/* Certifications */}
             <label className="form-label">Certifications</label>
             {formData.certifications.map((cert, index) => (
                 <div key={index} className="certification-field">
@@ -194,12 +338,15 @@ const OtherFields = () => {
                         placeholder="Enter certification"
                         className="form-input"
                     />
-                    <button type="button" onClick={addCertification} className="add-certification-btn">
+                    <button 
+                        type="button" 
+                        onClick={addCertification} 
+                        className="add-certification-btn"
+                    >
                         Add Certification
                     </button>
                 </div>
             ))}
-
 
             <button type="submit" className="submit-btn">
                 Submit

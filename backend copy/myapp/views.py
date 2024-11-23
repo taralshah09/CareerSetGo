@@ -115,22 +115,29 @@ class UpdateProfile(APIView):
         except Profile.DoesNotExist:
             data = request.data
             data['user'] = user.id
-            serializer = ProfileSerializer(data=data,context={'request': request})
+            serializer = ProfileSerializer(data=data, context={'request': request})
 
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request):
+    def patch(self, request):
         user = request.user
         try:
             profile = Profile.objects.get(user=user)
         except Profile.DoesNotExist:
             return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ProfileSerializer(profile, data=request.data,context={'request': request})
+        # Ensure only fields that are provided are updated, leaving others unchanged
+        data = request.data
+        for field in data:
+            if data[field] is None:  # If the value is None, remove it to keep the current value
+                data.pop(field)
 
+        # Use the filtered data to update the profile
+        serializer = ProfileSerializer(profile, data=data, partial=True, context={'request': request})
+        
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -139,38 +146,31 @@ class UpdateProfile(APIView):
 
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
-
+    
     def get(self, request):
-        try:
-            profile = Profile.objects.get(user=request.user)
-            serializer = ProfileSerializer(profile)
-            return Response(serializer.data)
-        except Profile.DoesNotExist:
-            return Response({"detail": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
-
-    def post(self, request):
-        if Profile.objects.filter(user=request.user).exists():
-            return Response({"detail": "Profile already exists."}, status=status.HTTP_400_BAD_REQUEST)
-
-        serializer = ProfileSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def put(self, request):
+        user = request.user
+        profile, created = Profile.objects.get_or_create(user=user)
+        if created:
+            profile.save()
+        serializer = ProfileSerializer(profile)
+        return Response(serializer.data)
+    
+    def patch(self, request):
         user = request.user
         try:
             profile = Profile.objects.get(user=user)
         except Profile.DoesNotExist:
             return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ProfileSerializer(profile, data=request.data, partial=True, context={'request': request})
+        # Filter out None values to preserve existing data
+        data = {k: v for k, v in request.data.items() if v is not None}
+
+        serializer = ProfileSerializer(profile, data=data, partial=True, context={'request': request})
+        
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 
