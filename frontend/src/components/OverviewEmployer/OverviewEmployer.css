@@ -1,0 +1,161 @@
+.overview {
+  width: 100%;
+  min-height: 90vh;
+  padding: 25px 15px;
+}
+
+.overview-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.overview-header p {
+  margin: 5px 0;
+  color: #777;
+}
+
+.overview-stats {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.stats-item {
+  background-color: #f1f1f1;
+  padding: 15px;
+  text-align: center;
+  border-radius: 8px;
+  width: 340px;
+  height: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.stats-item:hover{
+    border: '1px solid #0A65CC', 
+}
+
+.stats-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-basis: 85%;
+  justify-content: flex-start;
+}
+
+.stats-item h3 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+}
+
+.stats-item p {
+  margin: 0;
+  color: #666;
+}
+.stats-item .img-box {
+    display: flex;
+    align-items:center;
+    justify-content: center;
+    background: #ffffff;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+
+.img-box img {
+  width: 30px;
+}
+
+.recently-applied {
+    margin-top: 30px;
+  }
+  
+  .recently-applied h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .recently-applied table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .recently-applied th,
+  .recently-applied td {
+    padding-left: 20px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .recently-applied th {
+    background-color: #f7f7f7;
+    font-weight: bold;
+    text-align: left;
+  }
+  
+  .recently-applied td {
+    color: #555;
+    vertical-align: middle;
+    padding-bottom: 20px;
+    padding-top: 20px;
+   
+  }
+  
+  .recently-applied .job-details {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .recently-applied .job-title {
+    font-weight: bold;
+  }
+  .btn-icon{
+    margin-left: 10px;
+  }
+  
+  
+  .recently-applied .status-active {
+    color: #28a745;
+    font-weight: bold;
+  }
+  
+  .recently-applied .action-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .action-container {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Add space between the button and the icon */
+}
+
+.action-btn {
+    background-color: #007bff; /* Primary button color */
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.action-btn:hover {
+    background-color: #0056b3; /* Darker shade for hover */
+}
+
+.btn-icon {
+    color: #333;
+    padding: 0;
+}
+
+.btn-icon:hover {
+    color: #007bff; 
+}
+ 
