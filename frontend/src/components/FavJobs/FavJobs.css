@@ -1,0 +1,19 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Outfit", serif;
+}
+
+:root {
+  --primary-grey: #f1f2f4;
+  --primary-white: #ffffff;
+  --primary-blue: #0a65cc;
+  --dark-text: #18191c;
+  --light-text: #5e6670;
+}
+
+.favjobs-container{
+    width: 100%;
+}
