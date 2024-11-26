@@ -8,6 +8,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import InvalidToken
 from django.shortcuts import get_object_or_404
 from .utils import send_email
+from django.http import JsonResponse
 
 class RegisterUser(APIView):
     permission_classes = []
@@ -191,11 +192,15 @@ class PostJobView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = JobSerializer(data=request.data)
-        if serializer.is_valid():
-            job = serializer.save(posted_by=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        users = User.objects.filter(role = "recruiter")
+        if request.user in users:
+            serializer = JobSerializer(data=request.data)
+            if serializer.is_valid():
+                job = serializer.save(posted_by=request.user)
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            return JsonResponse({"message": "Not a recruiter"})
+        return JsonResponse({"message": "Not a recruiter"})
 
 
 class AddToWishlistView(APIView):

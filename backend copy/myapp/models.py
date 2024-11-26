@@ -50,7 +50,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     
     
     is_social_account = models.BooleanField(default=False)
-    
+    ROLE_CHOICES = [
+        ('candidate', 'Candidate'),
+        ('recruiter', 'Recruiter'),
+        ('admin', 'Admin'),
+    ]
+    role = models.CharField(max_length=255, choices=ROLE_CHOICES, default='candidate')
     
     id = models.AutoField(primary_key=True,unique=True)
     fullname = models.CharField(max_length=255)

@@ -56,7 +56,7 @@ const Navbar = () => {
 
         <div className="search-box">
           <img src="../images/search.png" alt="search" />
-          <input type="text" placeholder='Job title, keyword, company' />
+          <input type="text" className='search-bar' placeholder='Job title, keyword, company' />
         </div>
 
         <div className="buttons-box">

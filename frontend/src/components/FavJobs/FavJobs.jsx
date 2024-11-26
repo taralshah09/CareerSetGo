@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import "./FavJobs.css"
-import { Box, Grid, Typography, Container, List, ListItem, ListItemText, Link  } from '@mui/material';
+import { Box, Grid, Typography, Container, List, ListItem, ListItemText, Link } from '@mui/material';
 import JobCard from '../FavJobCardComponent/FavJobCard.jsx';
 import PaginationComponent from '../BrowseCandidateComponents/Pagination.jsx';
 
@@ -19,7 +19,7 @@ const jobData = [
     salary: '$120,000 - $140,000',
     deadline: '3 days remaining',
   },
-  
+
   {
     jobTitle: 'UI/UX Designer',
     jobTiming: 'Full-time',
@@ -34,7 +34,7 @@ const jobData = [
     salary: '$110,000 - $130,000',
     deadline: '1 day remaining',
   },
- 
+
   {
     jobTitle: 'Software Engineer',
     jobTiming: 'Full-time',
@@ -70,7 +70,7 @@ const jobData = [
     salary: '$110,000 - $130,000',
     deadline: '1 day remaining',
   },
- 
+
   {
     jobTitle: 'Software Engineer',
     jobTiming: 'Full-time',
@@ -99,7 +99,7 @@ const jobData = [
     salary: '$120,000 - $140,000',
     deadline: '3 days remaining',
   },
-  
+
   {
     jobTitle: 'UI/UX Designer',
     jobTiming: 'Full-time',
@@ -135,27 +135,27 @@ const FavJobs = () => {
   const totalPages = Math.ceil(sortedJobs.length / perPage);
   const jobsToShow = sortedJobs.slice((page - 1) * perPage, page * perPage);
   return (
-    <div>
-       <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#ffffff', overflow: 'hidden' }}>
-      <Container maxWidth="lg" sx={{ flex: 1, padding: '2rem', bgcolor: '#ffffff' }}>
-        <Typography variant="h4" sx={{ mb: 4 ,display:'flex'}}>
-          Favourite Jobs <Typography variant="h6" color='#767F8C' sx={{mt:1}} >({ jobData.length})</Typography>
-         
-        </Typography>
+    <div className='favjobs-container'>
+      <Box sx={{ display: 'flex', width: "100%", minHeight: '100vh', overflow: 'hidden' }}>
+        <Container maxWidth="lg" sx={{ flex: 1, padding: '2rem', bgcolor: '#ffffff' }}>
+          <Typography variant="h4" sx={{ mb: 4, display: 'flex' }}>
+            Favourite Jobs <Typography variant="h6" color='#767F8C' sx={{ mt: 1 }} >({jobData.length})</Typography>
 
-        <Grid container spacing={2}>
-          {jobsToShow.map((job, index) => (
-            <Grid item xs={12} key={index}>
-              <JobCard {...job} />
-            </Grid>
-          ))}
-        </Grid>
+          </Typography>
 
-        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
-          <PaginationComponent count={totalPages} page={page} onChange={handlePageChange} />
-        </Box>
-      </Container>
-    </Box>
+          <Grid container spacing={2}>
+            {jobsToShow.map((job, index) => (
+              <Grid item xs={12} key={index}>
+                <JobCard {...job} />
+              </Grid>
+            ))}
+          </Grid>
+
+          <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
+            <PaginationComponent count={totalPages} page={page} onChange={handlePageChange} />
+          </Box>
+        </Container>
+      </Box>
     </div>
   )
 }

@@ -13,9 +13,6 @@ import FindEmployer from './components/FindEmployers/FindEmployer'
 import BrowseCandidate from './pages/BrowseCandidatePage/BrowseCandidatePage'
 import ResumeBuilder from './pages/ResumeBuilder/ResumeBuilder'
 import PostJobForm from "./pages/PostJobForm/PostJobForm"
-import AccountSetup from './pages/AccountSetup/AccountSetup'
-import DashboardEmployer from "./pages/DashboardEmployer/DashboardEmployer.jsx"
-
 
 function App() {
   const location = useLocation();
@@ -24,7 +21,7 @@ function App() {
 
   return (
     <>
-      {/* {!hideNavbarFooter && <Navbar />}
+      {!hideNavbarFooter && <Navbar />}
       <Routes>
         <Route index path="/" element={<HomePage />}></Route>
         <Route path="/find-job" element={<FindJob />}></Route>
@@ -34,15 +31,9 @@ function App() {
         <Route path="/employers" element={<EmployerPage />}></Route>
         <Route path="/dashboard" element={<Dashboard />}></Route>
         <Route path="/resume-builder" element={<ResumeBuilder />}></Route>
-        <Route path="/post" element={<PostJobForm/>}></Route>
-      </Routes> */}
-      {/* <FindEmployer></FindEmployer>
-      {/* <BrowseCandidate></BrowseCandidate> */}
-      {/* <EmployerPage></EmployerPage> */}
-      {/* <FindEmployer></FindEmployer> */}
-        {/* <AccountSetup></AccountSetup> */}
-        <DashboardEmployer></DashboardEmployer>
-      {/* {!hideNavbarFooter && <Footer />} */}
+        <Route path="/post" element={<PostJobForm />}></Route>
+      </Routes>
+      {!hideNavbarFooter && <Footer />}
     </>
   )
 }

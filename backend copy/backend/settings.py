@@ -1,7 +1,6 @@
 from pathlib import Path
 import os
 from decouple import config
-
 # Base directory path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -120,6 +119,9 @@ SIMPLE_JWT = {
     'AUDIENCE': None,
     'ISSUER': None,
     'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
+    'TOKEN_OBTAIN_SERIALIZER': 'myapp.serializers.CustomTokenObtainPairSerializer',
 }
 
 # CSRF settings: remove CSRF-related configurations since JWT doesn't use CSRF
