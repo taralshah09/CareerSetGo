@@ -1,0 +1,27 @@
+.nav-bar {
+  display: flex;
+  gap: 15px;
+  margin: 10px 0 0 0;
+  padding: 10px;
+  border-radius: 5px;
+  justify-content: flex-start; 
+}
+
+  
+  .nav-item {
+    background: transparent;
+    border: none;
+    padding: 10px 10px;
+    cursor: pointer;
+    color: #ADB2BA;
+    font-size: 16px;
+  }
+  
+  .nav-item.active {
+    color: var(--primary-blue);
+    border-bottom: 2px solid var(--primary-blue);
+  }
+  
+  .nav-icon {
+    margin-right: 5px;
+  }
