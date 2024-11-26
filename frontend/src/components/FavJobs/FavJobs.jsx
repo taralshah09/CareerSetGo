@@ -6,6 +6,7 @@ import PaginationComponent from '../BrowseCandidateComponents/Pagination.jsx';
 
 const jobData = [
   {
+    logo : "../images/c1.png" ,
     jobTitle: 'Software Engineer',
     jobTiming: 'Full-time',
     location: 'San Francisco, CA',
@@ -13,6 +14,7 @@ const jobData = [
     deadline: '3 days remaining',
   },
   {
+    logo : "../images/c2.png" ,
     jobTitle: 'Software Engineer',
     jobTiming: 'Full-time',
     location: 'San Francisco, CA',
@@ -21,6 +23,7 @@ const jobData = [
   },
   
   {
+    logo : "../images/c3.png" ,
     jobTitle: 'UI/UX Designer',
     jobTiming: 'Full-time',
     location: 'Los Angeles, CA',
@@ -28,6 +31,7 @@ const jobData = [
     deadline: '5 days remaining',
   },
   {
+    logo : "../images/c1.png" ,
     jobTitle: 'Product Manager',
     jobTiming: 'Full-time',
     location: 'Chicago, IL',
@@ -36,6 +40,7 @@ const jobData = [
   },
  
   {
+    logo : "../images/c2.png" ,
     jobTitle: 'Software Engineer',
     jobTiming: 'Full-time',
     location: 'San Francisco, CA',
@@ -43,6 +48,7 @@ const jobData = [
     deadline: '3 days remaining',
   },
   {
+    logo : "../images/c3.png" ,
     jobTitle: 'Data Scientist',
     jobTiming: 'Part-time',
     location: 'New York, NY',
@@ -50,6 +56,7 @@ const jobData = [
     deadline: 'Deadline expired',
   },
   {
+    logo : "../images/c1.png" ,
     jobTitle: 'UI/UX Designer',
     jobTiming: 'Full-time',
     location: 'Los Angeles, CA',
@@ -57,6 +64,7 @@ const jobData = [
     deadline: '5 days remaining',
   },
   {
+    logo : "../images/c2.png" ,
     jobTitle: 'UI/UX Designer',
     jobTiming: 'Full-time',
     location: 'Los Angeles, CA',
@@ -64,6 +72,7 @@ const jobData = [
     deadline: '5 days remaining',
   },
   {
+    logo : "../images/c3.png" ,
     jobTitle: 'Product Manager',
     jobTiming: 'Full-time',
     location: 'Chicago, IL',
@@ -72,6 +81,7 @@ const jobData = [
   },
  
   {
+    logo : "../images/c1.png" ,
     jobTitle: 'Software Engineer',
     jobTiming: 'Full-time',
     location: 'San Francisco, CA',
@@ -79,6 +89,7 @@ const jobData = [
     deadline: '3 days remaining',
   },
   {
+    logo : "../images/c2.png" ,
     jobTitle: 'UI/UX Designer',
     jobTiming: 'Full-time',
     location: 'Los Angeles, CA',
@@ -86,6 +97,7 @@ const jobData = [
     deadline: '5 days remaining',
   },
   {
+    logo : "../images/c3.png" ,
     jobTitle: 'UI/UX Designer',
     jobTiming: 'Full-time',
     location: 'Los Angeles, CA',
@@ -93,6 +105,7 @@ const jobData = [
     deadline: '5 days remaining',
   },
   {
+    logo : "../images/c1.png" ,
     jobTitle: 'Software Engineer',
     jobTiming: 'Full-time',
     location: 'San Francisco, CA',
@@ -101,6 +114,7 @@ const jobData = [
   },
   
   {
+    logo : "../images/c2.png" ,
     jobTitle: 'UI/UX Designer',
     jobTiming: 'Full-time',
     location: 'Los Angeles, CA',
@@ -108,6 +122,7 @@ const jobData = [
     deadline: '5 days remaining',
   },
   {
+    logo : "../images/c1.png" ,
     jobTitle: 'Product Manager',
     jobTiming: 'Full-time',
     location: 'Chicago, IL',
@@ -115,6 +130,7 @@ const jobData = [
     deadline: '1 day remaining',
   },
   {
+    logo : "../images/c2.png" ,
     jobTitle: 'Web Developer',
     jobTiming: 'Full-time',
     location: 'Seattle, WA',
@@ -125,7 +141,7 @@ const jobData = [
 
 const FavJobs = () => {
   const [page, setPage] = useState(1);
-  const [perPage] = useState(6);
+  const [perPage] = useState(5);
   const [sortedJobs] = useState(jobData);
 
   const handlePageChange = (event, value) => {
@@ -137,9 +153,9 @@ const FavJobs = () => {
   return (
     <div>
        <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#ffffff', overflow: 'hidden' }}>
-      <Container maxWidth="lg" sx={{ flex: 1, padding: '2rem', bgcolor: '#ffffff' }}>
-        <Typography variant="h4" sx={{ mb: 4 ,display:'flex'}}>
-          Favourite Jobs <Typography variant="h6" color='#767F8C' sx={{mt:1}} >({ jobData.length})</Typography>
+      <Container maxWidth="xl" sx={{ flex: 1, padding: '1rem', bgcolor: '#ffffff'  , paddingX : 0}}>
+        <Typography variant="h6" sx={{ mt: 1 , mb : 1 , display:'flex' , alignItems : "center", gap : 1}}>
+          Favourite Jobs <Typography variant="h6">({ jobData.length})</Typography>
          
         </Typography>
 
@@ -160,4 +176,4 @@ const FavJobs = () => {
   )
 }
 
-export default FavJobs
+export default FavJobs                    

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Button, Card, CardContent, Typography, Chip,IconButton } from '@mui/material';
+import { Box, Button, Card, CardContent, Typography, Chip,IconButton , Avatar , Paper } from '@mui/material';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
@@ -8,7 +8,7 @@ import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import BookmarkIcon from '@mui/icons-material/Bookmark';
 
-const JobAlertCard = ({ jobTitle, location, image: imageUrl, jobTiming, salary, deadline }) => {
+const JobAlertCard = ({ logo , jobTitle, location, image: imageUrl, jobTiming, salary, deadline }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
  
@@ -19,7 +19,16 @@ const JobAlertCard = ({ jobTitle, location, image: imageUrl, jobTiming, salary, 
   const isExpired = deadline.toLowerCase().includes('expired');
 
   return (
-    
+    <Paper
+      elevation={2}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      sx={{
+        width: "100%",
+        borderRadius: 2,
+        backgroundColor: "#fff",
+      }}
+    >
     <Card
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -30,27 +39,19 @@ const JobAlertCard = ({ jobTitle, location, image: imageUrl, jobTiming, salary, 
         paddingX: '0.4rem',
         border: 'none ', 
         boxShaddow:'none',
-        '&:hover': {
-         
-          border: '1px solid #0A65CC', 
-        },
+        border: isHovered ? "1px solid #0A65CC" : "1px solid transparent",
+        transition: "border 0.3s ease",
+        borderRadius : 2
       }}
     >
-      <Box
-        sx={{
-          width: 50,
-          height: 50,
-          margin: '1rem',
-          borderRadius: '8px',
-          backgroundColor: '#767F8C',
-          backgroundImage: `url(imgurl)`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      />
+       <Avatar
+            src={logo}
+            variant="rounded"
+            sx={{ width: 60, height: 60 , marginLeft : 2 }}
+       />
       <CardContent sx={{ flexGrow: 1 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Typography variant="h6" className="jobtitle">
+          <Typography variant="h6" className="jobtitle" fontFamily="Outfit" fontSize="1.2rem">
             {jobTitle}
           </Typography>
           <Chip
@@ -58,10 +59,10 @@ const JobAlertCard = ({ jobTitle, location, image: imageUrl, jobTiming, salary, 
             color="primary"
             size="small"
             sx={{
-              fontSize: '0.75rem',
+              fontSize: '12px',
               backgroundColor: '#E7F0FA',
               color: '#0A65CC',
-              fontWeight: 600,
+              fontWeight: 700,
             }}
           />
         </Box>
@@ -106,25 +107,27 @@ const JobAlertCard = ({ jobTitle, location, image: imageUrl, jobTiming, salary, 
           {bookmarked ? <BookmarkIcon sx={{ color: 'black' }} /> : <BookmarkBorderIcon sx={{ color: 'inherit' }} />}
         </IconButton>
         
-          <Button
-            variant={isHovered ? 'contained' : 'outlined'}
-            endIcon={<ArrowForwardIcon />}
-            sx={{
-              width: '100%',
-              backgroundColor: isHovered ? '#0A65CC' : '#E7F0FA',
-              color: isHovered ? '#ffffff' : '#0A65CC',
-              borderColor: '#0A65CC',
-              '&:hover': {
-                backgroundColor: '#0A65CC',
-                color: '#ffffff',
-              },
-            }}
-          >
-            Apply Now
-          </Button>
+        <Button
+          variant={isHovered ? 'contained' : 'outlined'}
+          endIcon={<ArrowForwardIcon />}
+          sx={{
+            width: '100%',
+            borderColor: '#0A65CC !important',
+            color : '#0A65CC !important' ,
+            backgroundColor : '#E7F0FA !important' ,
+
+            '&:hover': {
+              backgroundColor: '#0A65CC !important',
+              color: '#ffffff !important',
+            },
+          }}
+        >
+          Apply Now
+        </Button>
     
       </Box>
     </Card>
+    </Paper>
   );
 };
 

@@ -54,13 +54,13 @@ export default function OverlayCard({ companyName, industry, logoUrl }) {
                             variant="contained"
                             endIcon={<ArrowForwardIcon />}
                             sx={{
-                                backgroundColor: '#0A65CC',
-                                color: 'white',
+                                backgroundColor: '#0A65CC !important',
+                                color: 'white !important',
                                 ':hover': {
-                                    backgroundColor: '#1565C0',
+                                    backgroundColor: '#1565C0 !important',
                                 },
                                 '& .MuiButton-endIcon': {
-                                    color: 'white', 
+                                    color: 'white !important', 
                                 },
                             }}
                         >

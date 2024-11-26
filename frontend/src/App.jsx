@@ -24,7 +24,7 @@ function App() {
 
   return (
     <>
-      {/* {!hideNavbarFooter && <Navbar />}
+      {!hideNavbarFooter && <Navbar />}
       <Routes>
         <Route index path="/" element={<HomePage />}></Route>
         <Route path="/find-job" element={<FindJob />}></Route>
@@ -35,16 +35,16 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />}></Route>
         <Route path="/resume-builder" element={<ResumeBuilder />}></Route>
         <Route path="/post" element={<PostJobForm/>}></Route>
-      </Routes> */}
+      </Routes>
       {/* <FindEmployer></FindEmployer>
       {/* <BrowseCandidate></BrowseCandidate> */}
       {/* <EmployerPage></EmployerPage> */}
       {/* <FindEmployer></FindEmployer> */}
         {/* <AccountSetup></AccountSetup> */}
-        <DashboardEmployer></DashboardEmployer>
-      {/* {!hideNavbarFooter && <Footer />} */}
+        {/* <DashboardEmployer></DashboardEmployer> */}
+      {!hideNavbarFooter && <Footer />}
     </>
   )
 }
 
-export default App
+export default App;
