@@ -125,8 +125,11 @@ const OtherFields = () => {
             domain.toLowerCase().includes(domainSearch.toLowerCase()) &&
             !formData.domainOfInterest.includes(domain)
     );
-
+    
     const addSkills = (e, skill) => {
+        if (!skill) {
+            return;
+        }
         e.preventDefault();
         if (!formData.professionalSkills.includes(skill)) {
             setFormData(prev => ({
@@ -138,6 +141,9 @@ const OtherFields = () => {
     };
 
     const addDomain = (e, domain) => {
+        if (!domain) {
+            return;
+        }
         e.preventDefault();
         if (!formData.domainOfInterest.includes(domain)) {
             setFormData(prev => ({
@@ -148,11 +154,27 @@ const OtherFields = () => {
         setDomainSearch("");
     };
 
+    // For Adding Skills
+    const handleSkillKeyDown = (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault(); // Prevent the default form submission on Enter
+            addSkills(e, skillName.trim()); // Trigger addSkills function
+        }
+    };
+
+    // For Adding Domains
+    const handleDomainKeyDown = (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault(); // Prevent the default form submission on Enter
+            addDomain(e, domainSearch.trim()); // Trigger addDomain function
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         const token = localStorage.getItem('access_token');
-        
+
         // Create FormData object to handle file uploads
         const formDataToSend = new FormData();
 
@@ -224,32 +246,23 @@ const OtherFields = () => {
                         ))}
                     </div>
                 )}
-                <input
-                    type="text"
-                    value={skillName}
-                    onChange={e => setSkillName(e.target.value)}
-                    placeholder="Search for a skill..."
-                    className="search-input"
-                />
+                <div className='skill-input-box'>
+                    <input
+                        type="text"
+                        value={skillName}
+                        onChange={e => setSkillName(e.target.value)}
+                        placeholder="Search for a skill..."
+                        className="search-input"
+                        onKeyDown={handleSkillKeyDown}
+                    />
+                    <button className='add-button' onClick={(e) => {
+                        addSkills(e, skillName);
+                    }}>Add</button>
+                </div>
             </div>
-            {skillName && (
-                <ul className="options-list">
-                    {filteredSkills.map((skill, index) => (
-                        <li
-                            key={index}
-                            className="option-item"
-                            onClick={(e) => {
-                                addSkills(e, skill);
-                                setSkillName(skill);
-                            }}
-                        >
-                            {skill}
-                        </li>
-                    ))}
-                </ul>
-            )}
 
-            {/* Domain of Interest */}
+
+            {/* Domain of interest */}
             <label className="form-label">Domain of Interest</label>
             <div className="input-group">
                 {formData.domainOfInterest.length > 0 && (
@@ -259,37 +272,52 @@ const OtherFields = () => {
                         ))}
                     </div>
                 )}
-                <input
-                    type="text"
-                    value={domainSearch}
-                    onChange={e => setDomainSearch(e.target.value)}
-                    placeholder="Search for a domain..."
-                    className="search-input"
-                />
+                <div className='skill-input-box'>
+                    <input
+                        type="text"
+                        value={domainSearch}
+                        onChange={e => setDomainSearch(e.target.value)}
+                        placeholder="Search for a skill..."
+                        className="search-input"
+                        onKeyDown={handleDomainKeyDown}
+                    />
+                    <button className='add-button' onClick={(e) => {
+                        addDomain(e, domainSearch);
+                    }}>Add</button>
+                </div>
             </div>
-            {domainSearch && (
-                <ul className="options-list">
-                    {filteredDomains.map((domain, index) => (
-                        <li
-                            key={index}
-                            className="option-item"
-                            onClick={(e) => {
-                                addDomain(e, domain);
-                                setDomainSearch(domain);
-                            }}
-                        >
-                            {domain}
-                        </li>
-                    ))}
-                </ul>
-            )}
+
+            {/* Domain of Interest */}
+            {/* <label className="form-label">Domain of Interest</label>
+            <div className="input-group">
+                {formData.domainOfInterest.length > 0 && (
+                    <div className="selected-items">
+                        {formData.domainOfInterest.map((domain, index) => (
+                            <span key={index} className="item-badge">{domain}</span>
+                        ))}
+                    </div>
+                )}
+                <div className='skill-input-box'>
+                    <input
+                        type="text"
+                        value={domainSearch}
+                        onChange={e => setDomainSearch(e.target.value)}
+                        placeholder="Search for a domain..."
+                        className="search-input"
+                    />
+                    <button className='add-button' onClick={(e) => {
+                        setDomainSearch(e, domainSearch);
+                    }}>Add</button>
+                </div>
+            </div> */}
+
 
             {/* Languages */}
             <label className="form-label">Languages</label>
-            <select 
-                name="languages" 
-                value={formData.languages} 
-                onChange={handleInputChange} 
+            <select
+                name="languages"
+                value={formData.languages}
+                onChange={handleInputChange}
                 className="form-select"
             >
                 <option value="">Select a language</option>
@@ -301,10 +329,10 @@ const OtherFields = () => {
 
             {/* Availability Status */}
             <label className="form-label">Availability Status</label>
-            <select 
-                name="availabilityStatus" 
-                value={formData.availabilityStatus} 
-                onChange={handleInputChange} 
+            <select
+                name="availabilityStatus"
+                value={formData.availabilityStatus}
+                onChange={handleInputChange}
                 className="form-select"
             >
                 <option value="">Select availability</option>
@@ -315,10 +343,10 @@ const OtherFields = () => {
 
             {/* Preferred Work Environment */}
             <label className="form-label">Preferred Work Environment</label>
-            <select 
-                name="preferredWorkEnvironment" 
-                value={formData.preferredWorkEnvironment} 
-                onChange={handleInputChange} 
+            <select
+                name="preferredWorkEnvironment"
+                value={formData.preferredWorkEnvironment}
+                onChange={handleInputChange}
                 className="form-select"
             >
                 <option value="">Select work environment</option>
@@ -338,16 +366,16 @@ const OtherFields = () => {
                         placeholder="Enter certification"
                         className="form-input"
                     />
-                    <button 
-                        type="button" 
-                        onClick={addCertification} 
+                    <button
+                        type="button"
+                        onClick={addCertification}
                         className="add-certification-btn"
                     >
                         Add Certification
                     </button>
                 </div>
             ))}
-
+            
             <button type="submit" className="submit-btn">
                 Submit
             </button>
