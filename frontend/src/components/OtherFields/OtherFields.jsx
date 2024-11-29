@@ -125,7 +125,7 @@ const OtherFields = () => {
             domain.toLowerCase().includes(domainSearch.toLowerCase()) &&
             !formData.domainOfInterest.includes(domain)
     );
-
+    
     const addSkills = (e, skill) => {
         if (!skill) return;
         e.preventDefault();
@@ -144,7 +144,6 @@ const OtherFields = () => {
     };
 
     const addDomain = (e, domain) => {
-        if (!domain) return;
         e.preventDefault();
         
         if (!formData.domainOfInterest.includes(domain)) {
@@ -156,38 +155,33 @@ const OtherFields = () => {
         setDomainSearch("");
     };
 
+    // For Adding Skills
     const handleSkillKeyDown = (e) => {
         if (e.key === "Enter") {
-            e.preventDefault();
-            addSkills(e, skillName.trim());
+            e.preventDefault(); // Prevent the default form submission on Enter
+            addSkills(e, skillName.trim()); // Trigger addSkills function
         }
     };
 
+    // For Adding Domains
     const handleDomainKeyDown = (e) => {
         if (e.key === "Enter") {
-            e.preventDefault();
-            addDomain(e, domainSearch.trim());
+            e.preventDefault(); // Prevent the default form submission on Enter
+            addDomain(e, domainSearch.trim()); // Trigger addDomain function
         }
     };
 
+  
     const handleSubmit = async (e) => {
         e.preventDefault();
     
         const token = localStorage.getItem('access_token');
-    
-        const formatDate = (dateString) => {
-            if (!dateString) return null;
-            const date = new Date(dateString);
-            return date.toISOString().split('T')[0]; 
-        };
-    
-        const formattedSkills = formData.skills.map(skill => ({
-            name: skill.name,
-            score: skill.score || 0,
-            verified: skill.verified || false
-        }));
-    
-        const dataToSend = {
+        
+        // Create FormData object to handle file uploads
+        const formDataToSend = new FormData();
+
+        // Map the form fields to match the serializer structure
+        const mappedData = {
             fullname: formData.fullName,
             title: formData.headline,
             experience: formData.experience,
@@ -208,7 +202,6 @@ const OtherFields = () => {
         };
     
 
-        const formDataToSend = new FormData();
     
         Object.keys(dataToSend).forEach(key => {
             if (key === 'skills') {
@@ -257,6 +250,19 @@ const OtherFields = () => {
                         ))}
                     </div>
                 )}
+                <div className='skill-input-box'>
+                    <input
+                        type="text"
+                        value={skillName}
+                        onChange={e => setSkillName(e.target.value)}
+                        placeholder="Search for a skill..."
+                        className="search-input"
+                        onKeyDown={handleSkillKeyDown}
+                    />
+                    <button className='add-button' onClick={(e) => {
+                        addSkills(e, skillName);
+                    }}>Add</button>
+                </div>
                 <div className='skill-input-box'>
                     <input
                         type="text"
@@ -355,7 +361,7 @@ const OtherFields = () => {
                     </button>
                 </div>
             ))}
-
+            
             <button type="submit" className="submit-btn">
                 Submit
             </button>
