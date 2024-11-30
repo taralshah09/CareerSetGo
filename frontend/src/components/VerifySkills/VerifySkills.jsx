@@ -27,7 +27,7 @@ const VerifySkills = () => {
             }
         };
         fetchData();
-    }, [skills]);
+    }, []);
 
     const redirectToVerifyPage = (skillname) => {
         navigate(`/verify/${skillname}`)
