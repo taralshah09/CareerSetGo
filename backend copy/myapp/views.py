@@ -1,18 +1,20 @@
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from django.core.mail import EmailMultiAlternatives
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import User, Profile, Job, Wishlist
-from .serializers import UserSerializer, ProfileSerializer, JobSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import InvalidToken
-from django.shortcuts import get_object_or_404
+from .models import User, Profile, Job, Wishlist
+from .serializers import UserSerializer, ProfileSerializer, JobSerializer
 from .utils import send_email
-from django.http import JsonResponse
 import requests
 import json
-import os
-from pathlib import Path
+
+
+
 
 class RegisterUser(APIView):
     permission_classes = []
@@ -103,44 +105,60 @@ class CurrentUserView(APIView):
         except AttributeError:
             return Response({"detail": "Profile not found."}, status=404)
 
-
 class UpdateProfile(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         user = request.user
         try:
+            # Check if the profile already exists
             profile = Profile.objects.get(user=user)
             return Response({"detail": "Profile already exists."}, status=status.HTTP_400_BAD_REQUEST)
         except Profile.DoesNotExist:
+            # Create a new profile
             data = request.data
             data['user'] = user.id
             serializer = ProfileSerializer(data=data, context={'request': request})
 
             if serializer.is_valid():
+                # Log skills field
+                skills = data.get('skills')
+                print(f"Skills received for creation: {skills}")
+
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
+
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def patch(self, request):
         user = request.user
         try:
+            # Retrieve the user's profile
             profile = Profile.objects.get(user=user)
         except Profile.DoesNotExist:
             return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        # Ensure only fields that are provided are updated, leaving others unchanged
+        # Update the profile
         data = request.data
-        for field in data:
-            if data[field] is None:  # If the value is None, remove it to keep the current value
-                data.pop(field)
+        if "skills" in data:
+            # Log the incoming skills data
+            print(f"Skills received for update: {data['skills']}")
 
-        # Use the filtered data to update the profile
+            # Merge the existing and new skills if required (custom logic can be added here)
+            existing_skills = profile.skills or {}
+            incoming_skills = data.get("skills", {})
+            
+            if isinstance(existing_skills, dict) and isinstance(incoming_skills, dict):
+                data["skills"] = {**existing_skills, **incoming_skills}
+        print(f"Skills received for update: {data['skills']}")
+        # Remove fields with `null` values to retain existing data
+        data = {key: value for key, value in data.items() if value is not None}
+
         serializer = ProfileSerializer(profile, data=data, partial=True, context={'request': request})
-        
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -166,15 +184,17 @@ class UserProfileView(APIView):
         data = {k: v for k, v in request.data.items() if v is not None}
 
         serializer = ProfileSerializer(profile, data=data, partial=True, context={'request': request})
-        
+        # for skill in data['skills']:
+        #             print(f"Skill: {skill['name']}, Score: {skill['score']}, Verified: {skill['verified']}")
+        print(data['skills'])
+        # if 'skills' in data:
+                #  update_skill_score(user, 'java', 5)
+        print_skills_from_db(user)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-
-
+    
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -201,39 +221,64 @@ class RecentJobsView(APIView):
     permission_classes = [AllowAny]
 
     def get(self, request):
-        recent_jobs = Job.objects.order_by('-created_at')[:5]
-        serializer = JobSerializer(recent_jobs, many=True)
+        """
+        Fetches the 5 most recent job postings.
+        """
+        jobs = Job.objects.order_by('-created_at')[:5]
+        serializer = JobSerializer(jobs, many=True)
         return Response(serializer.data)
 
+class RecentJobsView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        """
+        Fetches the 5 most recent job postings.
+        """
+        jobs = Job.objects.order_by('-created_at')[:5]
+        serializer = JobSerializer(jobs, many=True)
+        return Response(serializer.data)
+
+class JobsView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        """
+        Fetches the 5 most recent job postings.
+        """
+        jobs = Job.objects.order_by('-created_at')
+        serializer = JobSerializer(jobs, many=True)
+        return Response(serializer.data)
 
 class PostJobView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        users = User.objects.filter(role = "recruiter")
-        if request.user in users:
-            serializer = JobSerializer(data=request.data)
-            if serializer.is_valid():
-                job = serializer.save(posted_by=request.user)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return JsonResponse({"message": "Not a recruiter"})
-        return JsonResponse({"message": "Not a recruiter"})
+        # Check if the user is a recruiter
+        if request.user.role != "recruiter":
+            return Response({"message": "Not a recruiter"}, status=status.HTTP_403_FORBIDDEN)
 
+        # Serialize and validate the data
+        serializer = JobSerializer(data=request.data)
+        if serializer.is_valid():
+            job = serializer.save(posted_by=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        else:
+            # Return validation errors
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class AddToWishlistView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, job_id):
-        user = request.user
+        """
+        Adds a job to the user's wishlist.
+        """
         job = get_object_or_404(Job, job_id=job_id)
-
-        if Wishlist.objects.filter(user=user, job=job).exists():
-            return Response({"detail": "Job is already in your wishlist."}, status=status.HTTP_400_BAD_REQUEST)
-
-        Wishlist.objects.create(user=user, job=job)
-        return Response({"detail": "Job added to wishlist."}, status=status.HTTP_201_CREATED)
-
+        wishlist, created = Wishlist.objects.get_or_create(user=request.user, job=job)
+        if created:
+            return Response({"detail": "Job added to wishlist."}, status=status.HTTP_201_CREATED)
+        return Response({"detail": "Job is already in your wishlist."}, status=status.HTTP_400_BAD_REQUEST)
 
 class fetchcourses(APIView):
     permission_classes = [IsAuthenticated]
@@ -304,3 +349,83 @@ class fetchcourses(APIView):
         # return Response(response)
         
     
+def print_skills_from_db(user):
+    try:
+        profile = Profile.objects.get(user=user)
+        skills = profile.skills  # Fetch the JSONField data
+
+        update_skill_score(user, 'java', 5)
+        # Debugging: Check the type of skills
+        print(f"Skills data type: {type(skills)}")
+        print(f"Skills content: {skills}")
+        if isinstance(skills, str):
+            # If it's a string, parse it into JSON
+            import json
+            skills = json.loads(skills)
+
+        if skills:
+            for skill in skills:
+                print(f"Skill: {skill['name']}, Score: {skill['score']}, Verified: {skill['verified']}")
+        else:
+            print("No skills found for this user.")
+    except Profile.DoesNotExist:
+        print("Profile not found for the given user.")
+    except Exception as e:
+        print(f"Error: {e}")
+        
+        
+class UpdateSkillScore(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request):
+        user = request.user
+        
+        try:
+            profile = Profile.objects.get(user=user)
+        except Profile.DoesNotExist:
+            return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        skills_data = request.data.get("skills")
+        if not skills_data:
+            return Response({"detail": "Skills data is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if isinstance(skills_data, list):
+            for skill_data in skills_data:
+                skill_name = skill_data.get("name")
+                new_score = skill_data.get("score")
+
+                if skill_name and new_score is not None:
+                    # Automatically set verified based on the score
+                    verified = new_score > 8  # Set verified to True if score > 5, otherwise False
+
+                    updated = False
+                    if profile.skills:
+                        if isinstance(profile.skills, str):
+                            profile.skills = json.loads(profile.skills)
+
+                        # Update the skill if it exists in the user's profile
+                        for skill in profile.skills:
+                            if skill["name"] == skill_name:
+                                skill["score"] = new_score
+                                skill["verified"] = verified
+                                updated = True
+                                break
+                        
+                        # If the skill does not exist, add it to the list
+                        if not updated:
+                            profile.skills.append({
+                                "name": skill_name,
+                                "score": new_score,
+                                "verified": verified
+                            })
+
+                        profile.skills = json.dumps(profile.skills)  # Convert back to JSON string if needed
+                        profile.save()
+
+                    return Response({"detail": "Skill score updated successfully."}, status=status.HTTP_200_OK)
+                
+                else:
+                    return Response({"detail": "Invalid skill data."}, status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            return Response({"detail": "Skills data should be a list."}, status=status.HTTP_400_BAD_REQUEST)
