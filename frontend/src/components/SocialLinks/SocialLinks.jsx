@@ -1,67 +1,130 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './SocialLinks.css';
 
 const SocialLinks = () => {
-    const [socialLinks, setSocialLinks] = useState([
-        { id: 1, platform: 'Facebook', url: '' },
-        { id: 2, platform: 'Twitter', url: '' },
-        { id: 3, platform: 'Instagram', url: '' },
-        { id: 4, platform: 'Youtube', url: '' }
-    ]);
+    const [profileData, setProfileData] = useState({
+        twitter_link: '',
+        linkedin_link: '',
+        insta_link: '',
+        other_link: ''
+    });
 
-    const handlePlatformChange = (id, platform) => {
-        setSocialLinks(socialLinks.map(link =>
-            link.id === id ? { ...link, platform } : link
-        ));
+    const [formData, setFormData] = useState({
+        twitter_link: '',
+        linkedin_link: '',
+        insta_link: '',
+        other_link: ''
+    });
+
+    // Fetch existing profile data when the component mounts
+    useEffect(() => {
+        const token = localStorage.getItem('access_token');
+        const fetchData = async () => {
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/user/profile/', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setProfileData({
+                        twitter_link: data.twitter_link,
+                        linkedin_link: data.linkedin_link,
+                        insta_link: data.insta_link,
+                        other_link: data.other_link
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching profile data:', error);
+            }
+        };
+        fetchData();
+    }, []);
+
+    // Handle input change for social links
+    const handleInputChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
     };
 
-    const handleUrlChange = (id, url) => {
-        setSocialLinks(socialLinks.map(link =>
-            link.id === id ? { ...link, url } : link
-        ));
-    };
-
-    const addSocialLink = () => {
-        setSocialLinks([
-            ...socialLinks,
-            { id: socialLinks.length + 1, platform: 'Facebook', url: '' }
-        ]);
-    };
-
-    const removeSocialLink = (id) => {
-        setSocialLinks(socialLinks.filter(link => link.id !== id));
-    };
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Handle submit logic here
-        console.log(socialLinks);
+
+        const token = localStorage.getItem('access_token');
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/user/profile/', {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Profile updated:', data);
+                // Handle profile update (e.g., show success message)
+            } else {
+                const errorData = await response.json();
+                console.error('Error updating profile:', errorData);
+            }
+        } catch (error) {
+            console.error('Error submitting profile:', error);
+        }
     };
 
     return (
         <form className='social-links' onSubmit={handleSubmit}>
             <p>Social Links</p>
-            {socialLinks.map(link => (
-                <div className="social-link" key={link.id}>
-                    <select
-                        value={link.platform}
-                        onChange={(e) => handlePlatformChange(link.id, e.target.value)}
-                    >
-                        <option value="Facebook">Facebook</option>
-                        <option value="Twitter">Twitter</option>
-                        <option value="Instagram">Instagram</option>
-                        <option value="Youtube">Youtube</option>
-                    </select>
-                    <input
-                        type="url"
-                        placeholder="Profile link/url..."
-                        value={link.url}
-                        onChange={(e) => handleUrlChange(link.id, e.target.value)}
-                    />
-                    <button type="button" onClick={() => removeSocialLink(link.id)}>✕</button>
-                </div>
-            ))}
-            <button type="button" onClick={addSocialLink}>+ Add New Social Link</button>
+            <div className="social-link">
+                <label htmlFor="twitter_link">Twitter</label>
+                <input
+                    type="url"
+                    id="twitter_link"
+                    name="twitter_link"
+                    placeholder="Twitter Profile URL"
+                    value={formData.twitter_link || profileData.twitter_link || ''}
+                    onChange={handleInputChange}
+                />
+            </div>
+            <div className="social-link">
+                <label htmlFor="linkedin_link">LinkedIn</label>
+                <input
+                    type="url"
+                    id="linkedin_link"
+                    name="linkedin_link"
+                    placeholder="LinkedIn Profile URL"
+                    value={formData.linkedin_link || profileData.linkedin_link || ''}
+                    onChange={handleInputChange}
+                />
+            </div>
+            <div className="social-link">
+                <label htmlFor="insta_link">Instagram</label>
+                <input
+                    type="url"
+                    id="insta_link"
+                    name="insta_link"
+                    placeholder="Instagram Profile URL"
+                    value={formData.insta_link || profileData.insta_link || ''}
+                    onChange={handleInputChange}
+                />
+            </div>
+            <div className="social-link">
+                <label htmlFor="other_link">Other</label>
+                <input
+                    type="url"
+                    id="other_link"
+                    name="other_link"
+                    placeholder="Other Profile URL"
+                    value={formData.other_link || profileData.other_link || ''}
+                    onChange={handleInputChange}
+                />
+            </div>
             <button type="submit">Save Changes</button>
         </form>
     );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './OtherFields.css';
 
 const OtherFields = () => {
@@ -14,35 +14,102 @@ const OtherFields = () => {
         gender: '',
         maritalStatus: '',
         biography: '',
-        facebookLink: '',
-        linkedinLink: '',
-        twitterLink: '',
-        instagramLink: '',
-        professionalSkills: [],
+        skills: [],
         domainOfInterest: [],
         certifications: [''],
+        preferredWorkEnvironment: '',
+        availabilityStatus: '',
+        languages: '',
+        location: ''
     });
 
+    const [profileData, setProfileData] = useState(null);
     const [skillName, setSkillName] = useState("");
     const [domainSearch, setDomainSearch] = useState("");
 
+    // Fetch existing profile data when component mounts
+    useEffect(() => {
+        const fetchProfileData = async () => {
+            const token = localStorage.getItem('access_token');
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/user/profile/', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setProfileData(data);
+                    setFormData(prev => ({
+                        ...prev,
+                        fullName: data.fullname || '',
+                        headline: data.title || '',
+                        experience: data.experience || '',
+                        education: data.education || '',
+                        personalWebsite: data.personal_website || '',
+                        nationality: data.nationality || '',
+                        dateOfBirth: data.date_of_birth || '',
+                        gender: data.gender || '',
+                        maritalStatus: data.marital_status || '',
+                        biography: data.biography || '',
+                        // skills: Array.isArray(data.skills) ? data.skills : [],
+                        skills: Array.isArray(data.skills)
+                            ? data.skills
+                            : typeof data.skills === 'string'
+                                ? JSON.parse(data.skills)
+                                : [],
+                        domainOfInterest: data.domain_of_interest ? data.domain_of_interest.split(',') : [],
+                        certifications: data.certifications ? data.certifications.split(',') : [''],
+                        preferredWorkEnvironment: data.preferred_work_environment || '',
+                        availabilityStatus: data.availability_status || '',
+                        languages: data.languages || '',
+                        location: data.location || ''
+                    }));
+                }
+            } catch (error) {
+                console.error('Error fetching profile data:', error);
+            }
+        };
+        fetchProfileData();
+    }, []);
+
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({ ...prevData, [name]: value }));
+        const { name, value, type, files } = e.target;
+        if (type === 'file') {
+            setFormData(prev => ({
+                ...prev,
+                [name]: files[0]
+            }));
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                [name]: value
+            }));
+        }
     };
 
     const handleFileChange = (e) => {
-        setFormData((prevData) => ({ ...prevData, resume: e.target.files[0] }));
+        setFormData(prev => ({
+            ...prev,
+            resume: e.target.files[0]
+        }));
     };
 
     const addCertification = () => {
-        setFormData((prevData) => ({ ...prevData, certifications: [...prevData.certifications, ''] }));
+        setFormData(prev => ({
+            ...prev,
+            certifications: [...prev.certifications, '']
+        }));
     };
 
     const handleCertificationChange = (index, value) => {
         const updatedCertifications = [...formData.certifications];
         updatedCertifications[index] = value;
-        setFormData((prevData) => ({ ...prevData, certifications: updatedCertifications }));
+        setFormData(prev => ({
+            ...prev,
+            certifications: updatedCertifications
+        }));
     };
 
     const skillOptions = ["HTML", "CSS", "Javascript", "Python", "React", "Node.js", "C++", "Java", "SQL", "Machine Learning", "Data Structures", "Algorithms"];
@@ -55,30 +122,38 @@ const OtherFields = () => {
     const filteredSkills = skillOptions.filter(
         skill =>
             skill.toLowerCase().includes(skillName.toLowerCase()) &&
-            !formData.professionalSkills.includes(skill)  // Exclude already selected skills
+            !formData.skills.some(s => s.name === skill)
     );
 
     const filteredDomains = domainOptions.filter(
         domain =>
             domain.toLowerCase().includes(domainSearch.toLowerCase()) &&
-            !formData.domainOfInterest.includes(domain)  // Exclude already selected domains
+            !formData.domainOfInterest.includes(domain)
     );
 
     const addSkills = (e, skill) => {
+        if (!skill) return;
         e.preventDefault();
-        if (!formData.professionalSkills.includes(skill)) {
-            setFormData((prev) => ({
+
+        if (!formData.skills.some(s => s.name === skill)) {
+            setFormData(prev => ({
                 ...prev,
-                professionalSkills: [...prev.professionalSkills, skill]
+                skills: [...prev.skills, {
+                    name: skill,
+                    score: 0,
+                    verified: false
+                }]
             }));
         }
         setSkillName("");
     };
 
     const addDomain = (e, domain) => {
+        if (!domain) return;
         e.preventDefault();
+
         if (!formData.domainOfInterest.includes(domain)) {
-            setFormData((prev) => ({
+            setFormData(prev => ({
                 ...prev,
                 domainOfInterest: [...prev.domainOfInterest, domain]
             }));
@@ -86,42 +161,159 @@ const OtherFields = () => {
         setDomainSearch("");
     };
 
+    const handleSkillKeyDown = (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            addSkills(e, skillName.trim());
+        }
+    };
+
+    const handleDomainKeyDown = (e) => {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            addDomain(e, domainSearch.trim());
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const token = localStorage.getItem('access_token');
+
+        // Format date to YYYY-MM-DD if it exists
+        const formatDate = (dateString) => {
+            if (!dateString) return null;
+            const date = new Date(dateString);
+            return date.toISOString().split('T')[0]; // This will format to YYYY-MM-DD
+        };
+
+        // Ensure skills are in the correct format for DRF serializer
+        const formattedSkills = formData.skills.map(skill => {
+        // Handle both string and object formats
+        if (typeof skill === 'string') {
+            return {
+                name: skill,
+                score: 0,
+                verified: false
+            };
+        }
+        return {
+            name: skill.name || skill,
+            score: skill.score || 0,
+            verified: skill.verified || false
+        };
+    });
+
+
+        // Create an object that matches the Django serializer's expected structure
+        const dataToSend = {
+            fullname: formData.fullName,
+            title: formData.headline,
+            experience: formData.experience,
+            education: formData.education,
+            personal_website: formData.personalWebsite,
+            nationality: formData.nationality,
+            date_of_birth: formatDate(formData.dateOfBirth),
+            gender: formData.gender,
+            marital_status: formData.maritalStatus,
+            biography: formData.biography,
+            skills: formData.skills,  // Send as list of dictionaries
+            domain_of_interest: formData.domainOfInterest.join(','),
+            certifications: formData.certifications.join(','),
+            preferred_work_environment: formData.preferredWorkEnvironment,
+            availability_status: formData.availabilityStatus,
+            languages: formData.languages,
+            location: formData.location
+        };
+
+        console.log("data to send : " + dataToSend.skills)
+
+        // Create FormData for file uploads
+        const formDataToSend = new FormData();
+
+        // Append all non-file fields
+        Object.keys(dataToSend).forEach(key => {
+            if (key === 'skills') {
+                // Directly append the skills array
+                formDataToSend.append(key, JSON.stringify(dataToSend[key]));
+            } else if (dataToSend[key] !== null && dataToSend[key] !== undefined) {
+                formDataToSend.append(key, dataToSend[key]);
+            }
+        });
+
+
+        // Append files if they exist
+        if (formData.resume) {
+            formDataToSend.append('resume', formData.resume);
+        }
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/user/profile/', {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: formDataToSend,
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Profile updated successfully:', data);
+                console.log("Response : " + Array(data.skills))
+                // Add success notification here
+            } else {
+                const errorData = await response.json();
+                console.error('Error updating profile:', errorData);
+                // Add detailed error handling
+                Object.keys(errorData).forEach(key => {
+                    console.error(`${key}:`, errorData[key]);
+                });
+            }
+        } catch (error) {
+            console.error('Error submitting profile:', error);
+        }
+    };
+
+    const handleRemoveSkill = (index) => {
+        // Create a new array excluding the skill at the given index
+        const updatedSkills = formData.skills.filter((_, i) => i !== index);
+
+        setFormData({
+            ...formData,
+            skills: updatedSkills
+        });
+
+    };
+
     return (
-        <form className="profile-form">
+        <form className="profile-form" onSubmit={handleSubmit}>
             {/* Professional Skills */}
             <label className="form-label">Professional Skills</label>
             <div className="input-group">
-                {formData.professionalSkills.length > 0 && (
-                    <div className="selected-items">
-                        {formData.professionalSkills.map((skill, index) => (
-                            <span key={index} className="item-badge">{skill}</span>
-                        ))}
-                    </div>
-                )}
-                <input
-                    type="text"
-                    value={skillName}
-                    onChange={e => setSkillName(e.target.value)}
-                    placeholder="Search for a skill..."
-                    className="search-input"
-                />
-            </div>
-            {skillName && (
-                <ul className="options-list">
-                    {filteredSkills.map((skill, index) => (
-                        <li
-                            key={index}
-                            className="option-item"
-                            onClick={(e) => {
-                                addSkills(e, skill);
-                                setSkillName(skill);
-                            }}
-                        >
-                            {skill}
-                        </li>
+                <div className="input-skills">
+                    {formData.skills.map((skill, index) => (
+                        <div className="item-badge" key={index}>
+                            <p>{skill.name.length > 10 ? skill.name.substr(0, 10) + "..." : skill.name}</p>
+                            <span onClick={() => handleRemoveSkill(index)}>
+                                <i className="fa-solid fa-xmark"></i>
+                            </span>
+                        </div>
                     ))}
-                </ul>
-            )}
+                </div>
+                <div className='skill-input-box'>
+                    <input
+                        type="text"
+                        value={skillName}
+                        onChange={e => setSkillName(e.target.value)}
+                        placeholder="Search for a skill..."
+                        className="search-input"
+                        onKeyDown={handleSkillKeyDown}
+                    />
+                    <button className='add-button' onClick={(e) => {
+                        addSkills(e, skillName);
+                    }}>Add</button>
+                </div>
+            </div>
 
             {/* Domain of Interest */}
             <label className="form-label">Domain of Interest</label>
@@ -133,34 +325,29 @@ const OtherFields = () => {
                         ))}
                     </div>
                 )}
-                <input
-                    type="text"
-                    value={domainSearch}
-                    onChange={e => setDomainSearch(e.target.value)}
-                    placeholder="Search for a domain..."
-                    className="search-input"
-                />
+                <div className='skill-input-box'>
+                    <input
+                        type="text"
+                        value={domainSearch}
+                        onChange={e => setDomainSearch(e.target.value)}
+                        placeholder="Search for a domain..."
+                        className="search-input"
+                        onKeyDown={handleDomainKeyDown}
+                    />
+                    <button className='add-button' onClick={(e) => {
+                        addDomain(e, domainSearch);
+                    }}>Add</button>
+                </div>
             </div>
-            {domainSearch && (
-                <ul className="options-list">
-                    {filteredDomains.map((domain, index) => (
-                        <li
-                            key={index}
-                            className="option-item"
-                            onClick={(e) => {
-                                addDomain(e, domain);
-                                setDomainSearch(domain);
-                            }}
-                        >
-                            {domain}
-                        </li>
-                    ))}
-                </ul>
-            )}
 
-            {/* Other fields remain the same */}
+            {/* Languages */}
             <label className="form-label">Languages</label>
-            <select name="languages" value={formData.languages} onChange={handleInputChange} className="form-select">
+            <select
+                name="languages"
+                value={formData.languages}
+                onChange={handleInputChange}
+                className="form-select"
+            >
                 <option value="">Select a language</option>
                 <option value="English">English</option>
                 <option value="Spanish">Spanish</option>
@@ -168,22 +355,35 @@ const OtherFields = () => {
                 <option value="Mandarin">Mandarin</option>
             </select>
 
+            {/* Availability Status */}
             <label className="form-label">Availability Status</label>
-            <select name="availabilityStatus" value={formData.availabilityStatus} onChange={handleInputChange} className="form-select">
+            <select
+                name="availabilityStatus"
+                value={formData.availabilityStatus}
+                onChange={handleInputChange}
+                className="form-select"
+            >
                 <option value="">Select availability</option>
                 <option value="Actively looking for opportunities">Actively looking for opportunities</option>
                 <option value="Open to opportunities">Open to opportunities</option>
                 <option value="Not looking for opportunities">Not looking for opportunities</option>
             </select>
 
+            {/* Preferred Work Environment */}
             <label className="form-label">Preferred Work Environment</label>
-            <select name="workEnvironment" value={formData.workEnvironment} onChange={handleInputChange} className="form-select">
+            <select
+                name="preferredWorkEnvironment"
+                value={formData.preferredWorkEnvironment}
+                onChange={handleInputChange}
+                className="form-select"
+            >
                 <option value="">Select work environment</option>
                 <option value="Remote">Remote</option>
                 <option value="In-Office">In-Office</option>
                 <option value="Hybrid">Hybrid</option>
             </select>
 
+            {/* Certifications */}
             <label className="form-label">Certifications</label>
             {formData.certifications.map((cert, index) => (
                 <div key={index} className="certification-field">
@@ -194,12 +394,15 @@ const OtherFields = () => {
                         placeholder="Enter certification"
                         className="form-input"
                     />
-                    <button type="button" onClick={addCertification} className="add-certification-btn">
+                    <button
+                        type="button"
+                        onClick={addCertification}
+                        className="add-certification-btn"
+                    >
                         Add Certification
                     </button>
                 </div>
             ))}
-
 
             <button type="submit" className="submit-btn">
                 Submit
