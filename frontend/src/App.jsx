@@ -15,8 +15,6 @@ import ResumeBuilder from './pages/ResumeBuilder/ResumeBuilder'
 import SkillsVerficationPage from './pages/SkillsVerificationPage/SkillsVerificationPage'
 import PostJobForm from './pages/PostJobForm/PostJobForm'
 
-import PostJobForm from "./pages/PostJobForm/PostJobForm"
-
 function App() {
   const location = useLocation();
 
