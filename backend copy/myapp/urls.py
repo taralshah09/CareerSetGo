@@ -1,7 +1,7 @@
 from django.urls import path
 from django.contrib import admin
 from rest_framework_simplejwt import views as jwt_views
-from .views import ( RegisterUser,LoginView,LogoutView,UpdateProfile,JobsView,UserProfileView,CurrentUserView,PostJobView,RecentJobsView,AddToWishlistView,fetchcourses)
+from .views import ( RegisterUser,UpdateSkillScore,LoginView,LogoutView,UpdateProfile,JobsView,UserProfileView,CurrentUserView,PostJobView,RecentJobsView,AddToWishlistView,fetchcourses)
 
 urlpatterns = [
     # Authentication Routes
@@ -15,7 +15,7 @@ urlpatterns = [
     path('api/profile/', UpdateProfile.as_view(), name='update_profile'),
     path('api/user/profile/', UserProfileView.as_view(), name='user_profile'),
     path('api/current_user/', CurrentUserView.as_view(), name='current_user'),
-
+    path("api/update-skill-score/", UpdateSkillScore.as_view(), name=""),
     # Job Management Routes
     path('api/post-job/', PostJobView.as_view(), name='post_job'),
     path('api/jobs/', JobsView.as_view(), name='jobs'),

@@ -393,14 +393,17 @@ class UpdateSkillScore(APIView):
             for skill_data in skills_data:
                 skill_name = skill_data.get("name")
                 new_score = skill_data.get("score")
-                verified = skill_data.get("verified")
 
-                if skill_name and new_score is not None and verified is not None:
+                if skill_name and new_score is not None:
+                    # Automatically set verified based on the score
+                    verified = new_score > 0  # Set verified to True if score > 5, otherwise False
+
                     updated = False
                     if profile.skills:
                         if isinstance(profile.skills, str):
                             profile.skills = json.loads(profile.skills)
-                        
+
+                        # Update the skill if it exists in the user's profile
                         for skill in profile.skills:
                             if skill["name"] == skill_name:
                                 skill["score"] = new_score
@@ -408,13 +411,14 @@ class UpdateSkillScore(APIView):
                                 updated = True
                                 break
                         
+                        # If the skill does not exist, add it to the list
                         if not updated:
                             profile.skills.append({
                                 "name": skill_name,
                                 "score": new_score,
                                 "verified": verified
                             })
-                        
+
                         profile.skills = json.dumps(profile.skills)  # Convert back to JSON string if needed
                         profile.save()
 

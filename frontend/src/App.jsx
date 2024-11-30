@@ -12,7 +12,7 @@ import Dashboard from './pages/Dashboard/Dashboard'
 import FindEmployer from './components/FindEmployers/FindEmployer'
 import BrowseCandidate from './pages/BrowseCandidatePage/BrowseCandidatePage'
 import ResumeBuilder from './pages/ResumeBuilder/ResumeBuilder'
-
+import SkillsVerficationPage from './pages/SkillsVerificationPage/SkillsVerificationPage'
 import PostJobForm from './pages/PostJobForm/PostJobForm'
 
 
@@ -33,6 +33,8 @@ function App() {
         <Route path="/employers" element={<EmployerPage />}></Route>
         <Route path="/dashboard" element={<Dashboard />}></Route>
         <Route path="/resume-builder" element={<ResumeBuilder />}></Route>
+        <Route path="/verify/:skillName" element={<SkillsVerficationPage />} ></Route>
+
 
         <Route path="/post" element={<PostJobForm />}></Route>
 
