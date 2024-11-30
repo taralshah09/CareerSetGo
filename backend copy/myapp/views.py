@@ -187,8 +187,8 @@ class UserProfileView(APIView):
         # for skill in data['skills']:
         #             print(f"Skill: {skill['name']}, Score: {skill['score']}, Verified: {skill['verified']}")
         print(data['skills'])
-        if 'skills' in data:
-                 update_skill_score(user, 'java', 5)
+        # if 'skills' in data:
+                #  update_skill_score(user, 'java', 5)
         print_skills_from_db(user)
         if serializer.is_valid():
             serializer.save()
@@ -396,7 +396,7 @@ class UpdateSkillScore(APIView):
 
                 if skill_name and new_score is not None:
                     # Automatically set verified based on the score
-                    verified = new_score > 0  # Set verified to True if score > 5, otherwise False
+                    verified = new_score > 8  # Set verified to True if score > 5, otherwise False
 
                     updated = False
                     if profile.skills:

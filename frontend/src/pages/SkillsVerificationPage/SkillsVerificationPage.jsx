@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import "./SkillsVerificationPage.css";
 import { quizData } from '../../../quiz/quiz';
 
 const SkillsVerificationPage = () => {
     const { skillName } = useParams();
+    const navigate = useNavigate();
     const [questions, setQuestions] = useState([]);
     const [currentQuestion, setCurrentQuestion] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState('');
     const [score, setScore] = useState(0);
     const [showResults, setShowResults] = useState(false);
     const [isAnswerChecked, setIsAnswerChecked] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
 
     useEffect(() => {
         setQuestions(Array(quizData[`${skillName}`])[0]);
@@ -50,12 +52,13 @@ const SkillsVerificationPage = () => {
 
     const updateScoreInBackend = async () => {
         try {
+            setIsUpdating(true);
             const token = localStorage.getItem('access_token');
             if (!token) {
                 console.error('No JWT token found!');
                 return;
             }
-            
+
             const response = await fetch('http://127.0.0.1:8000/api/update-skill-score/', {
                 method: 'PATCH',
                 headers: {
@@ -82,6 +85,18 @@ const SkillsVerificationPage = () => {
             }
         } catch (error) {
             console.error('Error updating score:', error);
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
+    const handleReturnToDashboard = async () => {
+        try {
+            setIsUpdating(true);
+            await updateScoreInBackend();
+            navigate('/dashboard'); // Redirect to dashboard after updating
+        } catch (error) {
+            console.error('Error returning to dashboard:', error);
         }
     };
 
@@ -105,6 +120,13 @@ const SkillsVerificationPage = () => {
                                 : "You might need more practice with this skill."}
                         </p>
                     </div>
+                    <button
+                        className="return-button"
+                        onClick={handleReturnToDashboard}
+                        disabled={isUpdating}
+                    >
+                        {isUpdating ? 'Updating...' : 'Return to Dashboard'}
+                    </button>
                 </div>
             </div>
         );

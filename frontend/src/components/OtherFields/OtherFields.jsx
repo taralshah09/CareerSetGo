@@ -188,11 +188,22 @@ const OtherFields = () => {
         };
 
         // Ensure skills are in the correct format for DRF serializer
-        const formattedSkills = formData.skills.map(skill => ({
-            name: skill.name,
+        const formattedSkills = formData.skills.map(skill => {
+        // Handle both string and object formats
+        if (typeof skill === 'string') {
+            return {
+                name: skill,
+                score: 0,
+                verified: false
+            };
+        }
+        return {
+            name: skill.name || skill,
             score: skill.score || 0,
             verified: skill.verified || false
-        }));
+        };
+    });
+
 
         // Create an object that matches the Django serializer's expected structure
         const dataToSend = {
@@ -263,19 +274,32 @@ const OtherFields = () => {
         }
     };
 
+    const handleRemoveSkill = (index) => {
+        // Create a new array excluding the skill at the given index
+        const updatedSkills = formData.skills.filter((_, i) => i !== index);
+
+        setFormData({
+            ...formData,
+            skills: updatedSkills
+        });
+
+    };
+
     return (
         <form className="profile-form" onSubmit={handleSubmit}>
             {/* Professional Skills */}
             <label className="form-label">Professional Skills</label>
             <div className="input-group">
-                {formData.skills.length > 0 && (
-                    <div className="selected-items">
-                        {console.log(formData.skills)}
-                        {formData.skills.map((skill, index) => (
-                            <span key={index} className="item-badge">{skill.name}</span>
-                        ))}
-                    </div>
-                )}
+                <div className="input-skills">
+                    {formData.skills.map((skill, index) => (
+                        <div className="item-badge" key={index}>
+                            <p>{skill.name.length > 10 ? skill.name.substr(0, 10) + "..." : skill.name}</p>
+                            <span onClick={() => handleRemoveSkill(index)}>
+                                <i className="fa-solid fa-xmark"></i>
+                            </span>
+                        </div>
+                    ))}
+                </div>
                 <div className='skill-input-box'>
                     <input
                         type="text"

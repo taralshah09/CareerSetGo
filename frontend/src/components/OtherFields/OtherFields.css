@@ -27,12 +27,30 @@
   margin-bottom: 8px;
 }
 
+.input-skills {
+  width: 100%;
+  display: flex;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
 .item-badge {
   background-color: #e0e0e0;
-  padding: 4px 10px;
+  padding: 6px 6px;
   border-radius: 16px;
   font-size: 14px;
   color: #333;
+  max-width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.item-badge i {
+  display: flex;
+  font-size: 10px;
+  font-weight: 1000;
 }
 
 .search-input {
@@ -44,7 +62,7 @@
   height: 100%;
 }
 
-.skill-input-box{
+.skill-input-box {
   display: flex;
   width: 100%;
   align-items: center;
@@ -133,4 +151,25 @@
 
 .submit-btn {
   margin-top: 25px;
+}
+
+.return-button {
+  margin-top: 20px;
+  padding: 12px 24px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s;
+}
+
+.return-button:hover {
+  background-color: #357abd;
+}
+
+.return-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }

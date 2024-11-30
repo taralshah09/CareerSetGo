@@ -1667,5 +1667,5 @@ export const quizData = {
         correctAnswer: "SQLiteOpenHelper",
       },
     ],
-  };
+};
   
