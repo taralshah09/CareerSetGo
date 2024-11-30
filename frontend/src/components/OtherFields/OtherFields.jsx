@@ -53,7 +53,12 @@ const OtherFields = () => {
                         gender: data.gender || '',
                         maritalStatus: data.marital_status || '',
                         biography: data.biography || '',
-                        skills: Array.isArray(data.skills) ? data.skills : [],
+                        // skills: Array.isArray(data.skills) ? data.skills : [],
+                        skills: Array.isArray(data.skills)
+                            ? data.skills
+                            : typeof data.skills === 'string'
+                                ? JSON.parse(data.skills)
+                                : [],
                         domainOfInterest: data.domain_of_interest ? data.domain_of_interest.split(',') : [],
                         certifications: data.certifications ? data.certifications.split(',') : [''],
                         preferredWorkEnvironment: data.preferred_work_environment || '',
@@ -146,7 +151,7 @@ const OtherFields = () => {
     const addDomain = (e, domain) => {
         if (!domain) return;
         e.preventDefault();
-        
+
         if (!formData.domainOfInterest.includes(domain)) {
             setFormData(prev => ({
                 ...prev,
@@ -170,98 +175,25 @@ const OtherFields = () => {
         }
     };
 
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-
-    //     const token = localStorage.getItem('access_token');
-
-    //     // Ensure skills are in the correct format for DRF serializer
-    //     const formattedSkills = formData.skills.map(skill => ({
-    //         name: skill.name,
-    //         score: skill.score || 0,
-    //         verified: skill.verified || false
-    //     }));
-
-    //     // Create an object that matches the Django serializer's expected structure
-    //     const dataToSend = {
-    //         fullname: formData.fullName,
-    //         title: formData.headline,
-    //         experience: formData.experience,
-    //         education: formData.education,
-    //         personal_website: formData.personalWebsite,
-    //         nationality: formData.nationality,
-    //         date_of_birth: formData.dateOfBirth,
-    //         gender: formData.gender,
-    //         marital_status: formData.maritalStatus,
-    //         biography: formData.biography,
-    //         skills: formattedSkills,
-    //         domain_of_interest: formData.domainOfInterest.join(','),
-    //         certifications: formData.certifications.join(','),
-    //         preferred_work_environment: formData.preferredWorkEnvironment,
-    //         availability_status: formData.availabilityStatus,
-    //         languages: formData.languages,
-    //         location: formData.location
-    //     };
-
-    //     // Create FormData for file uploads
-    //     const formDataToSend = new FormData();
-
-    //     // Append all non-file fields
-    //     Object.keys(dataToSend).forEach(key => {
-    //         if (key === 'skills') {
-    //             // Stringify skills to send as JSON
-    //             formDataToSend.append(key, JSON.stringify(dataToSend[key]));
-    //         } else if (dataToSend[key] !== null && dataToSend[key] !== undefined) {
-    //             formDataToSend.append(key, dataToSend[key]);
-    //         }
-    //     });
-
-    //     // Append files if they exist
-    //     if (formData.resume) {
-    //         formDataToSend.append('resume', formData.resume);
-    //     }
-
-    //     try {
-    //         const response = await fetch('http://127.0.0.1:8000/api/user/profile/', {
-    //             method: 'PATCH',
-    //             headers: {
-    //                 'Authorization': `Bearer ${token}`,
-    //             },
-    //             body: formDataToSend,
-    //         });
-
-    //         if (response.ok) {
-    //             const data = await response.json();
-    //             console.log('Profile updated successfully:', data);
-    //             // Add success notification here
-    //         } else {
-    //             const errorData = await response.text();
-    //             console.error('Error updating profile:', errorData);
-    //             // Add error handling logic
-    //         }
-    //     } catch (error) {
-    //         console.error('Error submitting profile:', error);
-    //     }
-    // };
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         const token = localStorage.getItem('access_token');
-    
+
         // Format date to YYYY-MM-DD if it exists
         const formatDate = (dateString) => {
             if (!dateString) return null;
             const date = new Date(dateString);
             return date.toISOString().split('T')[0]; // This will format to YYYY-MM-DD
         };
-    
+
         // Ensure skills are in the correct format for DRF serializer
         const formattedSkills = formData.skills.map(skill => ({
             name: skill.name,
             score: skill.score || 0,
             verified: skill.verified || false
         }));
-    
+
         // Create an object that matches the Django serializer's expected structure
         const dataToSend = {
             fullname: formData.fullName,
@@ -282,10 +214,12 @@ const OtherFields = () => {
             languages: formData.languages,
             location: formData.location
         };
-    
+
+        console.log("data to send : " + dataToSend.skills)
+
         // Create FormData for file uploads
         const formDataToSend = new FormData();
-    
+
         // Append all non-file fields
         Object.keys(dataToSend).forEach(key => {
             if (key === 'skills') {
@@ -295,13 +229,13 @@ const OtherFields = () => {
                 formDataToSend.append(key, dataToSend[key]);
             }
         });
-    
-    
+
+
         // Append files if they exist
         if (formData.resume) {
             formDataToSend.append('resume', formData.resume);
         }
-    
+
         try {
             const response = await fetch('http://127.0.0.1:8000/api/user/profile/', {
                 method: 'PATCH',
@@ -310,10 +244,11 @@ const OtherFields = () => {
                 },
                 body: formDataToSend,
             });
-    
+
             if (response.ok) {
                 const data = await response.json();
                 console.log('Profile updated successfully:', data);
+                console.log("Response : " + Array(data.skills))
                 // Add success notification here
             } else {
                 const errorData = await response.json();
@@ -327,6 +262,7 @@ const OtherFields = () => {
             console.error('Error submitting profile:', error);
         }
     };
+
     return (
         <form className="profile-form" onSubmit={handleSubmit}>
             {/* Professional Skills */}
@@ -334,6 +270,7 @@ const OtherFields = () => {
             <div className="input-group">
                 {formData.skills.length > 0 && (
                     <div className="selected-items">
+                        {console.log(formData.skills)}
                         {formData.skills.map((skill, index) => (
                             <span key={index} className="item-badge">{skill.name}</span>
                         ))}
