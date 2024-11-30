@@ -13,6 +13,9 @@ from .utils import send_email
 import requests
 import json
 
+
+
+
 class RegisterUser(APIView):
     permission_classes = []
 
@@ -192,7 +195,6 @@ class UserProfileView(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -226,6 +228,27 @@ class RecentJobsView(APIView):
         serializer = JobSerializer(jobs, many=True)
         return Response(serializer.data)
 
+class RecentJobsView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        """
+        Fetches the 5 most recent job postings.
+        """
+        jobs = Job.objects.order_by('-created_at')[:5]
+        serializer = JobSerializer(jobs, many=True)
+        return Response(serializer.data)
+
+class JobsView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        """
+        Fetches the 5 most recent job postings.
+        """
+        jobs = Job.objects.order_by('-created_at')
+        serializer = JobSerializer(jobs, many=True)
+        return Response(serializer.data)
 
 class PostJobView(APIView):
     permission_classes = [IsAuthenticated]
@@ -256,7 +279,6 @@ class AddToWishlistView(APIView):
         if created:
             return Response({"detail": "Job added to wishlist."}, status=status.HTTP_201_CREATED)
         return Response({"detail": "Job is already in your wishlist."}, status=status.HTTP_400_BAD_REQUEST)
-
 
 class fetchcourses(APIView):
     permission_classes = [IsAuthenticated]
@@ -352,34 +374,54 @@ def print_skills_from_db(user):
         print(f"Error: {e}")
         
         
-def update_skill_score(user, skill_name, new_score):
-    try:
-        profile = Profile.objects.get(user=user)  # Fetch profile of the user
+class UpdateSkillScore(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request):
+        user = request.user
         
-        # Check if skills exist
-        if profile.skills:
-            # If skills are a string (e.g., JSON string), convert it to a list
-            if isinstance(profile.skills, str):
-                profile.skills = json.loads(profile.skills)
+        try:
+            profile = Profile.objects.get(user=user)
+        except Profile.DoesNotExist:
+            return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
 
-            # Iterate over the list of skills to find the skill to update
-            for skill in profile.skills:
-                if skill['name'] == skill_name:
-                    # Update the score of the found skill
-                    skill['score'] = new_score
-                    break  # Exit the loop once the skill is found
+        skills_data = request.data.get("skills")
+        if not skills_data:
+            return Response({"detail": "Skills data is required."}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Save the updated skills list back to the database
-            profile.skills = profile.skills  # Reassign to trigger an update
-            profile.save()
+        if isinstance(skills_data, list):
+            for skill_data in skills_data:
+                skill_name = skill_data.get("name")
+                new_score = skill_data.get("score")
+                verified = skill_data.get("verified")
 
-            return Response({"detail": "Skill score updated successfully."}, status=status.HTTP_200_OK)
+                if skill_name and new_score is not None and verified is not None:
+                    updated = False
+                    if profile.skills:
+                        if isinstance(profile.skills, str):
+                            profile.skills = json.loads(profile.skills)
+                        
+                        for skill in profile.skills:
+                            if skill["name"] == skill_name:
+                                skill["score"] = new_score
+                                skill["verified"] = verified
+                                updated = True
+                                break
+                        
+                        if not updated:
+                            profile.skills.append({
+                                "name": skill_name,
+                                "score": new_score,
+                                "verified": verified
+                            })
+                        
+                        profile.skills = json.dumps(profile.skills)  # Convert back to JSON string if needed
+                        profile.save()
+
+                    return Response({"detail": "Skill score updated successfully."}, status=status.HTTP_200_OK)
+                
+                else:
+                    return Response({"detail": "Invalid skill data."}, status=status.HTTP_400_BAD_REQUEST)
 
         else:
-            return Response({"detail": "No skills found for this user."}, status=status.HTTP_404_NOT_FOUND)
-
-    except Profile.DoesNotExist:
-        return Response({"detail": "Profile not found for the given user."}, status=status.HTTP_404_NOT_FOUND)
-    except Exception as e:
-        return Response({"detail": f"Error: {e}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+            return Response({"detail": "Skills data should be a list."}, status=status.HTTP_400_BAD_REQUEST)

@@ -150,7 +150,7 @@ class Job(models.Model):
     is_approved = models.BooleanField(default=False)  # Admin approval required
 
     
-        
+    
     skills_required = models.TextField(blank=True)  # ilst of skills & also skillgap analysis will be done through this
     job_domain = models.CharField(max_length=30, choices=JOB_DOMAIN_CHOICES,default='')  # New domain field
     job_type = models.CharField(max_length=10, choices=JOB_TYPE_CHOICES) 
