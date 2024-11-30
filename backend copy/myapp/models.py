@@ -48,13 +48,20 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+
+    # 
+    RECRUITER = 'recruiter'
+    JOBSEEKER = 'jobseeker'
+    # 
+
     is_social_account = models.BooleanField(default=False)
     ROLE_CHOICES = [
         ('candidate', 'Candidate'),
         ('recruiter', 'Recruiter'),
         ('admin', 'Admin'),
     ]
-    role = models.CharField(max_length=255, choices=ROLE_CHOICES, default='candidate')
+    # role = models.CharField(max_length=255, choices=ROLE_CHOICES, default='candidate')
+    role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='candidate')
     id = models.AutoField(primary_key=True,unique=True)
     fullname = models.CharField(max_length=255)
     username = models.CharField(max_length=255, unique=True)
@@ -70,10 +77,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     USER_ID_FIELD = 'userid'
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
-    def __str__(self):
+    def _str_(self):
         return self.username
 
-
+  
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -115,7 +122,7 @@ class Profile(models.Model):
     # Location
     location = models.CharField(max_length=255, blank=True)
 
-    def _str_(self):
+    def str(self):
         return f"Profile of {self.user.username}"
 
 class Course(models.Model):
@@ -128,7 +135,7 @@ class Course(models.Model):
     instructor = models.CharField(max_length=255)
     enrolled_users = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name="courses")
 
-    def __str__(self):
+    def _str_(self):
         return self.title
     
 
@@ -155,7 +162,7 @@ class Job(models.Model):
     job_domain = models.CharField(max_length=30, choices=JOB_DOMAIN_CHOICES,default='')  # New domain field
     job_type = models.CharField(max_length=10, choices=JOB_TYPE_CHOICES) 
 
-    def __str__(self):
+    def _str_(self):
         return f"{self.title} at {self.company_name}"
     
     
@@ -167,7 +174,7 @@ class Wishlist(models.Model):
     class Meta:
         unique_together = ('user', 'job')  
 
-    def __str__(self):
+    def _str_(self):
         return f"{self.user.username} - {self.job.title} (Wishlist)"
 
 class AppliedJob(models.Model):
@@ -178,5 +185,5 @@ class AppliedJob(models.Model):
     class Meta:
         unique_together = ('user', 'job')  
 
-    def __str__(self):
+    def _str_(self):
         return f"{self.user.username} - {self.job.title} (Applied)"
