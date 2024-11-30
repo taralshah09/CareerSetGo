@@ -125,7 +125,7 @@ const OtherFields = () => {
             domain.toLowerCase().includes(domainSearch.toLowerCase()) &&
             !formData.domainOfInterest.includes(domain)
     );
-    
+
     const addSkills = (e, skill) => {
         if (!skill) return;
         e.preventDefault();
@@ -144,6 +144,7 @@ const OtherFields = () => {
     };
 
     const addDomain = (e, domain) => {
+        if (!domain) return;
         e.preventDefault();
         
         if (!formData.domainOfInterest.includes(domain)) {
@@ -155,33 +156,114 @@ const OtherFields = () => {
         setDomainSearch("");
     };
 
-    // For Adding Skills
     const handleSkillKeyDown = (e) => {
         if (e.key === "Enter") {
-            e.preventDefault(); // Prevent the default form submission on Enter
-            addSkills(e, skillName.trim()); // Trigger addSkills function
+            e.preventDefault();
+            addSkills(e, skillName.trim());
         }
     };
 
-    // For Adding Domains
     const handleDomainKeyDown = (e) => {
         if (e.key === "Enter") {
-            e.preventDefault(); // Prevent the default form submission on Enter
-            addDomain(e, domainSearch.trim()); // Trigger addDomain function
+            e.preventDefault();
+            addDomain(e, domainSearch.trim());
         }
     };
 
-  
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+
+    //     const token = localStorage.getItem('access_token');
+
+    //     // Ensure skills are in the correct format for DRF serializer
+    //     const formattedSkills = formData.skills.map(skill => ({
+    //         name: skill.name,
+    //         score: skill.score || 0,
+    //         verified: skill.verified || false
+    //     }));
+
+    //     // Create an object that matches the Django serializer's expected structure
+    //     const dataToSend = {
+    //         fullname: formData.fullName,
+    //         title: formData.headline,
+    //         experience: formData.experience,
+    //         education: formData.education,
+    //         personal_website: formData.personalWebsite,
+    //         nationality: formData.nationality,
+    //         date_of_birth: formData.dateOfBirth,
+    //         gender: formData.gender,
+    //         marital_status: formData.maritalStatus,
+    //         biography: formData.biography,
+    //         skills: formattedSkills,
+    //         domain_of_interest: formData.domainOfInterest.join(','),
+    //         certifications: formData.certifications.join(','),
+    //         preferred_work_environment: formData.preferredWorkEnvironment,
+    //         availability_status: formData.availabilityStatus,
+    //         languages: formData.languages,
+    //         location: formData.location
+    //     };
+
+    //     // Create FormData for file uploads
+    //     const formDataToSend = new FormData();
+
+    //     // Append all non-file fields
+    //     Object.keys(dataToSend).forEach(key => {
+    //         if (key === 'skills') {
+    //             // Stringify skills to send as JSON
+    //             formDataToSend.append(key, JSON.stringify(dataToSend[key]));
+    //         } else if (dataToSend[key] !== null && dataToSend[key] !== undefined) {
+    //             formDataToSend.append(key, dataToSend[key]);
+    //         }
+    //     });
+
+    //     // Append files if they exist
+    //     if (formData.resume) {
+    //         formDataToSend.append('resume', formData.resume);
+    //     }
+
+    //     try {
+    //         const response = await fetch('http://127.0.0.1:8000/api/user/profile/', {
+    //             method: 'PATCH',
+    //             headers: {
+    //                 'Authorization': `Bearer ${token}`,
+    //             },
+    //             body: formDataToSend,
+    //         });
+
+    //         if (response.ok) {
+    //             const data = await response.json();
+    //             console.log('Profile updated successfully:', data);
+    //             // Add success notification here
+    //         } else {
+    //             const errorData = await response.text();
+    //             console.error('Error updating profile:', errorData);
+    //             // Add error handling logic
+    //         }
+    //     } catch (error) {
+    //         console.error('Error submitting profile:', error);
+    //     }
+    // };
     const handleSubmit = async (e) => {
         e.preventDefault();
     
         const token = localStorage.getItem('access_token');
-        
-        // Create FormData object to handle file uploads
-        const formDataToSend = new FormData();
-
-        // Map the form fields to match the serializer structure
-        const mappedData = {
+    
+        // Format date to YYYY-MM-DD if it exists
+        const formatDate = (dateString) => {
+            if (!dateString) return null;
+            const date = new Date(dateString);
+            return date.toISOString().split('T')[0]; // This will format to YYYY-MM-DD
+        };
+    
+        // Ensure skills are in the correct format for DRF serializer
+        const formattedSkills = formData.skills.map(skill => ({
+            name: skill.name,
+            score: skill.score || 0,
+            verified: skill.verified || false
+        }));
+    
+        // Create an object that matches the Django serializer's expected structure
+        const dataToSend = {
             fullname: formData.fullName,
             title: formData.headline,
             experience: formData.experience,
@@ -192,7 +274,7 @@ const OtherFields = () => {
             gender: formData.gender,
             marital_status: formData.maritalStatus,
             biography: formData.biography,
-            skills: formData.skills,  
+            skills: formData.skills,  // Send as list of dictionaries
             domain_of_interest: formData.domainOfInterest.join(','),
             certifications: formData.certifications.join(','),
             preferred_work_environment: formData.preferredWorkEnvironment,
@@ -201,10 +283,13 @@ const OtherFields = () => {
             location: formData.location
         };
     
-
+        // Create FormData for file uploads
+        const formDataToSend = new FormData();
     
+        // Append all non-file fields
         Object.keys(dataToSend).forEach(key => {
             if (key === 'skills') {
+                // Directly append the skills array
                 formDataToSend.append(key, JSON.stringify(dataToSend[key]));
             } else if (dataToSend[key] !== null && dataToSend[key] !== undefined) {
                 formDataToSend.append(key, dataToSend[key]);
@@ -212,6 +297,7 @@ const OtherFields = () => {
         });
     
     
+        // Append files if they exist
         if (formData.resume) {
             formDataToSend.append('resume', formData.resume);
         }
@@ -228,9 +314,11 @@ const OtherFields = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log('Profile updated successfully:', data);
+                // Add success notification here
             } else {
                 const errorData = await response.json();
                 console.error('Error updating profile:', errorData);
+                // Add detailed error handling
                 Object.keys(errorData).forEach(key => {
                     console.error(`${key}:`, errorData[key]);
                 });
@@ -241,6 +329,7 @@ const OtherFields = () => {
     };
     return (
         <form className="profile-form" onSubmit={handleSubmit}>
+            {/* Professional Skills */}
             <label className="form-label">Professional Skills</label>
             <div className="input-group">
                 {formData.skills.length > 0 && (
@@ -263,21 +352,9 @@ const OtherFields = () => {
                         addSkills(e, skillName);
                     }}>Add</button>
                 </div>
-                <div className='skill-input-box'>
-                    <input
-                        type="text"
-                        value={skillName}
-                        onChange={e => setSkillName(e.target.value)}
-                        placeholder="Search for a skill..."
-                        className="search-input"
-                        onKeyDown={handleSkillKeyDown}
-                    />
-                    <button className='add-button' onClick={(e) => {
-                        addSkills(e, skillName);
-                    }}>Add</button>
-                </div>
             </div>
 
+            {/* Domain of Interest */}
             <label className="form-label">Domain of Interest</label>
             <div className="input-group">
                 {formData.domainOfInterest.length > 0 && (
@@ -302,6 +379,7 @@ const OtherFields = () => {
                 </div>
             </div>
 
+            {/* Languages */}
             <label className="form-label">Languages</label>
             <select
                 name="languages"
@@ -316,6 +394,7 @@ const OtherFields = () => {
                 <option value="Mandarin">Mandarin</option>
             </select>
 
+            {/* Availability Status */}
             <label className="form-label">Availability Status</label>
             <select
                 name="availabilityStatus"
@@ -329,6 +408,7 @@ const OtherFields = () => {
                 <option value="Not looking for opportunities">Not looking for opportunities</option>
             </select>
 
+            {/* Preferred Work Environment */}
             <label className="form-label">Preferred Work Environment</label>
             <select
                 name="preferredWorkEnvironment"
@@ -342,6 +422,7 @@ const OtherFields = () => {
                 <option value="Hybrid">Hybrid</option>
             </select>
 
+            {/* Certifications */}
             <label className="form-label">Certifications</label>
             {formData.certifications.map((cert, index) => (
                 <div key={index} className="certification-field">
@@ -361,7 +442,7 @@ const OtherFields = () => {
                     </button>
                 </div>
             ))}
-            
+
             <button type="submit" className="submit-btn">
                 Submit
             </button>

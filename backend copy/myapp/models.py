@@ -48,8 +48,6 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    
-    
     is_social_account = models.BooleanField(default=False)
     ROLE_CHOICES = [
         ('candidate', 'Candidate'),
@@ -57,7 +55,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         ('admin', 'Admin'),
     ]
     role = models.CharField(max_length=255, choices=ROLE_CHOICES, default='candidate')
-    
     id = models.AutoField(primary_key=True,unique=True)
     fullname = models.CharField(max_length=255)
     username = models.CharField(max_length=255, unique=True)
@@ -70,11 +67,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)  
     is_active = models.BooleanField(default=True)   
     objects = UserManager()
-
     USER_ID_FIELD = 'userid'
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
-
     def __str__(self):
         return self.username
 
@@ -106,7 +101,7 @@ class Profile(models.Model):
     education = models.TextField(blank=True)
     domain_of_interest = models.CharField(max_length=30, choices=JOB_DOMAIN_CHOICES, blank=True)
     job_type = models.CharField(max_length=30, choices=JOB_TYPE_CHOICES, blank=True)
-    skills = models.TextField(blank=True, null=True)  # Handled as a list if needed
+    skills = models.JSONField(null=True)
     certifications = models.TextField(blank=True, null=True)
     preferred_work_environment = models.CharField(max_length=255, blank=True, null=True)
     availability_status = models.CharField(max_length=100, blank=True, null=True)
@@ -122,9 +117,7 @@ class Profile(models.Model):
 
     def _str_(self):
         return f"Profile of {self.user.username}"
-    
-    
-    
+
 class Course(models.Model):
     course_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255)
