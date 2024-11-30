@@ -5,6 +5,7 @@ import Personal from '../Personal/Personal';
 import Profile from '../Profile/Profile';
 import SocialLinks from '../SocialLinks/SocialLinks';
 import OtherFields from '../OtherFields/OtherFields';
+import VerifySkills from '../../components/VerifySkills/VerifySkills';
 
 const SettingsComp = () => {
   const [selectedOption, setSelectedOption] = useState('Personal');
@@ -14,6 +15,7 @@ const SettingsComp = () => {
     { id: 'Profile', label: 'Profile', icon: <FaUserCircle /> },
     { id: 'Social Links', label: 'Social Links', icon: <FaLink /> },
     { id: 'Other', label: 'Other', icon: <FaCogs /> },
+    { id: 'VerifySkills', label: 'Verify Skills', icon: <FaCogs /> },
   ];
   const renderContent = () => {
     switch (selectedOption) {
@@ -22,9 +24,11 @@ const SettingsComp = () => {
       case 'Profile':
         return <Profile />;
       case 'Social Links':
-        return <SocialLinks/>
+        return <SocialLinks />
       case 'Other':
-        return <OtherFields/>;
+        return <OtherFields />;
+      case 'VerifySkills':
+        return <VerifySkills />;
       default:
         return <div>Select an option from the navigation</div>;
     }

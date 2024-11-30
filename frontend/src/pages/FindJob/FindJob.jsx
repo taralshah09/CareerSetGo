@@ -1,309 +1,93 @@
-import React from 'react'
-import "./FindJob.css"
+import React, { useEffect, useState } from "react";
+import "./FindJob.css";
+
 const FindJob = () => {
-    return (
-        <div className='find-job-container'>
-            <div className='find-job-search'>
-                <div className="find-job-search-header">
-                    <p>Find Job</p>
-                </div>
-                <div className="input-box">
-                    <div className="input-box-1">
-                        <img src="../images/search.png" alt="Search Icon" />
-                        <input type="text" placeholder='Job title, keyword...' />
-                    </div>
-                    <div className="input-box-2">
-                        <img src="../images/location.png" alt="Location Icon" />
-                        <input type="text" placeholder='Location' />
-                    </div>
-                    <div className="input-box-3">
-                        <img src="../images/layers.png" alt="Category Icon" />
-                        <select name="category" id="category">
-                            <option value="Software Engineer">Software Engineer</option>
-                            <option value="Frontend Developer">Frontend Developer</option>
-                            <option value="Backend Developer">Backend Developer</option>
-                            <option value="Devops Developer">Devops Developer</option>
-                        </select>
-                    </div>
-                    <div className="input-box-4">
-                        <label htmlFor="filter">Advanced Filter</label>
-                    </div>
-                    <button>Find Job</button>
-                </div>
-            </div>
-            <div className="jobs-container">
-                <div className="jobs-filter">
-                    <select name="time" id="time">
-                        <option value="latest">Latest</option>
-                        <option value="old">Old</option>
-                    </select>
-                    <select name="no_of_jobs" id="no_of_jobs">
-                        <option value="12">12</option>
-                        <option value="9">9</option>
-                        <option value="6">6</option>
-                    </select>
-                </div>
-                <div className="jobs-feed">
-                    <div className="job">
-                        <div className="job-header">
-                            <div className="job-header-left">
-                                <img src="../images/c1.png" alt="" />
-                            </div>
-                            <div className="job-header-right">
-                                <div className="job-header-right-top">
-                                    <p>Company</p>
-                                    <span>Featured</span>
-                                </div>
-                                <div className="job-header-right-bottom">
-                                    <img src="images/location.png" alt="" />
-                                    <span>United States</span>
-                                </div>
+  const [jobs, setJobs] = useState([]); // State to hold job data
 
-                            </div>
-                        </div>
-                        <div className="job-footer">
-                            <p>Marketing Officer</p>
-                            <div className="job-footer-bottom">
-                                <span>Full Time</span>
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/jobs/");
+        const data = await response.json();
+        setJobs(data); // Update the jobs state with fetched data
+      } catch (error) {
+        console.error("Error fetching jobs:", error);
+      }
+    };
 
-                                <span>
-                                    30k-35k
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="job">
-                        <div className="job-header">
-                            <div className="job-header-left">
-                                <img src="../images/c1.png" alt="" />
-                            </div>
-                            <div className="job-header-right">
-                                <div className="job-header-right-top">
-                                    <p>Company</p>
-                                    <span>Featured</span>
-                                </div>
-                                <div className="job-header-right-bottom">
-                                    <img src="images/location.png" alt="" />
-                                    <span>United States</span>
-                                </div>
+    fetchJobs(); // Fetch jobs when the component mounts
+  }, []);
 
-                            </div>
-                        </div>
-                        <div className="job-footer">
-                            <p>Marketing Officer</p>
-                            <div className="job-footer-bottom">
-                                <span>Full Time</span>
-
-                                <span>
-                                    30k-35k
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="job">
-                        <div className="job-header">
-                            <div className="job-header-left">
-                                <img src="../images/c1.png" alt="" />
-                            </div>
-                            <div className="job-header-right">
-                                <div className="job-header-right-top">
-                                    <p>Company</p>
-                                    <span>Featured</span>
-                                </div>
-                                <div className="job-header-right-bottom">
-                                    <img src="images/location.png" alt="" />
-                                    <span>United States</span>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div className="job-footer">
-                            <p>Marketing Officer</p>
-                            <div className="job-footer-bottom">
-                                <span>Full Time</span>
-
-                                <span>
-                                    30k-35k
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="job">
-                        <div className="job-header">
-                            <div className="job-header-left">
-                                <img src="../images/c1.png" alt="" />
-                            </div>
-                            <div className="job-header-right">
-                                <div className="job-header-right-top">
-                                    <p>Company</p>
-                                    <span>Featured</span>
-                                </div>
-                                <div className="job-header-right-bottom">
-                                    <img src="images/location.png" alt="" />
-                                    <span>United States</span>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div className="job-footer">
-                            <p>Marketing Officer</p>
-                            <div className="job-footer-bottom">
-                                <span>Full Time</span>
-
-                                <span>
-                                    30k-35k
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="job">
-                        <div className="job-header">
-                            <div className="job-header-left">
-                                <img src="../images/c1.png" alt="" />
-                            </div>
-                            <div className="job-header-right">
-                                <div className="job-header-right-top">
-                                    <p>Company</p>
-                                    <span>Featured</span>
-                                </div>
-                                <div className="job-header-right-bottom">
-                                    <img src="images/location.png" alt="" />
-                                    <span>United States</span>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div className="job-footer">
-                            <p>Marketing Officer</p>
-                            <div className="job-footer-bottom">
-                                <span>Full Time</span>
-
-                                <span>
-                                    30k-35k
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="job">
-                        <div className="job-header">
-                            <div className="job-header-left">
-                                <img src="../images/c1.png" alt="" />
-                            </div>
-                            <div className="job-header-right">
-                                <div className="job-header-right-top">
-                                    <p>Company</p>
-                                    <span>Featured</span>
-                                </div>
-                                <div className="job-header-right-bottom">
-                                    <img src="images/location.png" alt="" />
-                                    <span>United States</span>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div className="job-footer">
-                            <p>Marketing Officer</p>
-                            <div className="job-footer-bottom">
-                                <span>Full Time</span>
-
-                                <span>
-                                    30k-35k
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="job">
-                        <div className="job-header">
-                            <div className="job-header-left">
-                                <img src="../images/c1.png" alt="" />
-                            </div>
-                            <div className="job-header-right">
-                                <div className="job-header-right-top">
-                                    <p>Company</p>
-                                    <span>Featured</span>
-                                </div>
-                                <div className="job-header-right-bottom">
-                                    <img src="images/location.png" alt="" />
-                                    <span>United States</span>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div className="job-footer">
-                            <p>Marketing Officer</p>
-                            <div className="job-footer-bottom">
-                                <span>Full Time</span>
-
-                                <span>
-                                    30k-35k
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="job">
-                        <div className="job-header">
-                            <div className="job-header-left">
-                                <img src="../images/c1.png" alt="" />
-                            </div>
-                            <div className="job-header-right">
-                                <div className="job-header-right-top">
-                                    <p>Company</p>
-                                    <span>Featured</span>
-                                </div>
-                                <div className="job-header-right-bottom">
-                                    <img src="images/location.png" alt="" />
-                                    <span>United States</span>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div className="job-footer">
-                            <p>Marketing Officer</p>
-                            <div className="job-footer-bottom">
-                                <span>Full Time</span>
-
-                                <span>
-                                    30k-35k
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="job">
-                        <div className="job-header">
-                            <div className="job-header-left">
-                                <img src="../images/c1.png" alt="" />
-                            </div>
-                            <div className="job-header-right">
-                                <div className="job-header-right-top">
-                                    <p>Company</p>
-                                    <span>Featured</span>
-                                </div>
-                                <div className="job-header-right-bottom">
-                                    <img src="images/location.png" alt="" />
-                                    <span>United States</span>
-                                </div>
-
-                            </div>
-                        </div>
-                        <div className="job-footer">
-                            <p>Marketing Officer</p>
-                            <div className="job-footer-bottom">
-                                <span>Full Time</span>
-
-                                <span>
-                                    30k-35k
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="jobs-pagination">
-                        
-                </div>
-            </div>
+  return (
+    <div className="find-job-container">
+      <div className="find-job-search">
+        <div className="find-job-search-header">
+          <p>Find Job</p>
         </div>
+        <div className="input-box">
+          <div className="input-box-1">
+            <img src="../images/search.png" alt="Search Icon" />
+            <input type="text" placeholder="Job title, keyword..." />
+          </div>
+          <div className="input-box-2">
+            <img src="../images/location.png" alt="Location Icon" />
+            <input type="text" placeholder="Location" />
+          </div>
+          <div className="input-box-3">
+            <img src="../images/layers.png" alt="Category Icon" />
+            <select name="category" id="category">
+              <option value="Software Engineer">Software Engineer</option>
+              <option value="Frontend Developer">Frontend Developer</option>
+              <option value="Backend Developer">Backend Developer</option>
+              <option value="Devops Developer">Devops Developer</option>
+            </select>
+          </div>
+          <div className="input-box-4">
+            <label htmlFor="filter">Advanced Filter</label>
+          </div>
+          <button>Find Job</button>
+        </div>
+      </div>
+      <div className="jobs-container">
+        <div className="jobs-feed">
+          {jobs.length > 0 ? (
+            jobs.map((job) => (
+              <div className="job" key={job.job_id}>
+                <div className="job-header">
+                  <div className="job-header-left">
+                    <img src="../images/c1.png" alt="Company Logo" />
+                  </div>
+                  <div className="job-header-right">
+                    <div className="job-header-right-top">
+                      <p>{job.company_name}</p>
+                      <span>{job.featured ? "Featured" : "Standard"}</span>
+                    </div>
+                    <div className="job-header-right-bottom">
+                      <img src="../images/location.png" alt="Location Icon" />
+                      <span>{job.location}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="job-footer">
+                  <p>{job.title}</p>
+                  <div className="job-footer-bottom">
+                    <span>{job.job_type}</span>
+                    <span>{job.salary ? `$${job.salary}` : "Not disclosed"}</span>
+                  </div>
+                </div>
+             
+              </div>
+            ))
+          ) : (
+            <p>No jobs available</p>
+          )}
+        </div>
+        <div className="jobs-pagination">
+          {/* Pagination logic can be implemented here */}
+        </div>
+      </div>
+    </div>
+  );
+};
 
-    )
-}
-
-export default FindJob
+export default FindJob;

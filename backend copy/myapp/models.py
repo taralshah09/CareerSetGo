@@ -11,6 +11,7 @@ from django.core.validators import validate_email
 
 JOB_DOMAIN_CHOICES = [
         ('ai_ml', 'Artificial Intelligence & Machine Learning'),
+        ('AI/ML', 'Artificial Intelligence & Machine Learning'),
         ('data_science', 'Data Science'),
         ('cyber_security', 'Cyber Security'),
         ('web_dev', 'Web Development'),
@@ -47,8 +48,6 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    
-    
     is_social_account = models.BooleanField(default=False)
     ROLE_CHOICES = [
         ('candidate', 'Candidate'),
@@ -56,7 +55,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         ('admin', 'Admin'),
     ]
     role = models.CharField(max_length=255, choices=ROLE_CHOICES, default='candidate')
-    
     id = models.AutoField(primary_key=True,unique=True)
     fullname = models.CharField(max_length=255)
     username = models.CharField(max_length=255, unique=True)
@@ -69,41 +67,55 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)  
     is_active = models.BooleanField(default=True)   
     objects = UserManager()
-
     USER_ID_FIELD = 'userid'
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
-
     def __str__(self):
         return self.username
 
 
 
-class Profile(models.Model):  
+class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
     profile_id = models.AutoField(primary_key=True)
-    # user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
-    education = models.TextField(blank=True)
-    age = models.IntegerField(blank=True, null=True)
-    experience = models.TextField(blank=True)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+    
+    # Contact Information
+    phone_no = models.CharField(max_length=20, blank=True)
+    personal_website = models.URLField(blank=True, null=True)
     twitter_link = models.URLField(blank=True)
     linkedin_link = models.URLField(blank=True)
     insta_link = models.URLField(blank=True)
     other_link = models.URLField(blank=True)
-    location = models.CharField(max_length=255, blank=True)
-    role = models.CharField(max_length=255, blank=True)
-    phone_no = models.CharField(max_length=20, blank=True)
-    resume = models.FileField(upload_to='pdfs/', blank=True, null=True)
-    
 
-    #Added Later feed will be made on base of these 3
+    # Personal Details
+    nationality = models.CharField(max_length=100, blank=True, null=True)
+    date_of_birth = models.DateField(blank=True, null=True)
+    gender = models.CharField(max_length=10, choices=[('Male', 'Male'), ('Female', 'Female'), ('Other', 'Other')], blank=True, null=True)
+    marital_status = models.CharField(max_length=15, choices=[('Single', 'Single'), ('Married', 'Married'), ('Other', 'Other')], blank=True, null=True)
+    biography = models.TextField(blank=True, null=True)
+
+    # Professional Details
+    title = models.CharField(max_length=255, blank=True, null=True)
+    experience = models.TextField(blank=True)
+    education = models.TextField(blank=True)
     domain_of_interest = models.CharField(max_length=30, choices=JOB_DOMAIN_CHOICES, blank=True)
-    job_type = models.CharField(max_length=30, choices=JOB_TYPE_CHOICES)  # New domain field 
-    skills = models.TextField(blank=True, null=True) #This can be handled as a list & we will do that
-   
-    # New field for domain of interest
-    def __str__(self):
+    job_type = models.CharField(max_length=30, choices=JOB_TYPE_CHOICES, blank=True)
+    skills = models.JSONField(null=True)
+    certifications = models.TextField(blank=True, null=True)
+    preferred_work_environment = models.CharField(max_length=255, blank=True, null=True)
+    availability_status = models.CharField(max_length=100, blank=True, null=True)
+
+    # Resume
+    resume = models.FileField(upload_to='pdfs/', blank=True, null=True)
+
+    # Language and Miscellaneous
+    languages = models.TextField(blank=True, null=True)
+
+    # Location
+    location = models.CharField(max_length=255, blank=True)
+
+    def _str_(self):
         return f"Profile of {self.user.username}"
 
 class Course(models.Model):
@@ -138,7 +150,7 @@ class Job(models.Model):
     is_approved = models.BooleanField(default=False)  # Admin approval required
 
     
-        
+    
     skills_required = models.TextField(blank=True)  # ilst of skills & also skillgap analysis will be done through this
     job_domain = models.CharField(max_length=30, choices=JOB_DOMAIN_CHOICES,default='')  # New domain field
     job_type = models.CharField(max_length=10, choices=JOB_TYPE_CHOICES) 
