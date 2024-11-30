@@ -113,23 +113,22 @@ const JobCard = ({ logo, title, badge, location, salary, dateApplied, status, on
         {/* Action Button */}
         <Grid item xs={2} sx={{ textAlign: "center" }}>
           <Button
-            variant={isHovered ? "contained" : "outlined"}
-            onClick={onAction}
-            sx={{
-              width: "70%",
-              marginLeft: "20%",
-              backgroundColor: isHovered ? "#0A65CC" : "#E7F0FA",
-              color: isHovered ? "#ffffff" : "#0A65CC",
-              borderColor: "#0A65CC",
-              textTransform: "none",
-              "&:hover": {
-                backgroundColor: "#0A65CC",
-                color: "#ffffff",
-              },
-            }}
-          >
-            View Details
-          </Button>
+          variant={isHovered ? 'contained' : 'outlined'}
+          sx={{
+            width: '70%',
+            marginLeft : "20%",
+            borderColor: '#0A65CC !important',
+            color : '#0A65CC !important' ,
+            backgroundColor : '#E7F0FA !important' ,
+
+            '&:hover': {
+              backgroundColor: '#0A65CC !important',
+              color: '#ffffff !important',
+            },
+          }}
+        >
+          View Details
+        </Button>
         </Grid>
       </Grid>
     </Paper>

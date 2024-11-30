@@ -33,8 +33,6 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />}></Route>
         <Route path="/resume-builder" element={<ResumeBuilder />}></Route>
         <Route path="/verify/:skillName" element={<SkillsVerficationPage />} ></Route>
-
-
         <Route path="/post" element={<PostJobForm />}></Route>
       </Routes>
       {!hideNavbarFooter && <Footer />}
@@ -42,4 +40,4 @@ function App() {
   )
 }
 
-export default App
+export default App;

@@ -86,7 +86,6 @@ const AppliedJobs = () => {
       dateApplied: "Feb 2, 2019 19:28",
       status: "Active",
     },
-    // More job entries...
   ];
 
   return (
