@@ -7,7 +7,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
 
-        # Add custom claims
         token['username'] = user.username
         print(f"Logged in as: {user.username}")
 
@@ -28,33 +27,47 @@ class UserSerializer(serializers.ModelSerializer):
         )
         return user
 
+
 class ProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    fullname = serializers.CharField(source='user.fullname', required=False)  # Allow updates to fullname
+
     class Meta:
         model = Profile
         fields = [
-            'profile_id',
-            'skills',
-            'resume',
-            'domain_of_interest',
-            'profile_picture',
-            'job_type',
-            'education',
-            'age',
-            'experience',
-            'twitter_link',
-            'linkedin_link',
-            'insta_link',
-            'other_link',
-            'location',
-            'role',
-            'phone_no'
+            'fullname', 'profile_id', 'experience', 'education',
+            'profile_picture', 'resume', 'username', 'title', 'personal_website',
+            'nationality', 'date_of_birth', 'gender', 'marital_status', 'biography', 
+            'languages', 'location','other_link','insta_link','twitter_link','linkedin_link',
+            'preferred_work_environment','availability_status','certifications','domain_of_interest',
+'languages','skills'
         ]
+        extra_kwargs = {
+            'profile_picture': {'required': False},
+            'resume': {'required': False},
+            'experience': {'required': False},
+            'education': {'required': False},
+            'biography': {'required': False},
+            'nationality': {'required': False},
+            'date_of_birth': {'required': False},
+            'gender': {'required': False},
+            'marital_status': {'required': False},
+            'languages': {'required': False},
+            'location': {'required': False},
+        }
 
-    def create(self, validated_data):
-        user = self.context['request'].user  
-        validated_data['user'] = user  
-        return super().create(validated_data)
+    def update(self, instance, validated_data):
+        # Extract user data
+        user_data = validated_data.pop('user', {})
+        fullname = user_data.get('fullname', None)
 
+        # Update the User model
+        if fullname:
+            instance.user.fullname = fullname
+            instance.user.save()
+
+        # Update the Profile model
+        return super().update(instance, validated_data)
 
 from rest_framework import serializers
 from .models import Job

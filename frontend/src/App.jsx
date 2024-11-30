@@ -12,6 +12,9 @@ import Dashboard from './pages/Dashboard/Dashboard'
 import FindEmployer from './components/FindEmployers/FindEmployer'
 import BrowseCandidate from './pages/BrowseCandidatePage/BrowseCandidatePage'
 import ResumeBuilder from './pages/ResumeBuilder/ResumeBuilder'
+
+import PostJobForm from './pages/PostJobForm/PostJobForm'
+
 import PostJobForm from "./pages/PostJobForm/PostJobForm"
 
 function App() {

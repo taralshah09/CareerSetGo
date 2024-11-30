@@ -9,6 +9,10 @@ from rest_framework_simplejwt.exceptions import InvalidToken
 from django.shortcuts import get_object_or_404
 from .utils import send_email
 from django.http import JsonResponse
+import requests
+import json
+import os
+from pathlib import Path
 
 class RegisterUser(APIView):
     permission_classes = []
@@ -73,7 +77,15 @@ class LoginView(APIView):
 
                 send_email(subject, plain_message, [email], html_message)
 
-                return Response({"access_token": access_token, "message": "Login successful!"}, status=status.HTTP_200_OK)
+                return Response(
+                    {
+                        "access_token": access_token,
+                        "refresh_token": str(refresh),
+                        "message": "Login successful!"
+                    },
+                    status=status.HTTP_200_OK
+                )
+
             return Response({"error": "Invalid email or password."}, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
             return Response({"error": "Invalid email or password."}, status=status.HTTP_400_BAD_REQUEST)
@@ -103,22 +115,29 @@ class UpdateProfile(APIView):
         except Profile.DoesNotExist:
             data = request.data
             data['user'] = user.id
-            serializer = ProfileSerializer(data=data)
+            serializer = ProfileSerializer(data=data, context={'request': request})
 
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request):
+    def patch(self, request):
         user = request.user
         try:
             profile = Profile.objects.get(user=user)
         except Profile.DoesNotExist:
             return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ProfileSerializer(profile, data=request.data)
+        # Ensure only fields that are provided are updated, leaving others unchanged
+        data = request.data
+        for field in data:
+            if data[field] is None:  # If the value is None, remove it to keep the current value
+                data.pop(field)
 
+        # Use the filtered data to update the profile
+        serializer = ProfileSerializer(profile, data=data, partial=True, context={'request': request})
+        
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -127,37 +146,33 @@ class UpdateProfile(APIView):
 
 class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
-
+    
     def get(self, request):
-        try:
-            profile = Profile.objects.get(user=request.user)
-            serializer = ProfileSerializer(profile)
-            return Response(serializer.data)
-        except Profile.DoesNotExist:
-            return Response({"detail": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
-
-    def post(self, request):
-        if Profile.objects.filter(user=request.user).exists():
-            return Response({"detail": "Profile already exists."}, status=status.HTTP_400_BAD_REQUEST)
-
-        serializer = ProfileSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def put(self, request):
+        user = request.user
+        profile, created = Profile.objects.get_or_create(user=user)
+        if created:
+            profile.save()
+        serializer = ProfileSerializer(profile)
+        return Response(serializer.data)
+    
+    def patch(self, request):
         user = request.user
         try:
             profile = Profile.objects.get(user=user)
         except Profile.DoesNotExist:
             return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        serializer = ProfileSerializer(profile, data=request.data, partial=True, context={'request': request})
+        # Filter out None values to preserve existing data
+        data = {k: v for k, v in request.data.items() if v is not None}
+
+        serializer = ProfileSerializer(profile, data=data, partial=True, context={'request': request})
+        
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 
 
 class LogoutView(APIView):
@@ -165,19 +180,22 @@ class LogoutView(APIView):
 
     def post(self, request):
         try:
+            # Get refresh token from request
             refresh_token = request.data.get('refresh_token')
 
+            # If no refresh token is provided, return error
             if not refresh_token:
                 return Response({"error": "Refresh token is required."}, status=status.HTTP_400_BAD_REQUEST)
 
+            # Try to blacklist the refresh token
             token = RefreshToken(refresh_token)
-            token.blacklist()
+            token.blacklist()  # This will blacklist the token
 
             return Response({"message": "Logged out successfully!"}, status=status.HTTP_200_OK)
 
         except InvalidToken:
+            # Handle case when the token is invalid
             return Response({"error": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
-
 
 class RecentJobsView(APIView):
     permission_classes = [AllowAny]
@@ -215,3 +233,74 @@ class AddToWishlistView(APIView):
 
         Wishlist.objects.create(user=user, job=job)
         return Response({"detail": "Job added to wishlist."}, status=status.HTTP_201_CREATED)
+
+
+class fetchcourses(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        try:
+            profile = Profile.objects.get(user=request.user)
+            skills = profile.skills.split(',') if profile.skills else []
+            domain_of_interest = profile.domain_of_interest
+            
+            q = ', '.join(skills) if skills else domain_of_interest
+            api_key = "your_api_key"
+            response_data = []
+            
+            if not api_key:
+                return Response(
+                    {"error": "YouTube API key is not configured."},
+                    status=500
+                )
+                
+            url = f'https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q={q}&key={api_key}'
+            api_response = requests.get(url)
+            
+            if api_response.status_code == 200:
+                data = api_response.json()
+
+                for item in data.get("items", []):
+                    if item["id"]["kind"] == "youtube#video":
+                        response_data.append({
+                            "type": "video",
+                            "title": item["snippet"]["title"],
+                            "description": item["snippet"]["description"],
+                            "link": f"https://www.youtube.com/watch?v={item['id']['videoId']}",
+                            "thumbnail": item["snippet"]["thumbnails"]["high"]["url"]
+                        })
+                    elif item["id"]["kind"] == "youtube#playlist":
+                        response_data.append({
+                            "type": "playlist",
+                            "title": item["snippet"]["title"],
+                            "description": item["snippet"]["description"],
+                            "link": f"https://www.youtube.com/playlist?list={item['id']['playlistId']}",
+                            "thumbnail": item["snippet"]["thumbnails"]["high"]["url"]
+                        })
+
+                return Response({"courses": response_data}, status=200)
+            else:
+                return Response(
+                    {"error": "Failed to fetch courses from YouTube API."},
+                    status=api_response.status_code
+                )
+                
+        except Profile.DoesNotExist:
+            return Response({"error": "User profile not found."}, status=404)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
+
+        # response = {}       
+        # r = requests.get(f'https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q={skills}&key=')
+        # r_status = r.status_code
+        # if r_status == 200:
+        #     data = r.json()
+        #     print(data)
+        #     response['courses'] = data
+        # else:
+        #     response['status'] = r.status_code
+        #     response['message'] = 'error'
+        #     response['credentials'] = 'Check your Api key'
+        # return Response(response)
+        
+    
