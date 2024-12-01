@@ -7,13 +7,27 @@ const FindJob = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/jobs/");
-        const data = await response.json();
-        setJobs(data); // Update the jobs state with fetched data
+          const response = await fetch("http://127.0.0.1:8000/api/jobs/", {
+              method: 'GET',
+              headers: {
+                  'Content-Type': 'application/json',
+                  // Include token if user is authenticated
+                  'Authorization': localStorage.getItem('access_token') ? `Bearer ${localStorage.getItem('access_token')}` : '',
+              },
+          });
+  
+          if (response.ok) {
+              const data = await response.json();
+              setJobs(data.jobs);  // Update state with fetched job data
+          } else {
+              const errorData = await response.json();
+              console.error('Error fetching jobs:', errorData);
+          }
       } catch (error) {
-        console.error("Error fetching jobs:", error);
+          console.error('Error fetching jobs:', error);
       }
-    };
+  };
+  
 
     fetchJobs(); // Fetch jobs when the component mounts
   }, []);

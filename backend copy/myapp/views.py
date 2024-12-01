@@ -227,28 +227,55 @@ class RecentJobsView(APIView):
         jobs = Job.objects.order_by('-created_at')[:5]
         serializer = JobSerializer(jobs, many=True)
         return Response(serializer.data)
+# class JobsView(APIView):
+#     permission_classes = [AllowAny]
 
-class RecentJobsView(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request):
-        """
-        Fetches the 5 most recent job postings.
-        """
-        jobs = Job.objects.order_by('-created_at')[:5]
-        serializer = JobSerializer(jobs, many=True)
-        return Response(serializer.data)
+#     def get(self, request):
+#         """
+#         Fetches the 5 most recent job postings.
+#         """
+#         jobs = Job.objects.order_by('-created_at')[:5]
+#         serializer = JobSerializer(jobs, many=True)
+#         return Response(serializer.data)
 
 class JobsView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        """
-        Fetches the 5 most recent job postings.
-        """
+        user = request.user
+
+        try:
+            profile = Profile.objects.get(user=request.user)
+        except Profile.DoesNotExist:
+            return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
+        
+        user_skills = profile.skills if isinstance(profile.skills, list) else json.loads(profile.skills)
+        print(f"User Skills: {user_skills}")
+
+        user_skill_names = {skill['name'].lower() for skill in user_skills}
+        print(f"User Skill Names: {user_skill_names}")
+
         jobs = Job.objects.order_by('-created_at')
-        serializer = JobSerializer(jobs, many=True)
-        return Response(serializer.data)
+
+        matching_jobs = []
+
+        for job in jobs:
+            job_required_skills = job.skills_required.split(",") 
+            job_required_skills = {skill.strip().lower() for skill in job_required_skills}  
+
+            matching_skills = user_skill_names.intersection(job_required_skills)
+            print(f"Matching Skills for {job.title}: {matching_skills}")
+
+            if matching_skills:
+                matching_jobs.append(job)
+
+        if matching_jobs:
+            serializer = JobSerializer(matching_jobs, many=True)
+            return Response({
+                "jobs" : serializer.data
+            })
+        else:
+            return Response({"message": "No matching jobs found."}, status=status.HTTP_404_NOT_FOUND)
 
 class PostJobView(APIView):
     permission_classes = [IsAuthenticated]

@@ -125,21 +125,6 @@ class Profile(models.Model):
     def str(self):
         return f"Profile of {self.user.username}"
 
-class Course(models.Model):
-    course_id = models.AutoField(primary_key=True)
-    title = models.CharField(max_length=255)
-    description = models.TextField()
-    created_at = models.DateTimeField(default=timezone.now)
-    start_date = models.DateField()
-    end_date = models.DateField()
-    instructor = models.CharField(max_length=255)
-    enrolled_users = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name="courses")
-
-    def _str_(self):
-        return self.title
-    
-
-
 
 class Job(models.Model):
     
@@ -164,7 +149,22 @@ class Job(models.Model):
 
     def _str_(self):
         return f"{self.title} at {self.company_name}"
+  
+class Course(models.Model):
+    course_id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
+    start_date = models.DateField()
+    end_date = models.DateField()
+    instructor = models.CharField(max_length=255)
+    enrolled_users = models.ManyToManyField(settings.AUTH_USER_MODEL, blank=True, related_name="courses")
+
+    def _str_(self):
+        return self.title
     
+
+  
     
 class Wishlist(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='wishlists')
