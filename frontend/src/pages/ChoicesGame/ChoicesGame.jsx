@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { GoogleGenerativeAI } from "@google/generative-ai"
 import "./ChoicesGame.css"
+import ReactMarkdown from "react-markdown";
 
 const ChoicesGame = () => {
     const [questions, setQuestions] = useState([]);
@@ -163,7 +164,7 @@ const ChoicesGame = () => {
                 selectedChoice: q.choices[selectedAnswers[q.id]]
             }));
 
-            const predictionPrompt = `As a career advisor for frontend developers, analyze these skill-based choices and predict the potential career trajectory. Here are the developer's choices for different skills:
+            const predictionPrompt = `As a career advisor for the current user, analyze these skill-based choices and predict the potential career trajectory. Here are the developer's choices for different skills:
             ${JSON.stringify(choicesSummary, null, 2)}
             
             Please provide:
@@ -191,7 +192,6 @@ const ChoicesGame = () => {
 
     return (
         <div className="container">
-
             <div className="game-container">
                 <div className="game-content">
                     <h1 className="game-title">Game of Choices</h1>
@@ -255,9 +255,7 @@ const ChoicesGame = () => {
                                 <div className="prediction-card">
                                     <h3>Your Career Prediction</h3>
                                     <div className="prediction-content">
-                                        {prediction.split('\n').map((line, index) => (
-                                            <p key={index}>{line}</p>
-                                        ))}
+                                        <ReactMarkdown>{prediction}</ReactMarkdown>
                                     </div>
                                 </div>
                             )}
@@ -266,7 +264,6 @@ const ChoicesGame = () => {
                 </div>
             </div>
         </div>
-
     );
 };
 
