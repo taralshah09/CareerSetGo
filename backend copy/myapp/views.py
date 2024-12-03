@@ -186,7 +186,7 @@ class UserProfileView(APIView):
         serializer = ProfileSerializer(profile, data=data, partial=True, context={'request': request})
         # for skill in data['skills']:
         #             print(f"Skill: {skill['name']}, Score: {skill['score']}, Verified: {skill['verified']}")
-        print(data['skills'])
+        # print(data['skills'])
         # if 'skills' in data:
                 #  update_skill_score(user, 'java', 5)
         print_skills_from_db(user)
@@ -227,16 +227,6 @@ class RecentJobsView(APIView):
         jobs = Job.objects.order_by('-created_at')[:5]
         serializer = JobSerializer(jobs, many=True)
         return Response(serializer.data)
-# class JobsView(APIView):
-#     permission_classes = [AllowAny]
-
-#     def get(self, request):
-#         """
-#         Fetches the 5 most recent job postings.
-#         """
-#         jobs = Job.objects.order_by('-created_at')[:5]
-#         serializer = JobSerializer(jobs, many=True)
-#         return Response(serializer.data)
 
 class JobsView(APIView):
     permission_classes = [IsAuthenticated]
@@ -317,7 +307,8 @@ class fetchcourses(APIView):
             domain_of_interest = profile.domain_of_interest
             
             q = ', '.join(skills) if skills else domain_of_interest
-            api_key = "your_api_key"
+            api_key = "AIzaSyAWH5EDW_vnrh4zBLMGS9GAe15a-Eb2O7Y"
+            url = f'https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q={q}&key=AIzaSyAWH5EDW_vnrh4zBLMGS9GAe15a-Eb2O7Y'
             response_data = []
             
             if not api_key:
@@ -326,9 +317,9 @@ class fetchcourses(APIView):
                     status=500
                 )
                 
-            url = f'https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q={q}&key={api_key}'
+                
             api_response = requests.get(url)
-            
+
             if api_response.status_code == 200:
                 data = api_response.json()
 
@@ -349,7 +340,7 @@ class fetchcourses(APIView):
                             "link": f"https://www.youtube.com/playlist?list={item['id']['playlistId']}",
                             "thumbnail": item["snippet"]["thumbnails"]["high"]["url"]
                         })
-
+                print(response_data)
                 return Response({"courses": response_data}, status=200)
             else:
                 return Response(
@@ -381,7 +372,6 @@ def print_skills_from_db(user):
         profile = Profile.objects.get(user=user)
         skills = profile.skills  # Fetch the JSONField data
 
-        update_skill_score(user, 'java', 5)
         # Debugging: Check the type of skills
         print(f"Skills data type: {type(skills)}")
         print(f"Skills content: {skills}")

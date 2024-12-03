@@ -14,6 +14,8 @@ import BrowseCandidate from './pages/BrowseCandidatePage/BrowseCandidatePage'
 import ResumeBuilder from './pages/ResumeBuilder/ResumeBuilder'
 import SkillsVerficationPage from './pages/SkillsVerificationPage/SkillsVerificationPage'
 import PostJobForm from './pages/PostJobForm/PostJobForm'
+import Course from './pages/Courses/Course'
+
 
 function App() {
   const location = useLocation();
@@ -34,6 +36,8 @@ function App() {
         <Route path="/resume-builder" element={<ResumeBuilder />}></Route>
         <Route path="/verify/:skillName" element={<SkillsVerficationPage />} ></Route>
         <Route path="/post" element={<PostJobForm />}></Route>
+        <Route path="/course" element={<Course />}></Route>
+
       </Routes>
       {!hideNavbarFooter && <Footer />}
     </>
