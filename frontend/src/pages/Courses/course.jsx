@@ -9,15 +9,11 @@ const Course = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        setIsLoading(true);
-        const response = await axios.get('http://127.0.0.1:8000/api/course/', {
-          headers: {
-            'Authorization': localStorage.getItem('access_token')
-              ? `Bearer ${localStorage.getItem('access_token')}`
-              : '',
-          }
-        });
-        setCourses(response.data.courses);
+        // Use fetchWithAuth to fetch data with the access token
+        const data = await fetchWithAuth('http://127.0.0.1:8000/api/course/');
+
+        console.log(data);  
+        // setCourses(data.courses);  
       } catch (error) {
         console.error('Error fetching courses:', error);
         setError(error.message);

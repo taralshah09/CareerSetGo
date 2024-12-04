@@ -308,7 +308,6 @@ class fetchcourses(APIView):
             
             q = ', '.join(skills) if skills else domain_of_interest
             api_key = "AIzaSyAWH5EDW_vnrh4zBLMGS9GAe15a-Eb2O7Y"
-            url = f'https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q={q}&key=AIzaSyAWH5EDW_vnrh4zBLMGS9GAe15a-Eb2O7Y'
             response_data = []
             
             if not api_key:

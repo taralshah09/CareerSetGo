@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import "./SkillsVerificationPage.css";
 import { quizData } from '../../../quiz/quiz';
+import axios from "axios"
 
 const SkillsVerificationPage = () => {
     const { skillName } = useParams();
@@ -13,10 +14,40 @@ const SkillsVerificationPage = () => {
     const [showResults, setShowResults] = useState(false);
     const [isAnswerChecked, setIsAnswerChecked] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
-
+    const [showModal, setShowModal] = useState(false);
+    const [videos, setVideos] = useState([]);
+    const API_KEY = "AIzaSyCT_jXkbZ_g8gjg46Tn2D0stmOhjBtHeQo";
+    const limit = 5;
     useEffect(() => {
         setQuestions(Array(quizData[`${skillName}`])[0]);
     }, [skillName]);
+
+    useEffect(() => {
+        if (showModal) {
+            const fetchVideos = async () => {
+                try {
+                    const response = await axios.get(
+                        `https://www.googleapis.com/youtube/v3/search`,
+                        {
+                            params: {
+                                key: API_KEY,
+                                part: 'snippet',
+                                type: 'video',
+                                q: skillName,
+                                maxResults: limit,
+                            },
+                        }
+                    );
+                    setVideos(response.data.items);
+                    console.log(videos)
+                } catch (error) {
+                    console.error('Error fetching YouTube videos:', error);
+                }
+            };
+
+            fetchVideos();
+        }
+    }, [showModal, skillName]);
 
     const handleAnswerSelect = (answer) => {
         if (!isAnswerChecked) {
@@ -36,8 +67,11 @@ const SkillsVerificationPage = () => {
                 setSelectedAnswer('');
                 setIsAnswerChecked(false);
             } else {
+                const percentage = (score / questions.length) * 100;
                 setShowResults(true);
-                // Update score in the backend when quiz is finished
+                // if (percentage < 80) {
+                //     setShowModal(false);
+                // }
                 updateScoreInBackend();
             }
         }
@@ -100,6 +134,10 @@ const SkillsVerificationPage = () => {
         }
     };
 
+    const closeModal = () => {
+        setShowModal(false);
+    };
+
     if (!questions.length) {
         return <div className="quiz-container">Loading quiz...</div>;
     }
@@ -120,14 +158,61 @@ const SkillsVerificationPage = () => {
                                 : "You might need more practice with this skill."}
                         </p>
                     </div>
-                    <button
-                        className="return-button"
-                        onClick={handleReturnToDashboard}
-                        disabled={isUpdating}
-                    >
-                        {isUpdating ? 'Updating...' : 'Return to Dashboard'}
-                    </button>
+                    <div className='btns-box'>
+
+                        <button
+                            className="return-button"
+                            onClick={handleReturnToDashboard}
+                            disabled={isUpdating}
+                        >
+                            Return to Dashboard
+                        </button>
+
+                        <button
+                            className="return-button"
+                            onClick={() => setShowModal(true)}
+                        >
+                            How to UpSkill?
+                        </button>
+
+                    </div>
                 </div>
+                {showModal && (
+                    <div className="modal-overlay">
+                        <div className="modal-content">
+                            <button className="modal-close-btn" onClick={closeModal}>
+                                &times;
+                            </button>
+                            <h2>Recommended Videos for {skillName}</h2>
+                            {videos.length > 0 ? (
+                                <div className="video-list">
+                                    {videos.map((video, index) => (
+                                        <div
+                                            className="video-item"
+                                            key={video.id.videoId}
+                                        >
+                                            <a
+                                                href={`https://www.youtube.com/watch?v=${video.id.videoId}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="video-link"
+                                            >
+                                                <img
+                                                    src={video.snippet.thumbnails.medium.url}
+                                                    alt={video.snippet.title}
+                                                    className="video-thumbnail"
+                                                />
+                                                <p className="video-title">{video.snippet.title}</p>
+                                            </a>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p>Loading recommended videos...</p>
+                            )}
+                        </div>
+                    </div>
+                )}
             </div>
         );
     }

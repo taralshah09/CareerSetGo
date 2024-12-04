@@ -3,8 +3,8 @@ import './VerifySkills.css'; // Import the CSS file
 import { useNavigate } from "react-router-dom"
 
 const VerifySkills = () => {
-    const [skills, setSkills] = useState([]);
     const navigate = useNavigate()
+    const [skills, setSkills] = useState([]);
     useEffect(() => {
         const token = localStorage.getItem('access_token');
         const fetchData = async () => {
@@ -28,6 +28,9 @@ const VerifySkills = () => {
         };
         fetchData();
     }, []);
+
+    const skillNames = skills.map(skill => skill.name);
+    console.log(skillNames);
 
     const redirectToVerifyPage = (skillname) => {
         navigate(`/verify/${skillname}`)

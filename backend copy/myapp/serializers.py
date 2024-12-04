@@ -95,7 +95,6 @@ class ProfileSerializer(serializers.ModelSerializer):
         # Update Profile fields
         return super().update(instance, validated_data)
 
-
 class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
