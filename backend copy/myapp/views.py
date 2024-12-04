@@ -290,7 +290,7 @@ class fetchcourses(APIView):
             domain_of_interest = profile.domain_of_interest
             
             q = ', '.join(skills) if skills else domain_of_interest
-            api_key = "your_api_key"
+            api_key = "AIzaSyAWH5EDW_vnrh4zBLMGS9GAe15a-Eb2O7Y"
             response_data = []
             
             if not api_key:
@@ -323,6 +323,7 @@ class fetchcourses(APIView):
                             "thumbnail": item["snippet"]["thumbnails"]["high"]["url"]
                         })
 
+                print(response_data)
                 return Response({"courses": response_data}, status=200)
             else:
                 return Response(

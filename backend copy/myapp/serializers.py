@@ -62,6 +62,7 @@ class UserSerializer(serializers.ModelSerializer):
 class ProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
     fullname = serializers.CharField(source='user.fullname', required=False)
+    role = serializers.CharField(source='user.role', required=False)
 
     class Meta:
         model = Profile
@@ -70,7 +71,7 @@ class ProfileSerializer(serializers.ModelSerializer):
             'username', 'title', 'personal_website', 'nationality', 'date_of_birth', 'gender',
             'marital_status', 'biography', 'languages', 'location', 'other_link', 'insta_link',
             'twitter_link', 'linkedin_link', 'preferred_work_environment', 'availability_status',
-            'certifications', 'domain_of_interest', 'skills'
+            'certifications', 'domain_of_interest', 'skills','role'
         ]
         extra_kwargs = {
             field: {'required': False} for field in [
@@ -93,7 +94,6 @@ class ProfileSerializer(serializers.ModelSerializer):
 
         # Update Profile fields
         return super().update(instance, validated_data)
-
 
 class JobSerializer(serializers.ModelSerializer):
     class Meta:

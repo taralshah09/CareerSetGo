@@ -11,7 +11,7 @@ const CourseList = () => {
         const data = await fetchWithAuth('http://127.0.0.1:8000/api/course/');
 
         console.log(data);  
-        setCourses(data.courses);  
+        // setCourses(data.courses);  
       } catch (error) {
         console.error('Error fetching courses:', error);
       }
