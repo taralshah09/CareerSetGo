@@ -69,9 +69,9 @@ const SkillsVerificationPage = () => {
             } else {
                 const percentage = (score / questions.length) * 100;
                 setShowResults(true);
-                if (percentage < 80) {
-                    setShowModal(true);
-                }
+                // if (percentage < 80) {
+                //     setShowModal(false);
+                // }
                 updateScoreInBackend();
             }
         }
