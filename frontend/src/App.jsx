@@ -25,20 +25,20 @@ function App() {
   return (
     <>
       {!hideNavbarFooter && <Navbar />}
-      <Routes>
+      {<Routes>
         <Route index path="/" element={<HomePage />}></Route>
         <Route path="/find-job" element={<FindJob />}></Route>
         <Route path="/login" element={<LoginPage />}></Route>
         <Route path="/signup" element={<SignupPage />}></Route>
-        <Route path="/jobs" element={<JobPage />}></Route>
         <Route path="/employers" element={<EmployerPage />}></Route>
         <Route path="/dashboard" element={<Dashboard />}></Route>
         <Route path="/resume-builder" element={<ResumeBuilder />}></Route>
         <Route path="/verify/:skillName" element={<SkillsVerficationPage />} ></Route>
         <Route path="/post" element={<PostJobForm />}></Route>
         <Route path="/course" element={<Course />}></Route>
+        <Route path="/job/:id" element={<JobPage />}></Route>
 
-      </Routes>
+      </Routes>}
       {!hideNavbarFooter && <Footer />}
     </>
   )

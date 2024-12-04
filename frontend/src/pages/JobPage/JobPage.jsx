@@ -9,6 +9,7 @@ import EmployerDetailsCard from '../../components/JobPageComponents/EmployerDeta
 import RelatedJobCard from '../../components/RelatedJobCard.jsx';
 import JobDetails from '../../components/JobPageComponents/JobDetails.jsx';
 import Share from '../../components/Share.jsx';
+import { useParams } from 'react-router-dom';
 
 const JobPage = () => {
   const jobData = {
@@ -60,12 +61,14 @@ const JobPage = () => {
     ],
   };
 
+
+  const {id} = useParams()
+  console.log(id)
+
   return (
     <Box>
       <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <Navbar />
       </Container>
-    <br />
     {/* <Container maxWidth="lg" sx={{ mt: 4 }}> */}
         <JobDetails />
       {/* </Container> */}
