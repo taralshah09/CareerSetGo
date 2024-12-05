@@ -1,0 +1,254 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Outfit", serif;
+}
+
+:root {
+  --primary-grey: #f1f2f4;
+  --primary-white: #ffffff;
+  --primary-blue: #0a65cc;
+  --dark-text: #18191c;
+  --light-text: #5e6670;
+}
+
+.container {
+  --color: #0a65cc;
+  min-width: 700px;
+  max-width: 850px;
+  margin: 0 auto;
+  flex: 1.2;
+  height: fit-content;
+  min-height: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  padding: 30px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+}
+
+.header .heading {
+  font-size: 2.7rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  font-family: "Archivo", sans-serif;
+}
+
+.header .subHeading {
+  color: var(--color);
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+.header .links {
+  margin-top: 15px;
+  display: flex;
+  gap: 30px;
+  flex-wrap: wrap;
+  row-gap: 10px;
+}
+
+.header .link {
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+  font-size: inherit;
+}
+
+.header .link svg {
+  color: var(--color);
+  height: 16px;
+  width: 16px;
+}
+
+.main {
+  display: flex;
+  gap: 30px;
+}
+
+.col1 {
+  flex: 1.3;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.col2 {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.section .sectionTitle {
+  font-size: 1.4rem;
+  font-weight: bold;
+  width: 100%;
+  text-transform: uppercase;
+  font-family: "Archivo", sans-serif;
+  border-bottom: 2px solid #000;
+}
+
+.section .content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 0;
+}
+
+.section .content .item {
+  border-bottom: 1px dotted lightgray;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 10px;
+}
+
+.section .content .item:last-child {
+  border-bottom: none;
+}
+
+.content .title {
+  text-transform: capitalize;
+  font-weight: 600;
+  font-size: 1rem;
+  font-family: "Raleway", sans-serif;
+  line-height: 1.3rem;
+}
+
+.content .subTitle {
+  font-weight: bold;
+  color: var(--color);
+  font-size: 1rem;
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+}
+
+.content .overview {
+  font-size: 0.875rem;
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+}
+
+.content .link {
+  display: flex;
+  gap: 5px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  color: var(--color);
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.content .link svg {
+  height: 14px;
+  width: 14px;
+  color: var(--color);
+}
+
+.content .date {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  font-size: 0.875rem;
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.content .date svg {
+  height: 14px;
+  width: 14px;
+}
+
+.content .points,
+.numbered {
+  padding-left: 18px;
+  font-size: 0.875rem;
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.numbered .point {
+  list-style-type: decimal;
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.hidden {
+  display: none;
+}
+
+@media only screen and (min-width: 700px) and (max-width: 750px) {
+  .container {
+    min-width: 500px;
+    max-width: 850px;
+  }
+}
+
+@media only screen and (min-width: 600px) and (max-width: 699px) {
+  .container {
+    min-width: 500px;
+    max-width: 850px;
+  }
+}
+
+@media only screen and (min-width: 550px) and (max-width: 599px) {
+  .container {
+    min-width: 500px;
+    max-width: 850px;
+  }
+  .main {
+    flex-direction: column;
+  }
+}
+
+@media only screen and (min-width: 500px) and (max-width: 549px) {
+  .container {
+    min-width: 450px;
+    max-width: 850px;
+  }
+  .main {
+    flex-direction: column;
+  }
+}
+
+@media only screen and (min-width: 400px) and (max-width: 499px) {
+  .container {
+    min-width: 350px;
+    max-width: 850px;
+  }
+  .main {
+    flex-direction: column;
+  }
+  .sectionTitle {
+    font-size: 1.2rem;
+  }
+}
+
+@media only screen and (min-width: 300px) and (max-width: 399px) {
+  .container {
+    min-width: 250px;
+    max-width: 850px;
+  }
+  .main {
+    flex-direction: column;
+  }
+  .section .sectionTitle {
+    font-size: 1rem;
+  }
+}

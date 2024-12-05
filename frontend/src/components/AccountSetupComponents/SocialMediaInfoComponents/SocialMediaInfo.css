@@ -1,0 +1,187 @@
+:root {
+    --primary-blue: #0a65cc;
+    --light-grey: #f1f2f4;
+    --dark-text: #18191c;
+    --light-text: #5e6670;
+}
+  
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: "Arial", sans-serif;
+}
+
+.social-media-info {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; 
+    padding: 20px 16px;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Header Section */
+.header {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.logo img {
+    max-width: 100px;
+    height: auto;
+}
+
+
+.navbar-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.main-content {
+    width: 100%;
+    max-width: 800px;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding: 0;
+    flex-grow: 1; /* This makes the content area take up the available space */
+}
+
+.social-links {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 15px;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.social-link select {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.social-link input[type="url"] {
+    flex: 3;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.social-link button {
+    background: transparent;
+    border: none;
+    color: #333;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0 0.5rem;
+}
+
+.social-link button:hover {
+    color: #e74c3c;
+}
+
+button[type="button"] {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #f3f3f3;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #333;
+    transition: 0.3s;
+}
+
+button[type="button"]:hover {
+    background-color: #e7e7e7;
+}
+
+button[type="submit"] {
+    background-color: #007bff;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.profile-box-5 button {
+    padding: 10px 20px;
+    font-size: 1em;
+    color: #18191C;
+    background-color: #F1F2F4;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.profile-box-5 button:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+.profile-box-6 button {
+    padding: 10px 20px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+}
+
+.profile-box-6 button:hover {
+    background-color: #0056b3;
+}
+
+#aboutUs {
+    height: 6rem;
+}
+
+.btns {
+    display: flex;
+    gap: 1rem;
+}
+
+.save-btn .arrow-icon {
+    margin-left: 7px;
+}
+
+.addlink-btn {
+    margin-bottom: 1.5rem;
+}
+
+/* Footer Styling */
+footer {
+    margin-top: auto; 
+    padding: 20px 0;
+    text-align: center;
+}
+
+.main-content{
+    text-align: left;
+  }
