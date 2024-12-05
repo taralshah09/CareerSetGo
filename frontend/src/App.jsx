@@ -15,6 +15,7 @@ import ResumeBuilder from './pages/ResumeBuilder/ResumeBuilder'
 import SkillsVerficationPage from './pages/SkillsVerificationPage/SkillsVerificationPage'
 import PostJobForm from './pages/PostJobForm/PostJobForm'
 import ChoicesGame from './pages/ChoicesGame/ChoicesGame'
+import DashboardEmployer from './pages/DashboardEmployer/DashboardEmployer'
 
 function App() {
   const location = useLocation();
@@ -67,6 +68,7 @@ function App() {
   return (
     <>
       {!hideNavbarFooter && <Navbar />}
+
       <Routes>
         <Route index path="/" element={<HomePage />}></Route>
         <Route path="/find-job" element={<FindJob />}></Route>
@@ -74,7 +76,7 @@ function App() {
         <Route path="/signup" element={<SignupPage />}></Route>
         <Route path="/jobs" element={<JobPage />}></Route>
         <Route path="/employers" element={<EmployerPage />}></Route>
-        <Route path="/dashboard" element={profileData.role === "candidate" ? <Dashboard /> : <h1>Employer</h1>}></Route>
+        <Route path="/dashboard" element={profileData.role === "candidate" ? <Dashboard /> : <DashboardEmployer />}></Route>
         <Route path="/resume-builder" element={<ResumeBuilder />}></Route>
         <Route path="/verify/:skillName" element={<SkillsVerficationPage />} ></Route>
         <Route path="/post" element={<PostJobForm />}></Route>

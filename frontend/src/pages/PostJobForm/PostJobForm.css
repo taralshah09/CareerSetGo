@@ -1,81 +1,102 @@
-.container {
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f4f7fc;
-  }
-  
-  .post-job-container {
-    width: 100%;
-    max-width: 800px;
-    padding: 30px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  }
-  
-  .post-job-container h2 {
-    text-align: center;
-    margin-bottom: 25px;
-    font-size: 24px;
-    color: #333;
-  }
-  
-  .post-job-container form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .post-job-container label {
-    font-size: 16px;
-    font-weight: 600;
-    color: #555;
-    display: block;
-    margin-bottom: 8px;
-  }
-  
-  .post-job-container input,
-  .post-job-container select {
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin-bottom: 20px;
-    box-sizing: border-box;
-  }
-  
-  .post-job-container input[type="file"] {
-    padding: 6px;
-  }
-  
-  .submit-button {
-    padding: 12px 20px;
-    font-size: 16px;
-    color: white;
-    background-color: #007bff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    align-self: center;
-  }
-  
-  .submit-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .form-group {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  @media (max-width: 768px) {
-    .post-job-container {
-      padding: 20px;
-    }
-  }
-  
+/* General styles for the form container */
+.form-container {
+  max-width: 1200px;
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.form-container h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2rem;
+  color: #333333;
+}
+
+form {
+  width: 100%;
+}
+
+/* Form field styles */
+form div {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #555555;
+}
+
+input {
+  background: white;
+}
+input:hover {
+  background: white;
+}
+
+input,
+select,
+.react-quill {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  color: #333333;
+  outline: 0;
+}
+input:hover,
+select:hover,
+.react-quill:hover {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  color: #333333;
+}
+
+.more-options {
+  display: flex;
+  gap: 20px;
+}
+
+.salary-field,
+.job-type-field,
+.location-field {
+  flex: 1;
+}
+
+.react-quill {
+  height: 250px;
+  border-radius: 4px;
+  border: 1px solid;
+}
+
+.skills_required,
+.description,
+.responsibilites {
+  margin-bottom: 20px;
+}
+
+/* Submit button */
+button[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button[type="submit"]:hover {
+  background-color: #0056b3;
+}

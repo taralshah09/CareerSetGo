@@ -106,8 +106,8 @@
 }
 
 .search-box input {
-  border: none;
   outline: none;
+  border: 0;
   width: 100%;
   font-size: 16px;
   color: #495057;
@@ -119,6 +119,7 @@
 }
 .search-bar:hover {
   background: white;
+  border: 0;
 }
 
 .buttons-box {
