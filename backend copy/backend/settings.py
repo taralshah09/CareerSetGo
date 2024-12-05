@@ -1,6 +1,10 @@
 from pathlib import Path
 import os
 from decouple import config
+import os
+
+
+
 # Base directory path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -23,10 +27,13 @@ CORS_ALLOWED_ORIGINS = [
 # eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMyMjE0MzkxLCJpYXQiOjE3MzIyMTM0OTEsImp0aSI6Ijg3YThiMDg5MTdmYzQzNmNiMGRlMTZkYjA1NWE4NWYzIiwidXNlcl9pZCI6MX0.EM1McdKgK_PrhttiAPve2oZQEXa8DYzJzok5qHzwOHM
 # Installed apps
 INSTALLED_APPS = [
+    'adminlte3',
+    'adminlte3_theme',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+     'import_export',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
@@ -88,6 +95,7 @@ USE_TZ = True
 
 # Static files
 STATIC_URL = 'static/'
+STATIC_ROOT  = os.path.join(BASE_DIR,'static')
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -139,7 +147,9 @@ SIMPLE_JWT = {
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],  # For admin to work
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),  # Add this line
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

@@ -187,3 +187,91 @@ class AppliedJob(models.Model):
 
     def _str_(self):
         return f"{self.user.username} - {self.job.title} (Applied)"
+
+
+from django.db import models
+from django.conf import settings
+
+COMPANY_SIZE_CHOICES = [
+    ('1-10', '1-10 Employees'),
+    ('11-50', '11-50 Employees'),
+    ('51-200', '51-200 Employees'),
+    ('201-500', '201-500 Employees'),
+    ('501-1000', '501-1000 Employees'),
+    ('1001-5000', '1001-5000 Employees'),
+    ('5000+', '5000+ Employees')
+]
+
+INDUSTRY_TYPE_CHOICES = [
+    ('tech', 'Technology'),
+    ('finance', 'Financial Services'),
+    ('healthcare', 'Healthcare'),
+    ('education', 'Education'),
+    ('manufacturing', 'Manufacturing'),
+    ('retail', 'Retail'),
+    ('consulting', 'Consulting'),
+    ('media', 'Media & Entertainment'),
+    ('energy', 'Energy'),
+    ('telecommunications', 'Telecommunications'),
+    ('agriculture', 'Agriculture'),
+    ('automotive', 'Automotive'),
+    ('ecommerce', 'E-commerce'),
+    ('transportation', 'Transportation'),
+    ('other', 'Other')
+]
+
+ORGANIZATION_TYPE_CHOICES = [
+    ('startup', 'Startup'),
+    ('small_business', 'Small Business'),
+    ('mid_size', 'Mid-size Company'),
+    ('enterprise', 'Enterprise'),
+    ('non_profit', 'Non-Profit'),
+    ('government', 'Government Organization'),
+    ('public', 'Public Company'),
+    ('private', 'Private Company')
+]
+
+class Company(models.Model):
+    # Basic Information
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='company_profile')
+    company_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=255)
+    about_us = models.TextField(blank=True, null=True)
+    
+    # Organizational Details
+    org_type = models.CharField(max_length=30, choices=ORGANIZATION_TYPE_CHOICES, blank=True, null=True)
+    industry_type = models.CharField(max_length=30, choices=INDUSTRY_TYPE_CHOICES, blank=True, null=True)
+    team_size = models.CharField(max_length=20, choices=COMPANY_SIZE_CHOICES, blank=True, null=True)
+    years_of_experience = models.PositiveIntegerField(verbose_name='Years of Experience', blank=True, null=True)
+    
+    # Visual Branding
+    logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
+    banner_image = models.ImageField(upload_to='company_banners/', blank=True, null=True)
+    
+    # Contact Information
+    website = models.URLField(blank=True, null=True)
+    company_email = models.EmailField(blank=True, null=True)
+    company_phone = models.CharField(max_length=20, blank=True, null=True)
+    
+    # Location
+    location = models.CharField(max_length=255, blank=True, null=True)
+    map_location = models.URLField(verbose_name='Google Maps Location', blank=True, null=True)
+    
+    # Vision and Mission
+    company_vision = models.TextField(blank=True, null=True)
+    
+    # Social Media Profiles
+    linkedin_profile = models.URLField(blank=True, null=True)
+    twitter_profile = models.URLField(blank=True, null=True)
+    facebook_profile = models.URLField(blank=True, null=True)
+    instagram_profile = models.URLField(blank=True, null=True)
+    
+    # Metadata
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = 'Companies'
