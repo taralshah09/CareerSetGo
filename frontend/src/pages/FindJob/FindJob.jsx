@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const FindJob = () => {
   const [jobs, setJobs] = useState([]); // State to hold job data
-  
+
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -67,8 +67,8 @@ const FindJob = () => {
         <div className="jobs-feed">
           {jobs.length > 0 ? (
             jobs.map((job) => (
-              <Link to={`/job/${job.job_id}`} style={{textDecoration:"none",color:"black"}}>
-              <div className="job" key={job.job_id}>
+              <Link to={`/job/${job.job_id}`} style={{textDecoration:"none",color:"black"}} state={{ job }}>
+              <div className="job" key={job.job_id} >
                 <div className="job-header">
                   <div className="job-header-left">
                     <img src="../images/c1.png" alt="Company Logo" />

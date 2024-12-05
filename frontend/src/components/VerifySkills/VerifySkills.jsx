@@ -16,6 +16,7 @@ const VerifySkills = () => {
                 });
                 if (response.ok) {
                     const data = await response.json();
+                    console.log(data)
                     setSkills(Array.isArray(data.skills)
                         ? data.skills
                         : typeof data.skills === 'string'

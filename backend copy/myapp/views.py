@@ -1,20 +1,15 @@
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
-from django.core.mail import EmailMultiAlternatives
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.exceptions import InvalidToken
 from .models import User, Profile, Job, Wishlist
-from .serializers import UserSerializer, ProfileSerializer, JobSerializer
-from .utils import send_email
+from .serializers import UserSerializer, ProfileSerializer, JobSerializer, SkillGapAnalysisSerializer
+from .utils.email_utils import send_email  # Updated import statement
 import requests
 import json
-
-
-
 
 class RegisterUser(APIView):
     permission_classes = []
@@ -445,3 +440,35 @@ class UpdateSkillScore(APIView):
 
         else:
             return Response({"detail": "Skills data should be a list."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from .utils.skill_gap_analysis import skill_gap_analysis
+
+class SkillGapAnalysisView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = SkillGapAnalysisSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            job_skills = serializer.validated_data['job_skills']
+            user_skills = serializer.validated_data['user_skills']
+            job_id = serializer.validated_data['job_id']
+            user_id = serializer.validated_data['user_id']
+
+            # Call the external function
+            analysis_result = skill_gap_analysis(user_skills, job_skills)
+
+            return Response({
+                'job_id': job_id,
+                'user_id': user_id,
+                'matching_skills': analysis_result['matched_skills'],
+                'missing_skills': analysis_result['missing_skills'],
+                'skill_completeness': analysis_result['match_percentage']
+            }, status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
