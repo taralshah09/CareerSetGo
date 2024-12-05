@@ -6,7 +6,9 @@ import SettingEmployer from '../SettingEmployer/SettingEmployer';
 import AppliedJobs from '../../components/AppliedJobs/AppliedJobs';
 import FavJobs from '../../components/FavJobs/FavJobs';
 import JobAlerts from '../../components/JobAlerts/JobAlerts';
-import SettingsComp from "../../components/SettingsComp/SettingsComp"
+import SettingsComp from "../../components/SettingsComp/SettingsComp";
+import SavedCandidate from '../SavedCandidateEmployer/SavedCandidate';
+import MyJobCard from '../../MyJobCard';
 const DashboardEmployer = () => {
     const [selectedOption, setSelectedOption] = useState('settings');
 
@@ -31,13 +33,13 @@ const DashboardEmployer = () => {
             case 'post a Job':
                 return <div>post a Job</div>;
             case 'saved Candidates':
-                return <div>savedCandidates</div>;
+                return <SavedCandidate/>;
             case 'plans & Billing':
                 return <div>plans&Billing</div>;
             case 'all Companies':
                 return <div>allCompanies</div>;
             case 'my Jobs':
-                return <div>myJobs</div>;
+                return <MyJobCard/>;
             case 'settings':
                 return <SettingEmployer/>;
             default:
