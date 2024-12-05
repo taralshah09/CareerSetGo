@@ -92,9 +92,9 @@ const AppliedJobs = () => {
     <Box>
       <Box sx={{ mt: 2.5, px: 2 }}>
         {/* Title */}
-        <Typography className="heading" sx={{ mb: 2 }}>
+        <h2 style={{fontSize:"20px"}}>
           Applied Jobs ({jobs.length})
-        </Typography>
+        </h2 >
 
         {/* Table Headers */}
         <Grid
