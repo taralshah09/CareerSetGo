@@ -81,8 +81,9 @@ function App() {
         <Route path="/verify/:skillName" element={<SkillsVerficationPage />} ></Route>
         <Route path="/post" element={<PostJobForm />}></Route>
         <Route path="/choices-game" element={<ChoicesGame />}></Route>
-      </Routes>
-      {!hideNavbarFooter && <Footer />}
+      </Routes >
+      {!hideNavbarFooter && <Footer />
+      }
     </>
   )
 }

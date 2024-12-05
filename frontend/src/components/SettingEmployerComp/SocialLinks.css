@@ -1,0 +1,78 @@
+/* SocialLinks.css */
+
+.social-links {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    flex: 1;
+    gap: 15px;
+}
+
+
+.social-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.social-link select {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.social-link input[type="url"] {
+    flex: 3;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.social-link button {
+    background: transparent;
+    border: none;
+    color: #333;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0 0.5rem;
+}
+
+.social-link button:hover {
+    color: #e74c3c;
+}
+
+button[type="button"] {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #f3f3f3;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #333;
+    transition: 0.3s;
+}
+
+button[type="button"]:hover {
+    background-color: #e7e7e7;
+}
+
+button[type="submit"] {
+    background-color: #007bff;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    width:150px;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}
