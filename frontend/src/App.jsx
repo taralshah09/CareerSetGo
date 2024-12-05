@@ -11,6 +11,7 @@ import FindJob from './pages/FindJob/FindJob'
 import Dashboard from './pages/Dashboard/Dashboard'
 import FindEmployer from './components/FindEmployers/FindEmployer'
 import BrowseCandidate from './pages/BrowseCandidatePage/BrowseCandidatePage'
+import DashboardEmployer from './pages/DashboardEmployer/DashboardEmployer'
 
 function App() {
   const location = useLocation();
@@ -28,7 +29,7 @@ function App() {
         <Route path="/signup" element={<SignupPage />}></Route>
         <Route path="/jobs" element={<JobPage />}></Route>
         <Route path="/employers" element={<EmployerPage />}></Route>
-        <Route path="/dashboard" element={<Dashboard />}></Route>
+        <Route path="/dashboard" element={<Dashboard/>}></Route>
       </Routes>
       <Footer />
       {/* <FindEmployer></FindEmployer> */}
