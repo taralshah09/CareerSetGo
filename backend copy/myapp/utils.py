@@ -5,3 +5,5 @@ def send_email(subject, message, recipient_list, html_message=None):
     if html_message:
         email.attach_alternative(html_message, "text/html")
     email.send()
+
+

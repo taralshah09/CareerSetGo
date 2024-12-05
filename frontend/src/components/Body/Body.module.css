@@ -1,0 +1,186 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Outfit", serif;
+}
+
+:root {
+  --primary-grey: #f1f2f4;
+  --primary-white: #ffffff;
+  --primary-blue: #0a65cc;
+  --dark-text: #18191c;
+  --light-text: #5e6670;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  background-color: #fff;
+  padding: 4rem 6rem;
+}
+
+.heading {
+  font-weight: 500;
+  font-size: 2.1rem;
+  font-family: "Archivo", sans-serif;
+}
+
+.toolbar {
+  width: 100%;
+  display: flex;
+  gap: 40px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.colors {
+  display: flex;
+  gap: 0.7rem;
+  padding: 0 30px;
+}
+
+.colors .color {
+  height: 36px;
+  width: 36px;
+  border-radius: 50%;
+  background-color: var(--primary-blue);
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+}
+
+.colors .active {
+  border: 2px solid #000;
+}
+
+.toolbar button {
+  display: flex;
+  font-family: "Archivo", sans-serif;
+  border-radius: 5px;
+  background-color: var(--primary-blue);
+  color: #ffffff;
+  padding: 10px 20px;
+  outline: none;
+  border: none;
+  font-weight: 500;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+  gap: 5px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.toolbar button svg {
+  height: 20px;
+  width: 20px;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  width: 100%;
+}
+
+.resume{
+  background: #000;
+  width: 100vw;
+}
+
+
+@media only screen and (max-width: 959px) {
+  .container {
+    padding: 30px;
+  }
+
+  .toolbar button {
+    padding: 8px 16px;
+    font-size: 1rem;
+  }
+}
+
+@media only screen and (min-width: 700px) and (max-width: 750px) {
+  .toolbar {
+    gap: 0px;
+  }
+
+  .toolbar button {
+    padding: 8px 16px;
+    font-size: 1rem;
+  }
+}
+
+@media only screen and (min-width: 600px) and (max-width: 699px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .toolbar button {
+    padding: 8px 16px;
+    font-size: 1rem;
+  }
+}
+
+@media only screen and (min-width: 550px) and (max-width: 599px) {
+  .container {
+    flex-direction: column;
+  }
+  .toolbar {
+    gap: 30px;
+  }
+  .toolbar button {
+    padding: 8px 16px;
+    font-size: 1rem;
+  }
+}
+
+@media only screen and (min-width: 500px) and (max-width: 549px) {
+  .container {
+    flex-direction: column;
+  }
+  .toolbar {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .toolbar button {
+    padding: 8px 16px;
+    font-size: 1rem;
+  }
+}
+
+@media only screen and (min-width: 400px) and (max-width: 499px) {
+  .container {
+    flex-direction: column;
+  }
+  .toolbar {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .toolbar button {
+    padding: 8px 16px;
+    font-size: 1rem;
+  }
+}
+
+@media only screen and (min-width: 300px) and (max-width: 399px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .heading {
+    font-size: 1.8rem;
+  }
+
+  .toolbar {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .toolbar button {
+    padding: 8px 16px;
+    font-size: 1rem;
+  }
+}
+

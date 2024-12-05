@@ -129,6 +129,7 @@
     border-radius: 5px;
     cursor: pointer;
   }
+  
   .action-container {
     display: flex;
     align-items: center;
@@ -155,6 +156,6 @@
 }
 
 .btn-icon:hover {
-    color: #007bff; /* Icon hover color */
+    color: #007bff; 
 }
-  
+ 

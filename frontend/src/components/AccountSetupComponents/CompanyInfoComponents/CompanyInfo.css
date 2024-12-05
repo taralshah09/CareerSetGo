@@ -1,0 +1,218 @@
+:root {
+  --primary-blue: #0a65cc;
+  --light-grey: #f1f2f4;
+  --dark-text: #18191c;
+  --light-text: #5e6670;
+}
+
+body {
+  font-family: "Arial", sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+.company-info {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 16px;
+  text-align: left;
+  box-sizing: border-box;
+}
+
+/* Header Section */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.logo img {
+  max-width: 100px;
+  height: auto;
+}
+
+.navbar-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.main-content {
+  width: 100%;
+  max-width: 800px;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding: 0;
+  flex-grow: 1;
+}
+
+.upload-container {
+  display: flex;
+  gap: 25px; 
+  align-items: center;
+  margin-bottom: 1rem;
+  width: 100%;
+  box-sizing: border-box; 
+}
+
+/* Fixed size for .file-box-1 */
+.file-box-1 {
+  width: 170px; /* Fixed width */
+  height: 170px;
+  border: 2px dashed var(--light-text); 
+  border-radius: 5px;
+  background-color: #F1F2F466;
+  display: flex; 
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  /* padding: 0 2.5rem; */
+}
+
+/* Flex-grow for .file-box-2 */
+.file-box-2 {
+  flex-grow: 1; 
+  min-width: 0; /* Allow it to shrink if necessary */
+  height: 170px; 
+  border: none; 
+  border-radius: 5px;
+  background-color: #F1F2F466;
+  display: flex; 
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
+  padding: 0 2.5rem;
+}
+
+
+.upload-section h3{
+  color: #18191C;
+  margin-bottom: 1rem;
+}
+.file-label {
+  font-size: 14px;
+  color: #18191C;
+  margin-bottom: 5px;
+  display: block;
+}
+
+.upload-label{
+  color: #18191C;
+}
+
+.file-box .file-input-label {
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.file-box img {
+  width: 40px;
+  margin-bottom: 10px;
+}
+
+.file-box p {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 5px 0;
+}
+
+.file-box span {
+  font-size: 12px;
+  color: var(--light-text);
+}
+
+.file-box input {
+  display: none;
+}
+
+/* Form Section */
+.form-group {
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+label {
+  font-size: 14px;
+  color: var(--light-text);
+  margin-bottom: 5px;
+  display: block;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--light-text);
+  border-radius: 5px;
+  font-size: 14px;
+  color: var(--dark-text);
+  box-sizing: border-box;
+}
+
+textarea {
+  resize: none;
+  height: 100px;
+}
+
+/* Action Section */
+.save-btn {
+  background: var(--primary-blue);
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.save-btn .arrow-icon {
+  margin-left: 5px;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .upload-container {
+    flex-direction: column;
+  }
+
+  .file-box-wrapper {
+    width: 100%;
+  }
+
+  .save-btn {
+    width: 100%;
+  }
+
+  .header {
+    flex-direction: column;
+  }
+
+  .logo img {
+    margin-bottom: 10px;
+  }
+}
+
+footer {
+  margin-top: auto; 
+  padding: 20px 0;
+  text-align: center;
+}
+
+#aboutUs{
+  height: 6rem;
+}
+.company-info, .main-content {
+  text-align: left;
+}
+.main-content {
+  margin: 0 auto; /* Centers horizontally only */
+  text-align: left; /* Ensures text alignment */
+  display: block; /* Reset to block if flexbox styles exist */
+}

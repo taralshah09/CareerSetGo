@@ -7,7 +7,7 @@ import FlowChart from '../../components/FlowChart/FlowChart';
 import PopularCategory from '../../components/PopularCategory/PopularCategory';
 import FeaturedJobs from '../../components/FeaturedJobs/FeaturedJobs';
 import Users from '../../components/Users/Users';
-
+import ClientTestimonial from '../../components/ClientTestimonialComponents/ClientTestimonial'
 
 const HomePage = () => {
   const [userData, setUserData] = useState(null);
@@ -35,6 +35,7 @@ const HomePage = () => {
       <PopularCategory />
       <FeaturedJobs />
       <Users />
+      <ClientTestimonial />
 
       {userData && (
         <div>

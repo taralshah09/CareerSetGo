@@ -43,15 +43,28 @@
 .info-box .search-box {
   width: 95%;
   display: flex;
+  align-items: center;
   margin-left: -5px;
 }
 
 .info-box .box1 {
   display: flex;
+  align-items: center;
+}
+
+.info-box .box1 input,
+.info-box .box2 input {
+  border: 0;
+  outline: 0;
+}
+.info-box .box1 input:hover,
+.info-box .box2 input:hover {
+  background: white;
 }
 
 .info-box .box2 {
   display: flex;
+  align-items: center;
 }
 
 .info-box .box3 button {
@@ -95,6 +108,7 @@
 .hero-header .img-box img {
   max-width: 400px;
   width: 100%;
+  user-select: none;
 }
 
 .hero-footer {

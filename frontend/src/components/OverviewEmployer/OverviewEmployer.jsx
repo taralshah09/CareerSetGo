@@ -216,7 +216,58 @@ const OverviewEmployer = () => {
                                 </Menu>
                             </td>
                         </tr>
-                        {/* Repeat other rows here */}
+                        <tr className="recently">
+                            <td>
+                                <div className="job-details">
+                                    <div>
+                                        <span className="job-title">Networking Engineer<br /></span>
+                                        <span>Full Time &nbsp;&nbsp; 3 Days Remaining</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><span className="status-active">Active</span></td>
+                            <td><FaUserGroup />798 Applications</td>
+                            <td>
+                                <div className="action-container">
+                                    <button className="action-btn">View Application</button>
+                                    <IconButton onClick={handleMenuOpen} className="btn-icon">
+                                        <FaEllipsisV />
+                                    </IconButton>
+                                </div>
+                                <Menu
+                                    anchorEl={anchorEl}
+                                    open={open}
+                                    onClose={handleMenuClose}
+                                    anchorOrigin={{
+                                        vertical: 'bottom',
+                                        horizontal: 'center',
+                                    }}
+                                    transformOrigin={{
+                                        vertical: 'top',
+                                        horizontal: 'center',
+                                    }}
+                                >
+                                    <MenuItem onClick={handleMenuClose}>
+                                        <ListItemIcon>
+                                            <AddCircleOutlineIcon fontSize="small" />
+                                        </ListItemIcon>
+                                        <ListItemText>Promote Job</ListItemText>
+                                    </MenuItem>
+                                    <MenuItem onClick={handleMenuClose}>
+                                        <ListItemIcon>
+                                            <VisibilityIcon fontSize="small" />
+                                        </ListItemIcon>
+                                        <ListItemText>View Detail</ListItemText>
+                                    </MenuItem>
+                                    <MenuItem onClick={handleMenuClose}>
+                                        <ListItemIcon>
+                                            <CancelOutlinedIcon fontSize="small" />
+                                        </ListItemIcon>
+                                        <ListItemText>Mark as Expired</ListItemText>
+                                    </MenuItem>
+                                </Menu>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

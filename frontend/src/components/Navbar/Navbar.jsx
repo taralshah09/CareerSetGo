@@ -43,7 +43,8 @@ const Navbar = () => {
           <NavLink to="/find-job" className="nav-link">Find Job</NavLink>
           <NavLink to="/employers" className="nav-link">Employers</NavLink>
           <NavLink to="/dashboard" className="nav-link">Dashboard</NavLink>
-          <NavLink to="/customer-support" className="nav-link">Customer Support</NavLink>
+          <NavLink to="/resume-builder" className="nav-link">Resume builder</NavLink>
+          <NavLink to="/choices-game" className="nav-link">Choices game</NavLink>
         </ul>
       </nav>
 
@@ -55,7 +56,7 @@ const Navbar = () => {
 
         <div className="search-box">
           <img src="../images/search.png" alt="search" />
-          <input type="text" placeholder='Job title, keyword, company' />
+          <input type="text" className='search-bar' placeholder='Job title, keyword, company' />
         </div>
 
         <div className="buttons-box">

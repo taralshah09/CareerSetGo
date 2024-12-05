@@ -1,23 +1,26 @@
 import React, { useState } from 'react';
 import './DashboardEmployer.css';
-import { FaLayerGroup, FaBriefcase, FaCircle, FaCog, FaBookmark ,FaSignOutAlt,FaUserCircle,FaListUl,FaRegIdCard} from 'react-icons/fa';
+import { FaLayerGroup, FaBriefcase, FaCircle, FaCog, FaBookmark, FaSignOutAlt, FaUserCircle, FaListUl, FaRegIdCard } from 'react-icons/fa';
 import OverviewEmployer from '../../components/OverviewEmployer/OverviewEmployer';
 import SettingEmployer from '../SettingEmployer/SettingEmployer';
 import AppliedJobs from '../../components/AppliedJobs/AppliedJobs';
 import FavJobs from '../../components/FavJobs/FavJobs';
 import JobAlerts from '../../components/JobAlerts/JobAlerts';
 import SettingsComp from "../../components/SettingsComp/SettingsComp"
+import { FaLayerGroup, FaBriefcase, FaCircle, FaCog, FaBookmark, FaSignOutAlt, FaUserCircle, FaListUl, FaRegIdCard } from 'react-icons/fa';
+import OverviewEmployer from '../../components/OverviewEmployer/OverviewEmployer';
+import PostJobForm from '../PostJobForm/PostJobForm';
+
 const DashboardEmployer = () => {
-    const [selectedOption, setSelectedOption] = useState('settings');
+    const [selectedOption, setSelectedOption] = useState('overview');
 
     const options = [
-      
+
         { id: 'overview', label: 'Overview', icon: <FaLayerGroup /> },
         { id: 'employers Profile', label: 'Employers Profile', icon: <FaUserCircle /> },
-        { id: 'post a Job', label: 'Post a Job', icon: <FaCircle  /> },
+        { id: 'post a Job', label: 'Post a Job', icon: <FaCircle /> },
         { id: 'my Jobs', label: 'My Jobs', icon: <FaBriefcase /> },
         { id: 'saved Candidates', label: 'Saved Candidates', icon: <FaBookmark /> },
-        { id: 'plans & Billing', label: 'Plans & Billing', icon: <FaListUl/> },
         { id: 'all Companies', label: 'All Companies', icon: <FaRegIdCard /> },
         { id: 'settings', label: 'Settings', icon: <FaCog /> },
     ];
@@ -29,7 +32,7 @@ const DashboardEmployer = () => {
             case 'employers Profile':
                 return <div>Employers Profile</div>;
             case 'post a Job':
-                return <div>post a Job</div>;
+                return <PostJobForm />;
             case 'saved Candidates':
                 return <div>savedCandidates</div>;
             case 'plans & Billing':
@@ -39,7 +42,7 @@ const DashboardEmployer = () => {
             case 'my Jobs':
                 return <div>myJobs</div>;
             case 'settings':
-                return <SettingEmployer/>;
+                return <SettingEmployer />;
             default:
                 return <div>Select an option from the sidebar</div>;
         }
