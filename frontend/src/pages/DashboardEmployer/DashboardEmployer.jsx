@@ -7,7 +7,6 @@ import AppliedJobs from '../../components/AppliedJobs/AppliedJobs';
 import FavJobs from '../../components/FavJobs/FavJobs';
 import JobAlerts from '../../components/JobAlerts/JobAlerts';
 import SettingsComp from "../../components/SettingsComp/SettingsComp"
-import { FaLayerGroup, FaBriefcase, FaCircle, FaCog, FaBookmark, FaSignOutAlt, FaUserCircle, FaListUl, FaRegIdCard } from 'react-icons/fa';
 import OverviewEmployer from '../../components/OverviewEmployer/OverviewEmployer';
 import PostJobForm from '../PostJobForm/PostJobForm';
 
@@ -34,7 +33,7 @@ const DashboardEmployer = () => {
             case 'post a Job':
                 return <PostJobForm />;
             case 'saved Candidates':
-                return <div>savedCandidates</div>;
+                return <div>Saved Candidates</div>;
             case 'plans & Billing':
                 return <div>plans&Billing</div>;
             case 'all Companies':

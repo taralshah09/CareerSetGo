@@ -9,7 +9,6 @@ import BookmarkIcon from '@mui/icons-material/Bookmark';
 
 
 const FavJobCard = ({ logo, jobTitle, location, image: imageUrl, jobTiming, salary, deadline }) => {
-
   const [isHovered, setIsHovered] = useState(false);
   const isExpired = deadline.toLowerCase().includes('expired');
 
