@@ -1,86 +1,136 @@
-from django.core.management.base import BaseCommand
-from django.utils import timezone
-from django.contrib.auth import get_user_model
-from myapp.models import Profile, Job, Wishlist, AppliedJob, Course
 import random
+from django.core.management.base import BaseCommand
+from django.contrib.auth import get_user_model
+from django.db import transaction
 from faker import Faker
 
+from myapp.models import Job, Profile, Wishlist, AppliedJob  # Replace with your actual import path
+
+User = get_user_model()
 fake = Faker()
 
 class Command(BaseCommand):
-    help = 'Populate database with test user, profile, and job data'
+    help = 'Populates the database with sample jobs and user profiles'
 
-    def handle(self, *args, **kwargs):
-        # Creating test users
-        users = []
-        for _ in range(5):  # creating 5 test users
-            username = fake.user_name()
-            email = fake.email()
-            password = "testpassword123"  # You can use a simple password for testing
-            user = get_user_model().objects.create_user(
-                username=username,
-                email=email,
-                password=password
-            )
-            users.append(user)
-            self.stdout.write(self.style.SUCCESS(f'Created user: {user.username}'))
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--jobs', 
+            type=int, 
+            default=25, 
+            help='Number of jobs to create'
+        )
+        parser.add_argument(
+            '--users', 
+            type=int, 
+            default=50, 
+            help='Number of users to create'
+        )
 
-        # Creating profiles for each user
-        for user in users:
-            profile = Profile.objects.create(
-                user=user,
-                profile_picture=None,  # Set to None or use fake images if needed
-                education=fake.text(),
-                age=random.randint(20, 40),
-                experience=fake.text(),
-                location=fake.city(),
-                role=fake.job(),
-                phone_no=fake.phone_number(),
-                resume=None,  # Set to None or link to a dummy file if needed
-                domain_of_interest=random.choice(['ai_ml', 'web_dev', 'data_science']),
-                job_type=random.choice(['remote', 'onsite', 'hybrid']),
-                skills=fake.text(),
-            )
-            self.stdout.write(self.style.SUCCESS(f'Created profile for: {user.username}'))
+    def handle(self, *args, **options):
+        num_jobs = options['jobs']
+        num_users = options['users']
 
-        # Creating jobs
-        job_titles = ['Software Developer', 'Data Scientist', 'AI Specialist', 'Web Developer', 'Cybersecurity Expert']
-        for _ in range(5):  # creating 5 job listings
+        # Ensure we don't create duplicate data
+        self.stdout.write(self.style.WARNING('Clearing existing job and user data...'))
+        Job.objects.all().delete()
+        Profile.objects.all().delete()
+        User.objects.filter(role='candidate').delete()
+        
+        with transaction.atomic():
+            try:
+                # Populate jobs
+                jobs = self._populate_jobs(num_jobs)
+                
+                # Populate users
+                users = self._populate_users(num_users)
+                
+                self.stdout.write(
+                    self.style.SUCCESS(f'Successfully created {len(jobs)} jobs and {len(users)} users')
+                )
+            except Exception as e:
+                self.stdout.write(self.style.ERROR(f'Error populating data: {str(e)}'))
+
+    def _populate_jobs(self, num_jobs):
+        job_domains = ['ai_ml', 'data_science', 'cyber_security', 'web_dev', 'mobile_dev', 'ux_ui', 'cloud_computing', 'blockchain', 'digital_marketing', 'fintech', 'healthtech']
+        job_types = ['hybrid', 'onsite', 'remote']
+        
+        skills_map = {
+            'web_dev': ['React', 'Vue.js', 'Angular', 'HTML5', 'CSS3', 'JavaScript', 'TypeScript', 'Responsive Design', 'Bootstrap', 'Tailwind CSS'],
+            'mobile_dev': ['Java', 'Kotlin', 'Swift', 'Flutter', 'React Native'],
+            'ai_ml': ['Python', 'TensorFlow', 'Keras', 'PyTorch', 'Scikit-learn', 'Deep Learning', 'Machine Learning'],
+            'data_science': ['R', 'Python', 'Pandas', 'NumPy', 'Data Visualization', 'SQL'],
+            'cyber_security': ['Network Security', 'Penetration Testing', 'Ethical Hacking', 'Firewall Management'],
+            'cloud_computing': ['AWS', 'Azure', 'GCP', 'Docker', 'Kubernetes'],
+            'blockchain': ['Ethereum', 'Solidity', 'Cryptocurrency', 'Smart Contracts'],
+            'digital_marketing': ['SEO', 'SEM', 'Google Analytics', 'Social Media Marketing'],
+            'fintech': ['Blockchain', 'Financial Modeling', 'Cryptocurrency', 'Fintech Solutions'],
+            'healthtech': ['Health Data Analytics', 'Medical Software', 'Telemedicine'],
+        }
+        
+        recruiter, _ = User.objects.get_or_create(
+            username='primary_recruiter', 
+            defaults={'email': 'recruiter@example.com', 'role': 'recruiter'}
+        )
+        
+        created_jobs = []
+        
+        for _ in range(num_jobs):
+            domain = random.choice(job_domains)
+            skills = random.sample(skills_map.get(domain, []), k=min(random.randint(3, 6), len(skills_map.get(domain, []))))
+            
             job = Job.objects.create(
-                title=random.choice(job_titles),
-                description=fake.text(),
+                title=f"{domain.replace('_', ' ').title()} Engineer - {fake.company()}",
+                description=fake.paragraph(nb_sentences=5),
                 company_name=fake.company(),
                 location=fake.city(),
-                salary=random.randint(50000, 120000),
-                posted_by=random.choice(users),
-                job_domain=random.choice(['ai_ml', 'data_science', 'web_dev']),
-                job_type=random.choice(['remote', 'onsite', 'hybrid']),
+                salary=random.randint(50000, 180000),
+                job_type=random.choice(job_types),
+                job_domain=domain,
+                skills_required=', '.join(skills),
+                posted_by=recruiter,
+                is_approved=True
             )
-            self.stdout.write(self.style.SUCCESS(f'Created job listing: {job.title}'))
+            created_jobs.append(job)
+        
+        return created_jobs
 
-        # Creating course data
-        for _ in range(3):  # creating 3 courses
-            course = Course.objects.create(
-                title=fake.bs(),
-                description=fake.text(),
-                start_date=fake.date_this_year(),
-                end_date=fake.date_this_year(),
-                instructor=fake.name(),
+    def _populate_users(self, num_users):
+        skills_map = {
+            'web_dev': ['React', 'Vue.js', 'Angular', 'HTML5', 'CSS3', 'JavaScript', 'TypeScript', 'Responsive Design', 'Bootstrap', 'Tailwind CSS'],
+            'mobile_dev': ['Java', 'Kotlin', 'Swift', 'Flutter', 'React Native'],
+            'ai_ml': ['Python', 'TensorFlow', 'Keras', 'PyTorch', 'Scikit-learn', 'Deep Learning', 'Machine Learning'],
+            'data_science': ['R', 'Python', 'Pandas', 'NumPy', 'Data Visualization', 'SQL'],
+            'cyber_security': ['Network Security', 'Penetration Testing', 'Ethical Hacking', 'Firewall Management'],
+            'cloud_computing': ['AWS', 'Azure', 'GCP', 'Docker', 'Kubernetes'],
+            'blockchain': ['Ethereum', 'Solidity', 'Cryptocurrency', 'Smart Contracts'],
+            'digital_marketing': ['SEO', 'SEM', 'Google Analytics', 'Social Media Marketing'],
+            'fintech': ['Blockchain', 'Financial Modeling', 'Cryptocurrency', 'Fintech Solutions'],
+            'healthtech': ['Health Data Analytics', 'Medical Software', 'Telemedicine'],
+        }
+        
+        job_types = ['hybrid', 'onsite', 'remote']
+        
+        created_users = []
+        
+        for _ in range(num_users):
+            domain = random.choice(list(skills_map.keys()))
+            skills = random.sample(skills_map[domain], k=min(random.randint(3, 6), len(skills_map[domain])))
+            
+            user = User.objects.create(
+                username=fake.user_name(),
+                email=fake.email(),
+                fullname=fake.name(),
+                role='candidate'
             )
-            course.enrolled_users.add(*random.sample(users, 2))  # Enroll 2 random users
-            self.stdout.write(self.style.SUCCESS(f'Created course: {course.title}'))
-
-        # Creating wishlists and applied jobs
-        for user in users:
-            for job in Job.objects.all():
-                # Add random jobs to wishlist
-                if random.choice([True, False]):
-                    Wishlist.objects.create(user=user, job=job)
-                    self.stdout.write(self.style.SUCCESS(f'Added job to wishlist for {user.username}'))
-
-                # Apply for a random job
-                if random.choice([True, False]):
-                    AppliedJob.objects.create(user=user, job=job)
-                    self.stdout.write(self.style.SUCCESS(f'{user.username} applied for {job.title}'))
-
-        self.stdout.write(self.style.SUCCESS('Test data population completed!'))
+            
+            Profile.objects.create(
+                user=user,
+                skills=skills,
+                domain_of_interest=domain,
+                job_type=random.choice(job_types),
+                location=fake.city()
+            )
+            
+            created_users.append(user)
+        
+        return created_users

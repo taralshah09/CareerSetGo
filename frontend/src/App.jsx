@@ -16,6 +16,7 @@ import SkillsVerficationPage from './pages/SkillsVerificationPage/SkillsVerifica
 import PostJobForm from './pages/PostJobForm/PostJobForm'
 import ChoicesGame from './pages/ChoicesGame/ChoicesGame'
 import DashboardEmployer from './pages/DashboardEmployer/DashboardEmployer'
+import Profile from './components/Profile/Profile'
 
 function App() {
   const location = useLocation();

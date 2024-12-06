@@ -28,12 +28,11 @@ const FavJobCard = ({ logo, jobTitle, location, image: imageUrl, jobTiming, sala
         onMouseLeave={() => setIsHovered(false)}
         sx={{
           display: 'flex',
+          border: isHovered ? "1px solid #0A65CC" : "1px solid transparent",
           alignItems: 'center',
           paddingY: '0.3rem',
           paddingX: '0.4rem',
-          border: 'none ',
           boxShaddow: 'none',
-          border: isHovered ? "1px solid #0A65CC" : "1px solid transparent",
           transition: "border 0.3s ease",
         }}
       >

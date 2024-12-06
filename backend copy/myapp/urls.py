@@ -1,6 +1,8 @@
 from django.urls import path
 from django.contrib import admin
 from rest_framework_simplejwt import views as jwt_views
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+
 from .views import ( RegisterUser,UpdateSkillScore,LoginView,LogoutView,UpdateProfile,JobsView,UserProfileView,CurrentUserView,PostJobView,RecentJobsView,AddToWishlistView,fetchcourses)
 
 urlpatterns = [
@@ -9,6 +11,7 @@ urlpatterns = [
     path('api/login/', LoginView.as_view(), name='login'),  # JWT login
     path('logout/', LogoutView.as_view(), name='logout'),  # JWT logout
     path('token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'), 
 
     # User Profile Routes

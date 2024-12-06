@@ -28,12 +28,13 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'rest_framework_simplejwt',  # JWT Authentication
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework_simplejwt',  # JWT Authentication
-      'rest_framework_simplejwt.token_blacklist',
+    'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     'myapp',
+    'forum',
 ]
 
 # Middleware configuration
@@ -54,7 +55,8 @@ AUTH_USER_MODEL = 'myapp.User'
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',  # Replace with your frontend URL
-    'http://127.0.0.1:5173'  # Replace with your frontend URL
+    'http://127.0.0.1:5173',  # Replace with your frontend URL
+ 'http://localhost:3000'
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -100,6 +102,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',  # JWT Authentication
     ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
 }
 
 # Session settings are removed since we're using JWT now
@@ -158,3 +162,27 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'myapp': {  # This will catch our logger
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
