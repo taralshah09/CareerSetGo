@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './Personal.css';
 
 const Personal = () => {
@@ -78,12 +80,10 @@ const Personal = () => {
             }
         });
 
-        // Append profile picture if exists
         if (profileData.profile_picture) {
             formData.append('profile_picture', profileData.profile_picture);
         }
 
-        // Append resume if exists
         if (resumeFile) {
             formData.append('resume', resumeFile);
         }
@@ -99,7 +99,17 @@ const Personal = () => {
 
             if (response.ok) {
                 const updatedProfile = await response.json();
-                console.log('Profile updated successfully:', updatedProfile);
+
+                // Show success toast notification
+                toast.success('Profile updated successfully!', {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
 
                 // Update state with the newly submitted data
                 setProfileData({
@@ -107,127 +117,169 @@ const Personal = () => {
                     title: updatedProfile.title || '',
                     experience: updatedProfile.experience || '',
                     education: updatedProfile.education || '',
-                    website: updatedProfile.personal_website || '',
+                    website: updatedProfile.personal_website,
                 });
+
                 if (updatedProfile.profile_picture) {
                     setProfilePicture(updatedProfile.profile_picture);
                 }
 
-                navigate('/dashboard');
+                // Navigate after a short delay to ensure the toast is visible
+                setTimeout(() => {
+                    navigate('/dashboard');
+                }, 1000);
             } else {
                 const errorData = await response.json();
                 console.error('Error updating profile:', errorData);
+
+                // Show error toast notification
+                toast.error('Failed to update profile', {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
             }
         } catch (error) {
             console.error('Error submitting profile:', error);
+
+            // Show error toast notification for network/server errors
+            toast.error('Something went wrong. Please try again.', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
         }
     };
 
     return (
         <div className="personal">
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
             <div className="basic-info">
                 <div className="basic-info-header">
                     <p>Basic Info</p>
                 </div>
                 <form className="basic-info-content" onSubmit={handleSubmit}>
-                    <div className="basic-info-content-left">
-                        <p>Profile Picture</p>
-                        <div className="file-box">
-                            <label htmlFor="profile_picture">
-                                <img src="../images/upload.png" alt="Upload Icon" />
-                                <p>Browse Photo or drop here</p>
-                                <span>A photo larger than 400 pixels works best. Max photo size 5MB.</span>
-                            </label>
-                            <input
-                                type="file"
-                                id="profile_picture"
-                                name="profile_picture"
-                                onChange={handleChange}
-                                accept=".png, .jpg, .jpeg"
-                            />
-                        </div>
-                        {profilePicture && (
-                            <div className="profile-picture-preview">
-                                <p>Profile Preview:</p>
-                                <img
-                                    src={profilePicture}
-                                    alt="Profile Preview"
-                                    className="preview-image"
+                    <div className="form-top">
+                        <div className="basic-info-content-left">
+                            <p>Profile Picture</p>
+                            <div className="file-box">
+                                <label htmlFor="profile_picture">
+                                    <img src="../images/upload.png" alt="Upload Icon" />
+                                    <p>Browse Photo or drop here</p>
+                                    <span>A photo larger than 400 pixels works best. Max photo size 5MB.</span>
+                                </label>
+                                <input
+                                    type="file"
+                                    id="profile_picture"
+                                    name="profile_picture"
+                                    onChange={handleChange}
+                                    accept=".png, .jpg, .jpeg"
                                 />
                             </div>
-                        )}
+                            {profilePicture && (
+                                <div className="profile-picture-preview">
+                                    <p>Profile Preview:</p>
+                                    <img
+                                        src={profilePicture}
+                                        alt="Profile Preview"
+                                        className="preview-image"
+                                    />
+                                </div>
+                            )}
+                        </div>
+                        <div className="basic-info-content-right">
+                            <div className="top">
+                                <div className="top-left">
+                                    <label htmlFor="fullname">Full Name</label>
+                                    <input
+                                        type="text"
+                                        id="fullname"
+                                        name="fullname"
+                                        value={profileData.fullname || ''}
+                                        onChange={handleChange}
+                                        placeholder="Full Name"
+                                    />
+                                </div>
+                                <div className="top-right">
+                                    <label htmlFor="title">Title/Headline</label>
+                                    <input
+                                        type="text"
+                                        id="title"
+                                        name="title"
+                                        value={profileData.title || ''}
+                                        onChange={handleChange}
+                                        placeholder="Title/Headline"
+                                    />
+                                </div>
+                            </div>
+                            <div className="mid-1">
+                                <div className="mid-1-left">
+                                    <label htmlFor="experience">Experience</label>
+                                    <select
+                                        id="experience"
+                                        name="experience"
+                                        value={profileData.experience || ''}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="">Select Experience</option>
+                                        <option value="10">10+ years</option>
+                                        <option value="5">5+ years</option>
+                                        <option value="3">3+ years</option>
+                                        <option value="1">1+ years</option>
+                                        <option value="0">No Experience</option>
+                                    </select>
+                                </div>
+                                <div className="mid-1-right">
+                                    <label htmlFor="education">Education</label>
+                                    <select
+                                        id="education"
+                                        name="education"
+                                        value={profileData.education || ''}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="">Select Education</option>
+                                        <option value="Masters">Masters</option>
+                                        <option value="Bachelors">Bachelors</option>
+                                        <option value="Diploma">Diploma</option>
+                                        <option value="HSC">H.S.C.</option>
+                                        <option value="SSC">S.S.C</option>
+                                        <option value="School Dropout">School Dropout</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="mid-2">
+                                <label htmlFor="personal_website">Personal Website</label>
+                                <input
+                                    type="text"
+                                    id="personal_website"
+                                    name="personal_website"
+                                    placeholder="Personal Website URL"
+                                    value={profileData.personal_website || ''}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                        </div>
                     </div>
-                    <div className="basic-info-content-right">
-                        <div className="top">
-                            <div className="top-left">
-                                <label htmlFor="fullname">Full Name</label>
-                                <input
-                                    type="text"
-                                    id="fullname"
-                                    name="fullname"
-                                    value={profileData.fullname || ''}
-                                    onChange={handleChange}
-                                    placeholder="Full Name"
-                                />
-                            </div>
-                            <div className="top-right">
-                                <label htmlFor="title">Title/Headline</label>
-                                <input
-                                    type="text"
-                                    id="title"
-                                    name="title"
-                                    value={profileData.title || ''}
-                                    onChange={handleChange}
-                                    placeholder="Title/Headline"
-                                />
-                            </div>
-                        </div>
-                        <div className="mid-1">
-                            <div className="mid-1-left">
-                                <label htmlFor="experience">Experience</label>
-                                <select
-                                    id="experience"
-                                    name="experience"
-                                    value={profileData.experience || ''}
-                                    onChange={handleChange}
-                                >
-                                    <option value="">Select Experience</option>
-                                    <option value="10">10+ years</option>
-                                    <option value="5">5+ years</option>
-                                    <option value="3">3+ years</option>
-                                    <option value="1">1+ years</option>
-                                    <option value="0">No Experience</option>
-                                </select>
-                            </div>
-                            <div className="mid-1-right">
-                                <label htmlFor="education">Education</label>
-                                <select
-                                    id="education"
-                                    name="education"
-                                    value={profileData.education || ''}
-                                    onChange={handleChange}
-                                >
-                                    <option value="">Select Education</option>
-                                    <option value="Masters">Masters</option>
-                                    <option value="Bachelors">Bachelors</option>
-                                    <option value="Diploma">Diploma</option>
-                                    <option value="HSC">H.S.C.</option>
-                                    <option value="SSC">S.S.C</option>
-                                    <option value="School Dropout">School Dropout</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div className="mid-2">
-                            <label htmlFor="personal_website">Personal Website</label>
-                            <input
-                                type="text"
-                                id="personal_website"
-                                name="personal_website"
-                                placeholder="Personal Website URL"
-                                value={profileData.personal_website || ''}
-                                onChange={handleChange}
-                            />
-                        </div>
+                    <div className="form-bottom">
                         <div className="bottom">
                             <div>
                                 <label htmlFor="resume">Resume</label>
@@ -242,6 +294,7 @@ const Personal = () => {
                             <button type="submit">Save Changes</button>
                         </div>
                     </div>
+
                 </form>
             </div>
         </div>

@@ -1,9 +1,27 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Outfit", serif;
+}
+
 :root {
   --primary-grey: #f1f2f4;
   --primary-white: #ffffff;
   --primary-blue: #0a65cc;
   --dark-text: #18191c;
   --light-text: #5e6670;
+}
+
+.Toastify__toast--success {
+  background-color: #4caf50; /* Green */
+  color: white;
+}
+
+.Toastify__toast--error {
+  background-color: #f44336; /* Red */
+  color: white;
 }
 
 .personal {
@@ -31,10 +49,23 @@
 }
 .basic-info-content {
   display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 300px;
+}
+
+form div {
+  margin-bottom: 2px;
+}
+
+.basic-info-content .form-top {
+  display: flex;
   width: 100%;
   gap: 15px;
-  height: 300px;
-  /* padding: 0 15px; */
+}
+.basic-info-content .form-bottom {
+  display: flex;
+  width: 100%;
 }
 
 .basic-info-content-left {
@@ -101,12 +132,8 @@
 
 .basic-info-content-right {
   width: 100%;
-  /* background: brown; */
-  /* padding: 10px 10px; */
   display: flex;
   flex-direction: column;
-  /* align-items: center;
-  justify-content: center; */
   align-items: flex-start;
 }
 .basic-info-content-right .top {
@@ -145,11 +172,11 @@
   outline: 0;
   border: 1px solid var(--light-text);
 }
-label {
-  display: block;
+
+form label {
   font-weight: 400;
-  color: var(--light-text);
-  margin-bottom: 5px;
+  margin-bottom: 0px;
+  font-family: "Outfit", serif;
 }
 
 .basic-info-content-right .mid-1 {
@@ -210,7 +237,6 @@ label {
 }
 
 .cv-resume {
-  /* background-color: #f9f9f9; */
   border-radius: 8px;
   margin-bottom: 20px;
 }

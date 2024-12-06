@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './OtherFields.css';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const OtherFields = () => {
     const [formData, setFormData] = useState({
         fullName: '',
@@ -189,20 +190,20 @@ const OtherFields = () => {
 
         // Ensure skills are in the correct format for DRF serializer
         const formattedSkills = formData.skills.map(skill => {
-        // Handle both string and object formats
-        if (typeof skill === 'string') {
+            // Handle both string and object formats
+            if (typeof skill === 'string') {
+                return {
+                    name: skill,
+                    score: 0,
+                    verified: false
+                };
+            }
             return {
-                name: skill,
-                score: 0,
-                verified: false
+                name: skill.name || skill,
+                score: skill.score || 0,
+                verified: skill.verified || false
             };
-        }
-        return {
-            name: skill.name || skill,
-            score: skill.score || 0,
-            verified: skill.verified || false
-        };
-    });
+        });
 
 
         // Create an object that matches the Django serializer's expected structure
@@ -231,18 +232,14 @@ const OtherFields = () => {
         // Create FormData for file uploads
         const formDataToSend = new FormData();
 
-        // Append all non-file fields
         Object.keys(dataToSend).forEach(key => {
             if (key === 'skills') {
-                // Directly append the skills array
                 formDataToSend.append(key, JSON.stringify(dataToSend[key]));
             } else if (dataToSend[key] !== null && dataToSend[key] !== undefined) {
                 formDataToSend.append(key, dataToSend[key]);
             }
         });
 
-
-        // Append files if they exist
         if (formData.resume) {
             formDataToSend.append('resume', formData.resume);
         }
@@ -259,18 +256,52 @@ const OtherFields = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log('Profile updated successfully:', data);
-                console.log("Response : " + Array(data.skills))
-                // Add success notification here
+
+                // Show success toast
+                toast.success('Profile updated successfully!', {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    style: {
+                        backgroundColor: '#4CAF50',
+                        color: 'white'
+                    }
+                });
             } else {
                 const errorData = await response.json();
                 console.error('Error updating profile:', errorData);
-                // Add detailed error handling
-                Object.keys(errorData).forEach(key => {
-                    console.error(`${key}:`, errorData[key]);
+
+                // Show error toast
+                toast.error('Failed to update profile. Please try again.', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light"
                 });
             }
         } catch (error) {
             console.error('Error submitting profile:', error);
+
+            // Show error toast for network/unexpected errors
+            toast.error('An unexpected error occurred. Please try again later.', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light"
+            });
         }
     };
 
@@ -286,128 +317,143 @@ const OtherFields = () => {
     };
 
     return (
-        <form className="profile-form" onSubmit={handleSubmit}>
-            {/* Professional Skills */}
-            <label className="form-label">Professional Skills</label>
-            <div className="input-group">
-                <div className="input-skills">
-                    {formData.skills.map((skill, index) => (
-                        <div className="item-badge" key={index}>
-                            <p>{skill.name.length > 10 ? skill.name.substr(0, 10) + "..." : skill.name}</p>
-                            <span onClick={() => handleRemoveSkill(index)}>
-                                <i className="fa-solid fa-xmark"></i>
-                            </span>
-                        </div>
-                    ))}
-                </div>
-                <div className='skill-input-box'>
-                    <input
-                        type="text"
-                        value={skillName}
-                        onChange={e => setSkillName(e.target.value)}
-                        placeholder="Search for a skill..."
-                        className="search-input"
-                        onKeyDown={handleSkillKeyDown}
-                    />
-                    <button className='add-button' onClick={(e) => {
-                        addSkills(e, skillName);
-                    }}>Add</button>
-                </div>
-            </div>
-
-            {/* Domain of Interest */}
-            <label className="form-label">Domain of Interest</label>
-            <div className="input-group">
-                {formData.domainOfInterest.length > 0 && (
-                    <div className="selected-items">
-                        {formData.domainOfInterest.map((domain, index) => (
-                            <span key={index} className="item-badge">{domain}</span>
+        <>
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
+            <form className="profile-form" onSubmit={handleSubmit}>
+                {/* Professional Skills */}
+                <label className="form-label">Professional Skills</label>
+                <div className="input-group">
+                    <div className="input-skills">
+                        {formData.skills.map((skill, index) => (
+                            <div className="item-badge" key={index}>
+                                <p>{skill.name.length > 10 ? skill.name.substr(0, 10) + "..." : skill.name}</p>
+                                <span onClick={() => handleRemoveSkill(index)}>
+                                    <i className="fa-solid fa-xmark"></i>
+                                </span>
+                            </div>
                         ))}
                     </div>
-                )}
-                <div className='skill-input-box'>
-                    <input
-                        type="text"
-                        value={domainSearch}
-                        onChange={e => setDomainSearch(e.target.value)}
-                        placeholder="Search for a domain..."
-                        className="search-input"
-                        onKeyDown={handleDomainKeyDown}
-                    />
-                    <button className='add-button' onClick={(e) => {
-                        addDomain(e, domainSearch);
-                    }}>Add</button>
+                    <div className='skill-input-box'>
+                        <input
+                            type="text"
+                            value={skillName}
+                            onChange={e => setSkillName(e.target.value)}
+                            placeholder="Search for a skill..."
+                            className="search-input"
+                            onKeyDown={handleSkillKeyDown}
+                        />
+                        <button className='add-button' onClick={(e) => {
+                            addSkills(e, skillName);
+                        }}>Add</button>
+                    </div>
                 </div>
-            </div>
 
-            {/* Languages */}
-            <label className="form-label">Languages</label>
-            <select
-                name="languages"
-                value={formData.languages}
-                onChange={handleInputChange}
-                className="form-select"
-            >
-                <option value="">Select a language</option>
-                <option value="English">English</option>
-                <option value="Spanish">Spanish</option>
-                <option value="French">French</option>
-                <option value="Mandarin">Mandarin</option>
-            </select>
-
-            {/* Availability Status */}
-            <label className="form-label">Availability Status</label>
-            <select
-                name="availabilityStatus"
-                value={formData.availabilityStatus}
-                onChange={handleInputChange}
-                className="form-select"
-            >
-                <option value="">Select availability</option>
-                <option value="Actively looking for opportunities">Actively looking for opportunities</option>
-                <option value="Open to opportunities">Open to opportunities</option>
-                <option value="Not looking for opportunities">Not looking for opportunities</option>
-            </select>
-
-            {/* Preferred Work Environment */}
-            <label className="form-label">Preferred Work Environment</label>
-            <select
-                name="preferredWorkEnvironment"
-                value={formData.preferredWorkEnvironment}
-                onChange={handleInputChange}
-                className="form-select"
-            >
-                <option value="">Select work environment</option>
-                <option value="Remote">Remote</option>
-                <option value="In-Office">In-Office</option>
-                <option value="Hybrid">Hybrid</option>
-            </select>
-
-            {/* Certifications */}
-            <label className="form-label">Certifications</label>
-            {formData.certifications.map((cert, index) => (
-                <div key={index} className="certification-field">
-                    <input
-                        type="text"
-                        value={cert}
-                        onChange={(e) => handleCertificationChange(index, e.target.value)}
-                        placeholder="Enter certification"
-                        className="form-input"
-                    />
-                    <button
-                        type="button"
-                        onClick={addCertification}
-                        className="add-certification-btn"
-                    >
-                        Add Certification
-                    </button>
+                {/* Domain of Interest */}
+                <label className="form-label">Domain of Interest</label>
+                <div className="input-group">
+                    {formData.domainOfInterest.length > 0 && (
+                        <div className="selected-items">
+                            {formData.domainOfInterest.map((domain, index) => (
+                                <span key={index} className="item-badge">{domain}</span>
+                            ))}
+                        </div>
+                    )}
+                    <div className='skill-input-box'>
+                        <input
+                            type="text"
+                            value={domainSearch}
+                            onChange={e => setDomainSearch(e.target.value)}
+                            placeholder="Search for a domain..."
+                            className="search-input"
+                            onKeyDown={handleDomainKeyDown}
+                        />
+                        <button className='add-button' onClick={(e) => {
+                            addDomain(e, domainSearch);
+                        }}>Add</button>
+                    </div>
                 </div>
-            ))}
 
-            <button type="submit" className="submit-btn">
-                Submit
-            </button>
-        </form>
+                {/* Languages */}
+                <label className="form-label">Languages</label>
+                <select
+                    name="languages"
+                    value={formData.languages}
+                    onChange={handleInputChange}
+                    className="form-select"
+                >
+                    <option value="">Select a language</option>
+                    <option value="English">English</option>
+                    <option value="Spanish">Spanish</option>
+                    <option value="French">French</option>
+                    <option value="Mandarin">Mandarin</option>
+                </select>
+
+                {/* Availability Status */}
+                <label className="form-label">Availability Status</label>
+                <select
+                    name="availabilityStatus"
+                    value={formData.availabilityStatus}
+                    onChange={handleInputChange}
+                    className="form-select"
+                >
+                    <option value="">Select availability</option>
+                    <option value="Actively looking for opportunities">Actively looking for opportunities</option>
+                    <option value="Open to opportunities">Open to opportunities</option>
+                    <option value="Not looking for opportunities">Not looking for opportunities</option>
+                </select>
+
+                {/* Preferred Work Environment */}
+                <label className="form-label">Preferred Work Environment</label>
+                <select
+                    name="preferredWorkEnvironment"
+                    value={formData.preferredWorkEnvironment}
+                    onChange={handleInputChange}
+                    className="form-select"
+                >
+                    <option value="">Select work environment</option>
+                    <option value="Remote">Remote</option>
+                    <option value="In-Office">In-Office</option>
+                    <option value="Hybrid">Hybrid</option>
+                </select>
+
+                {/* Certifications */}
+                <label className="form-label">Certifications</label>
+                {formData.certifications.map((cert, index) => (
+                    <div key={index} className="certification-field">
+                        <input
+                            type="text"
+                            value={cert}
+                            onChange={(e) => handleCertificationChange(index, e.target.value)}
+                            placeholder="Enter certification"
+                            className="form-input"
+                        />
+                        <button
+                            type="button"
+                            onClick={addCertification}
+                            className="add-certification-btn"
+                        >
+                            Add Certification
+                        </button>
+                    </div>
+                ))}
+
+                <button type="submit" className="submit-btn">
+                    Submit
+                </button>
+            </form>
+        </>
+
     );
 };
 

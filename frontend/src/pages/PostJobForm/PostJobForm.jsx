@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import "./PostJobForm.css";
 
 const PostJobForm = () => {
@@ -21,11 +23,18 @@ const PostJobForm = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in
     const token = localStorage.getItem("access_token");
     if (!token) {
       setIsLoggedIn(false);
-      navigate("/login"); // Redirect to login page if not logged in
+      toast.error('Please login to continue', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      });
+      navigate("/login");
     }
   }, [navigate]);
 
@@ -47,8 +56,21 @@ const PostJobForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("access_token");
+
     if (!token) {
-      console.error("No JWT token found!");
+      toast.error('Authentication token not found. Please login again.', {
+        position: "top-right",
+        autoClose: 5000
+      });
+      return;
+    }
+
+    // Form validation
+    if (!jobData.title || !jobData.company_name || !jobData.description) {
+      toast.warning('Please fill in all required fields', {
+        position: "top-right",
+        autoClose: 4000
+      });
       return;
     }
 
@@ -69,13 +91,50 @@ const PostJobForm = () => {
       if (response.ok) {
         const newJob = await response.json();
         console.log("Job posted successfully:", newJob);
-        navigate("/dashboard");
+
+        // Show success toast
+        toast.success('Job posted successfully!', {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          style: {
+            backgroundColor: '#4CAF50',
+            color: 'white'
+          }
+        });
+
+        // Navigate after short delay to allow toast to be seen
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 2000);
       } else {
         const errorData = await response.json();
         console.error("Error posting job:", errorData);
+
+        toast.error('Failed to post job. Please try again.', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true
+        });
       }
     } catch (error) {
       console.error("Error posting job:", error);
+
+      toast.error('An unexpected error occurred. Please try again later.', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true
+      });
     }
   };
 
@@ -87,6 +146,7 @@ const PostJobForm = () => {
     <div className="form-container">
       <h1>Post Job</h1>
       <form onSubmit={handleSubmit}>
+        {/* Your existing form fields */}
         <div>
           <label htmlFor="title">Job Title</label>
           <input
@@ -190,6 +250,18 @@ const PostJobForm = () => {
         </div>
         <button type="submit">Submit</button>
       </form>
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
     </div>
   );
 };

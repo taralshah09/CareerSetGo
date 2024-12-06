@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import './SocialLinks.css';
 
 const SocialLinks = () => {
@@ -16,7 +18,6 @@ const SocialLinks = () => {
         other_link: ''
     });
 
-    // Fetch existing profile data when the component mounts
     useEffect(() => {
         const token = localStorage.getItem('access_token');
         const fetchData = async () => {
@@ -34,15 +35,23 @@ const SocialLinks = () => {
                         insta_link: data.insta_link,
                         other_link: data.other_link
                     });
+                } else {
+                    toast.error('Failed to fetch profile data', {
+                        position: "top-right",
+                        autoClose: 3000,
+                    });
                 }
             } catch (error) {
                 console.error('Error fetching profile data:', error);
+                toast.error('Error loading profile data', {
+                    position: "top-right",
+                    autoClose: 3000,
+                });
             }
         };
         fetchData();
     }, []);
 
-    // Handle input change for social links
     const handleInputChange = (e) => {
         setFormData({
             ...formData,
@@ -68,65 +77,125 @@ const SocialLinks = () => {
             if (response.ok) {
                 const data = await response.json();
                 console.log('Profile updated:', data);
-                // Handle profile update (e.g., show success message)
+
+                // Show success toast notification
+                toast.success('Social links updated successfully!', {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+
+                // Update profileData with new values
+                setProfileData({
+                    ...profileData,
+                    ...formData
+                });
+
+                // Reset formData
+                setFormData({
+                    twitter_link: '',
+                    linkedin_link: '',
+                    insta_link: '',
+                    other_link: ''
+                });
             } else {
                 const errorData = await response.json();
                 console.error('Error updating profile:', errorData);
+
+                // Show error toast notification
+                toast.error('Failed to update social links', {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
             }
         } catch (error) {
             console.error('Error submitting profile:', error);
+
+            // Show error toast notification for network/server errors
+            toast.error('Something went wrong. Please try again.', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
         }
     };
 
     return (
-        <form className='social-links' onSubmit={handleSubmit}>
-            <p>Social Links</p>
-            <div className="social-link">
-                <label htmlFor="twitter_link">Twitter</label>
-                <input
-                    type="url"
-                    id="twitter_link"
-                    name="twitter_link"
-                    placeholder="Twitter Profile URL"
-                    value={formData.twitter_link || profileData.twitter_link || ''}
-                    onChange={handleInputChange}
-                />
-            </div>
-            <div className="social-link">
-                <label htmlFor="linkedin_link">LinkedIn</label>
-                <input
-                    type="url"
-                    id="linkedin_link"
-                    name="linkedin_link"
-                    placeholder="LinkedIn Profile URL"
-                    value={formData.linkedin_link || profileData.linkedin_link || ''}
-                    onChange={handleInputChange}
-                />
-            </div>
-            <div className="social-link">
-                <label htmlFor="insta_link">Instagram</label>
-                <input
-                    type="url"
-                    id="insta_link"
-                    name="insta_link"
-                    placeholder="Instagram Profile URL"
-                    value={formData.insta_link || profileData.insta_link || ''}
-                    onChange={handleInputChange}
-                />
-            </div>
-            <div className="social-link">
-                <label htmlFor="other_link">Other</label>
-                <input
-                    type="url"
-                    id="other_link"
-                    name="other_link"
-                    placeholder="Other Profile URL"
-                    value={formData.other_link || profileData.other_link || ''}
-                    onChange={handleInputChange}
-                />
-            </div>
-            <button type="submit">Save Changes</button>
-        </form>
+        <>
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
+            <form className='social-links' onSubmit={handleSubmit}>
+                <p>Social Links</p>
+                <div className="social-link">
+                    <label htmlFor="twitter_link">Twitter</label>
+                    <input
+                        type="url"
+                        id="twitter_link"
+                        name="twitter_link"
+                        placeholder="Twitter Profile URL"
+                        value={formData.twitter_link || profileData.twitter_link || ''}
+                        onChange={handleInputChange}
+                    />
+                </div>
+                <div className="social-link">
+                    <label htmlFor="linkedin_link">LinkedIn</label>
+                    <input
+                        type="url"
+                        id="linkedin_link"
+                        name="linkedin_link"
+                        placeholder="LinkedIn Profile URL"
+                        value={formData.linkedin_link || profileData.linkedin_link || ''}
+                        onChange={handleInputChange}
+                    />
+                </div>
+                <div className="social-link">
+                    <label htmlFor="insta_link">Instagram</label>
+                    <input
+                        type="url"
+                        id="insta_link"
+                        name="insta_link"
+                        placeholder="Instagram Profile URL"
+                        value={formData.insta_link || profileData.insta_link || ''}
+                        onChange={handleInputChange}
+                    />
+                </div>
+                <div className="social-link">
+                    <label htmlFor="other_link">Other</label>
+                    <input
+                        type="url"
+                        id="other_link"
+                        name="other_link"
+                        placeholder="Other Profile URL"
+                        value={formData.other_link || profileData.other_link || ''}
+                        onChange={handleInputChange}
+                    />
+                </div>
+                <button type="submit">Save Changes</button>
+            </form>
+        </>
     );
 };
 

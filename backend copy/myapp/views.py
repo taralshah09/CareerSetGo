@@ -186,7 +186,7 @@ class UserProfileView(APIView):
         serializer = ProfileSerializer(profile, data=data, partial=True, context={'request': request})
         # for skill in data['skills']:
         #             print(f"Skill: {skill['name']}, Score: {skill['score']}, Verified: {skill['verified']}")
-        print(data['skills'])
+        print(data)
         # if 'skills' in data:
                 #  update_skill_score(user, 'java', 5)
         print_skills_from_db(user)
