@@ -26,7 +26,7 @@ const DashboardEmployer = () => {
             case 'post a Job':
                 return <PostJobForm />;
             case 'saved Candidates':
-                return <div>savedCandidates</div>;
+                return <div>Saved Candidates</div>;
             case 'plans & Billing':
                 return <div>plans&Billing</div>;
             case 'all Companies':
