@@ -8,8 +8,12 @@ A full-stack app with Django REST Framework (backend) and React (frontend) for m
 Navigate to the backend folder and install requirements:
 
 ```bash
-cd backend
+cd backend copy
 pip install -r requirements.txt
+```
+```bash
+python manage.py makemigrations
+python manage.py migrate
 ```
 
 #### Populate Data
