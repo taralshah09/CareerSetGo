@@ -9,6 +9,7 @@ from django.core.validators import validate_email
 
 
 
+
 JOB_DOMAIN_CHOICES = [
         ('ai_ml', 'Artificial Intelligence & Machine Learning'),
         ('AI/ML', 'Artificial Intelligence & Machine Learning'),
@@ -181,7 +182,7 @@ class AppliedJob(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='applied_jobs')
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='applied_by')
     applied_at = models.DateTimeField(auto_now_add=True)
-
+    
     class Meta:
         unique_together = ('user', 'job')  
 
