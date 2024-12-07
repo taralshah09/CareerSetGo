@@ -1,19 +1,34 @@
 import React, { useEffect, useState } from "react";
 import "./FindJob.css";
+import { Link } from "react-router-dom";
 
 const FindJob = () => {
   const [jobs, setJobs] = useState([]); // State to hold job data
-
+  
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/jobs/");
-        const data = await response.json();
-        setJobs(data); // Update the jobs state with fetched data
+          const response = await fetch("http://127.0.0.1:8000/api/jobs/", {
+              method: 'GET',
+              headers: {
+                  'Content-Type': 'application/json',
+                  // Include token if user is authenticated
+                  'Authorization': localStorage.getItem('access_token') ? `Bearer ${localStorage.getItem('access_token')}` : '',
+              },
+          });
+  
+          if (response.ok) {
+              const data = await response.json();
+              setJobs(data.jobs);  // Update state with fetched job data
+          } else {
+              const errorData = await response.json();
+              console.error('Error fetching jobs:', errorData);
+          }
       } catch (error) {
-        console.error("Error fetching jobs:", error);
+          console.error('Error fetching jobs:', error);
       }
-    };
+  };
+  
 
     fetchJobs(); // Fetch jobs when the component mounts
   }, []);
@@ -52,6 +67,7 @@ const FindJob = () => {
         <div className="jobs-feed">
           {jobs.length > 0 ? (
             jobs.map((job) => (
+              <Link to={`/job/${job.job_id}`} style={{textDecoration:"none",color:"black"}}>
               <div className="job" key={job.job_id}>
                 <div className="job-header">
                   <div className="job-header-left">
@@ -77,6 +93,8 @@ const FindJob = () => {
                 </div>
 
               </div>
+              </Link>
+
             ))
           ) : (
             <p>No jobs available</p>

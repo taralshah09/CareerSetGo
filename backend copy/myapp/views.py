@@ -125,6 +125,12 @@ class UserProfileView(APIView):
         data = {k: v for k, v in request.data.items() if v is not None}
 
         serializer = ProfileSerializer(profile, data=data, partial=True, context={'request': request})
+        # for skill in data['skills']:
+        #             print(f"Skill: {skill['name']}, Score: {skill['score']}, Verified: {skill['verified']}")
+        print(data['skills'])
+        # if 'skills' in data:
+                #  update_skill_score(user, 'java', 5)
+        print_skills_from_db(user)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -153,6 +159,45 @@ class RecentJobsView(APIView):
         jobs = Job.objects.order_by('-created_at')[:5]
         serializer = JobSerializer(jobs, many=True)
         return Response(serializer.data)
+
+class JobsView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        try:
+            profile = Profile.objects.get(user=request.user)
+        except Profile.DoesNotExist:
+            return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
+        
+        user_skills = profile.skills if isinstance(profile.skills, list) else json.loads(profile.skills)
+        print(f"User Skills: {user_skills}")
+
+        user_skill_names = {skill['name'].lower() for skill in user_skills}
+        print(f"User Skill Names: {user_skill_names}")
+
+        jobs = Job.objects.order_by('-created_at')
+
+        matching_jobs = []
+
+        for job in jobs:
+            job_required_skills = job.skills_required.split(",") 
+            job_required_skills = {skill.strip().lower() for skill in job_required_skills}  
+
+            matching_skills = user_skill_names.intersection(job_required_skills)
+            print(f"Matching Skills for {job.title}: {matching_skills}")
+
+            if matching_skills:
+                matching_jobs.append(job)
+
+        if matching_jobs:
+            serializer = JobSerializer(matching_jobs, many=True)
+            return Response({
+                "jobs" : serializer.data
+            })
+        else:
+            return Response({"message": "No matching jobs found."}, status=status.HTTP_404_NOT_FOUND)
 
 class PostJobView(APIView):
     permission_classes = [IsAuthenticated]
@@ -192,25 +237,87 @@ class fetchcourses(APIView):
             response_data = []
 
             if not api_key:
-                return Response({"error": "API Key is missing."}, status=status.HTTP_400_BAD_REQUEST)
+                return Response(
+                    {"error": "YouTube API key is not configured."},
+                    status=500
+                )
+                
+            url = f'https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q={q}&key={api_key}'
+            api_response = requests.get(url)
+            
+            if api_response.status_code == 200:
+                data = api_response.json()
 
-            url = f"https://www.googleapis.com/customsearch/v1?q={q}&key={api_key}&cx=717b32d6c206643e9"
-            response = requests.get(url)
-            data = response.json()
+                for item in data.get("items", []):
+                    if item["id"]["kind"] == "youtube#video":
+                        response_data.append({
+                            "type": "video",
+                            "title": item["snippet"]["title"],
+                            "description": item["snippet"]["description"],
+                            "link": f"https://www.youtube.com/watch?v={item['id']['videoId']}",
+                            "thumbnail": item["snippet"]["thumbnails"]["high"]["url"]
+                        })
+                    elif item["id"]["kind"] == "youtube#playlist":
+                        response_data.append({
+                            "type": "playlist",
+                            "title": item["snippet"]["title"],
+                            "description": item["snippet"]["description"],
+                            "link": f"https://www.youtube.com/playlist?list={item['id']['playlistId']}",
+                            "thumbnail": item["snippet"]["thumbnails"]["high"]["url"]
+                        })
 
-            for item in data.get("items", []):
-                response_data.append({
-                    "title": item["title"],
-                    "link": item["link"],
-                    "snippet": item["snippet"],
-                    "thumbnail": item.get("pagemap", {}).get("cse_image", [{}])[0].get("src", "")
-                })
-
-            return Response({"results": response_data})
+                print(response_data)
+                return Response({"courses": response_data}, status=200)
+            else:
+                return Response(
+                    {"error": "Failed to fetch courses from YouTube API."},
+                    status=api_response.status_code
+                )
+                
         except Profile.DoesNotExist:
-            return Response({"error": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "User profile not found."}, status=404)
+        except Exception as e:
+            return Response({"error": str(e)}, status=500)
 
+        # response = {}       
+        # r = requests.get(f'https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q={skills}&key=')
+        # r_status = r.status_code
+        # if r_status == 200:
+        #     data = r.json()
+        #     print(data)
+        #     response['courses'] = data
+        # else:
+        #     response['status'] = r.status_code
+        #     response['message'] = 'error'
+        #     response['credentials'] = 'Check your Api key'
+        # return Response(response)
+        
+    
+def print_skills_from_db(user):
+    try:
+        profile = Profile.objects.get(user=user)
+        skills = profile.skills  # Fetch the JSONField data
 
+        update_skill_score(user, 'java', 5)
+        # Debugging: Check the type of skills
+        print(f"Skills data type: {type(skills)}")
+        print(f"Skills content: {skills}")
+        if isinstance(skills, str):
+            # If it's a string, parse it into JSON
+            import json
+            skills = json.loads(skills)
+
+        if skills:
+            for skill in skills:
+                print(f"Skill: {skill['name']}, Score: {skill['score']}, Verified: {skill['verified']}")
+        else:
+            print("No skills found for this user.")
+    except Profile.DoesNotExist:
+        print("Profile not found for the given user.")
+    except Exception as e:
+        print(f"Error: {e}")
+        
+        
 class UpdateSkillScore(APIView):
     permission_classes = [IsAuthenticated]
 

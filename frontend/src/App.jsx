@@ -14,6 +14,8 @@ import BrowseCandidate from './pages/BrowseCandidatePage/BrowseCandidatePage'
 import ResumeBuilder from './pages/ResumeBuilder/ResumeBuilder'
 import SkillsVerficationPage from './pages/SkillsVerificationPage/SkillsVerificationPage'
 import PostJobForm from './pages/PostJobForm/PostJobForm'
+import Course from './pages/Courses/Course'
+
 import ChoicesGame from './pages/ChoicesGame/ChoicesGame'
 import DashboardEmployer from './pages/DashboardEmployer/DashboardEmployer'
 import Profile from './components/Profile/Profile'
@@ -75,12 +77,13 @@ function App() {
         <Route path="/find-job" element={<FindJob />}></Route>
         <Route path="/login" element={<LoginPage />}></Route>
         <Route path="/signup" element={<SignupPage />}></Route>
-        <Route path="/jobs" element={<JobPage />}></Route>
         <Route path="/employers" element={<EmployerPage />}></Route>
         <Route path="/dashboard" element={profileData.role === "candidate" ? <Dashboard /> : <DashboardEmployer />}></Route>
         <Route path="/resume-builder" element={<ResumeBuilder />}></Route>
         <Route path="/verify/:skillName" element={<SkillsVerficationPage />} ></Route>
         <Route path="/post" element={<PostJobForm />}></Route>
+        <Route path="/course" element={<Course />}></Route>
+        <Route path="/job/:id" element={<JobPage />}></Route>
         <Route path="/choices-game" element={<ChoicesGame />}></Route>
       </Routes >
       {!hideNavbarFooter && <Footer />

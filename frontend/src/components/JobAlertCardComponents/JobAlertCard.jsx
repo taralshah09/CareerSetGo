@@ -33,15 +33,16 @@ const JobAlertCard = ({ logo , jobTitle, location, image: imageUrl, jobTiming, s
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       sx={{
+        border: isHovered ? "1px solid #0A65CC" : "1px solid transparent",
         display: 'flex',
         alignItems: 'center',
         paddingY: '0.3rem',
         paddingX: '0.4rem',
-        boxShaddow:'none',
-        border: isHovered ? "1px solid #0A65CC" : "1px solid transparent",
+        boxShadow: 'none', // Corrected the typo here
         transition: "border 0.3s ease",
-        borderRadius : 2
-      }}
+        borderRadius: 2
+    }}
+    
     >
        <Avatar
             src={logo}

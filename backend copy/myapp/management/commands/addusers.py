@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
-from myapp.models import Profile  # Replace 'myapp' with your actual app name
+from myapp.models import Profile  
 import random
 import json
 
