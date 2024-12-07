@@ -65,7 +65,7 @@ const FindJob = () => {
       </div>
       <div className="jobs-container">
         <div className="jobs-feed">
-          {jobs.length > 0 ? (
+          {Array.isArray(jobs) && jobs.length > 0 ? (
             jobs.map((job) => (
               <Link to={`/job/${job.job_id}`} style={{textDecoration:"none",color:"black"}}>
               <div className="job" key={job.job_id}>
