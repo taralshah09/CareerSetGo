@@ -3,7 +3,15 @@ import os
 from decouple import config
 # Base directory path
 BASE_DIR = Path(__file__).resolve().parent.parent
+import os
+from decouple import config
 
+# Debug and Allowed Hosts
+DEBUG = config('DEBUG', default=False, cast=bool)
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=lambda v: [s.strip() for s in v.split(',')])
+
+# Dynamic CORS Origins
+CORS_ALLOWED_ORIGINS = config('CORS_ORIGINS', default='', cast=lambda v: [s.strip() for s in v.split(',')])
 # Media settings
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
@@ -11,14 +19,29 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Security settings
 SECRET_KEY = 'django-insecure-h(a9i&vl0vknxoxbj1#abh0!-r)w%4sw()stj)857ifbp2&w%u'
 DEBUG = True  # Change to False in production
-ALLOWED_HOSTS = []  # Add hostnames for production
-
-# settings.py
+ALLOWED_HOSTS = [
+    'localhost', 
+    '127.0.0.1', 
+    '*-3000.githubpreview.dev',
+    '*-5173.githubpreview.dev'
+]  # Add hostnames for production
+CORS_ALLOW_ALL_ORIGINS = False  # More secure
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',  # React app
-    'http://127.0.0.1:5173',  # React app
-    'http://127.0.0.1:8000',  # Django API
+    # MyApp Frontend URLs
+    'http://localhost:3000',    # Local React app for myapp
+    'http://127.0.0.1:3000',    
+    'https://*-3000.githubpreview.dev',  # GitHub Codespaces pattern
+    
+    # Forum App Frontend URLs
+    'http://localhost:5173',    # Local Vite app for forum
+    'http://127.0.0.1:5173',
+    'https://*-5173.githubpreview.dev',  # GitHub Codespaces pattern
+    
+    # Add any other specific URLs
+    'https://*.gitpod.io',
+    'https://*.github.dev'
 ]
+CORS_ALLOW_CREDENTIALS = True
 
 # eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMyMjE0MzkxLCJpYXQiOjE3MzIyMTM0OTEsImp0aSI6Ijg3YThiMDg5MTdmYzQzNmNiMGRlMTZkYjA1NWE4NWYzIiwidXNlcl9pZCI6MX0.EM1McdKgK_PrhttiAPve2oZQEXa8DYzJzok5qHzwOHM
 # Installed apps
@@ -164,25 +187,25 @@ EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-        'myapp': {  # This will catch our logger
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'console': {
+#             'level': 'DEBUG',
+#             'class': 'logging.StreamHandler',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#         'myapp': {  # This will catch our logger
+#             'handlers': ['console'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#     },
+# }

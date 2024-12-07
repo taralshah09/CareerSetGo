@@ -4,7 +4,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from myapp.models import User, Profile, Thread, Post, Pin
+from myapp.models import User, Profile
+from .models import  Thread, Post, Pin
 from .serializers import ThreadSerializer, PostSerializer, PinSerializer, ProfileSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from myapp.utils import send_email
@@ -237,3 +238,19 @@ class ProfileView(APIView):
         profile.phone_no = fake.phone_number()
         profile.personal_website = fake.url()
         profile
+  
+class ThreadsByTopicView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, topic_id):
+        paginator = PageNumberPagination()
+        paginator.page_size = 15
+
+        # Filter threads by topic ID
+        threads = Thread.objects.filter(topic_id=topic_id).order_by('-updated_at')
+        if not threads.exists():
+            return Response({"detail": "No threads found for this topic."}, status=404)
+
+        result_page = paginator.paginate_queryset(threads, request)
+        serializer = ThreadSerializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)

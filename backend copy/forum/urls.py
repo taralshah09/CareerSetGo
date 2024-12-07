@@ -17,14 +17,8 @@ from .views import (
 )
 
 urlpatterns = [
-    # Authentication (using shared views from `myapp`)
-    path('api/register/', RegisterUser.as_view(), name='register'),
+
     path('api/createThread/', CreateThreadView.as_view(), name='create-thread'),
-    path('api/login/', LoginView.as_view(), name='login'),
-    path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'), 
-    
-    # Forum-specific routes
     path('api/threads/', ThreadListView.as_view(), name='thread-list'),
     path('api/threads/topic/<int:topic_id>/', ThreadListView.as_view(), name='thread_list_by_topic'),
     path('api/threads/<int:pk>/', ThreadDetailView.as_view(), name='thread_detail'),

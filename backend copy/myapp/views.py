@@ -46,44 +46,6 @@ def send_login_notification(user_email, fullname):
     """
     send_email(subject, plain_message, [user_email], html_message)
 
-class RegisterUser(APIView):
-    permission_classes = []
-
-    def post(self, request):
-        serializer = UserSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            serializer.save()
-
-            # Send registration email
-            send_registration_email(serializer.data['email'], serializer.data['fullname'])
-            return Response({"message": "User registered successfully."}, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class LoginView(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        email = request.data.get('email')
-        password = request.data.get('password')
-
-        try:
-            user = User.objects.get(email=email)
-            if user.check_password(password):
-                refresh = RefreshToken.for_user(user)
-                access_token = str(refresh.access_token)
-
-                # Send login notification email
-                send_login_notification(email, user.fullname)
-
-                return Response(
-                    {"access_token": access_token, "refresh_token": str(refresh), "message": "Login successful!"},
-                    status=status.HTTP_200_OK
-                )
-
-            return Response({"error": "Invalid email or password."}, status=status.HTTP_400_BAD_REQUEST)
-        except User.DoesNotExist:
-            return Response({"error": "Invalid email or password."}, status=status.HTTP_400_BAD_REQUEST)
 
 class CurrentUserView(APIView):
     permission_classes = [IsAuthenticated]
@@ -247,3 +209,72 @@ class fetchcourses(APIView):
             return Response({"results": response_data})
         except Profile.DoesNotExist:
             return Response({"error": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
+
+
+class UpdateSkillScore(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request):
+        user = request.user
+        
+        try:
+            profile = Profile.objects.get(user=user)
+        except Profile.DoesNotExist:
+            return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        skills_data = request.data.get("skills")
+        if not skills_data:
+            return Response({"detail": "Skills data is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        if isinstance(skills_data, list):
+            for skill_data in skills_data:
+                skill_name = skill_data.get("name")
+                new_score = skill_data.get("score")
+
+                if skill_name and new_score is not None:
+                    # Automatically set verified based on the score
+                    verified = new_score > 8  # Set verified to True if score > 5, otherwise False
+
+                    updated = False
+                    if profile.skills:
+                        if isinstance(profile.skills, str):
+                            profile.skills = json.loads(profile.skills)
+
+                        # Update the skill if it exists in the user's profile
+                        for skill in profile.skills:
+                            if skill["name"] == skill_name:
+                                skill["score"] = new_score
+                                skill["verified"] = verified
+                                updated = True
+                                break
+                        
+                        # If the skill does not exist, add it to the list
+                        if not updated:
+                            profile.skills.append({
+                                "name": skill_name,
+                                "score": new_score,
+                                "verified": verified
+                            })
+
+                        profile.skills = json.dumps(profile.skills)  # Convert back to JSON string if needed
+                        profile.save()
+
+                    return Response({"detail": "Skill score updated successfully."}, status=status.HTTP_200_OK)
+                
+                else:
+                    return Response({"detail": "Invalid skill data."}, status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            return Response({"detail": "Skills data should be a list."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class JobsView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        """
+        Fetches the 5 most recent job postings.
+        """
+        jobs = Job.objects.order_by('-created_at')
+        serializer = JobSerializer(jobs, many=True)
+        return Response(serializer.data)
