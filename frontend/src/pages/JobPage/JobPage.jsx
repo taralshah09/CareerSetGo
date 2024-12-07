@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Container, Grid, Typography, Button, Snackbar, Alert } from '@mui/material';
+import { Box, Container, Grid, Typography, Button, Snackbar, Alert, IconButton } from '@mui/material';
 import JobHeader from '../../components/JobPageComponents/JobHeader.jsx';
 import JobDescription from '../../components/JobDescription.jsx';
 import JobOverviewCard from '../../components/JobPageComponents/JobOverviewCard.jsx';
@@ -9,6 +9,10 @@ import RelatedJobCard from '../../components/RelatedJobCard.jsx';
 import Share from '../../components/Share.jsx';
 import { useLocation, useParams } from 'react-router-dom';
 import { useAuth } from '../../auth/AuthProvider.jsx';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import SkillGapAnalysis from '../../components/SkillGapAnalysis/SkillGapAnalysis.jsx';
+import MoreDetailsModal from '../../components/MoreDetailsModal/MoreDetailsModal.jsx';
+
 
 const JobPage = () => {
   const [skillGapResult, setSkillGapResult] = useState(null);
@@ -18,13 +22,17 @@ const JobPage = () => {
 
   const location = useLocation();
   const { job } = location.state || {}
-  const {user, skills} = useAuth()
-  const user_id = user.profile_id;
+  const jobSkills = job.skills_required.split(", ");
+  console.log(job)
+  const { user, skills } = useAuth()
+  const user_id = user?.profile_id;
   const skillNames = skills.map(skill => skill.name);
 
-  const {id} = useParams()
+  const { id } = useParams()
   const job_id = id;
-
+  const [isMoreDetailsOpen, setIsMoreDetailsOpen] = useState(false);
+  const handleOpenMoreDetails = () => setIsMoreDetailsOpen(true);
+  const handleCloseMoreDetails = () => setIsMoreDetailsOpen(false);
   const jobData = {
     title: "Senior UX Designer",
     company: "Instagram",
@@ -62,10 +70,10 @@ const JobPage = () => {
       },
     },
     relatedJobs: [
-      { logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/2048px-Instagram_icon.png" , company : "Microsoft", title: "Visual Designer", type: "Full Time", location: "USA", salary: "$50k-$70k" },
-      { logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/2048px-Instagram_icon.png", company : "Microsoft" ,title: "Front End Developer", type: "Contract", location: "Australia", salary: "$80k-$90k" },
-      { logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/2048px-Instagram_icon.png", company : "Microsoft"  , title: "Technical Support Specialist", type: "Full Time", location: "France", salary: "$30k-$40k" },
-      { logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/2048px-Instagram_icon.png", company : "Microsoft"  , title: "Technical Support Specialist", type: "Full Time", location: "France", salary: "$30k-$40k" },
+      { logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/2048px-Instagram_icon.png", company: "Microsoft", title: "Visual Designer", type: "Full Time", location: "USA", salary: "$50k-$70k" },
+      { logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/2048px-Instagram_icon.png", company: "Microsoft", title: "Front End Developer", type: "Contract", location: "Australia", salary: "$80k-$90k" },
+      { logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/2048px-Instagram_icon.png", company: "Microsoft", title: "Technical Support Specialist", type: "Full Time", location: "France", salary: "$30k-$40k" },
+      { logoUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/2048px-Instagram_icon.png", company: "Microsoft", title: "Technical Support Specialist", type: "Full Time", location: "France", salary: "$30k-$40k" },
     ],
     badges: [
       { label: "Featured", color: "#FFCDD2", textColor: "#D32F2F" },  // Light red badge
@@ -112,10 +120,12 @@ const JobPage = () => {
     setOpenSnackbar(false);
   };
 
+
+
   return (
     <Box>
       <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <JobHeader 
+        <JobHeader
           title={job.title}
           company={job.company_name}
           type={jobData.type}
@@ -125,52 +135,45 @@ const JobPage = () => {
           logoUrl={jobData.employer.logoUrl}
         />
 
-        <Button 
-          variant="contained" 
-          color="primary" 
-          onClick={handleSkillGapAnalysis}
-          sx={{ my: 2 }}
-        >
-          Skill Gap Analysis
-        </Button>
-
-        {skillGapResult && (
-          <Box sx={{ mt: 2, p: 2, backgroundColor: '#f0f0f0', borderRadius: 2 }}>
-            <Typography variant="h6">Skill Gap Analysis Results</Typography>
-            <Typography>
-              Matching Skills: {skillGapResult.matching_skills.join(', ') || 'None'}
-            </Typography>
-            <Typography>
-              Missing Skills: {skillGapResult.missing_skills.join(', ') || 'None'}
-            </Typography>
-            <Typography>
-              Skill Completeness: {skillGapResult.skill_completeness}%
-            </Typography>
+        <div>
+          <Box sx={{ display: 'flex', gap: 2, marginTop: "40px" }}>
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: '#0A65CC',
+                color: 'white',
+                '&:hover': { backgroundColor: '#0A65CC' },
+              }}
+              endIcon={<ArrowForwardIcon />}
+            >
+              Apply Now
+            </Button>
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: '#0A65CC',
+                color: 'white',
+                '&:hover': { backgroundColor: '#0A65CC' },
+              }}
+              onClick={handleOpenMoreDetails}
+            >
+              More Details
+            </Button>
           </Box>
-        )}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleSkillGapAnalysis}
+            sx={{ my: 2 }}
+          >
+            Skill Gap Analysis
+          </Button>
+        </div>
 
-        {/* Display Job Skills and User Skills */}
-        <Box sx={{ mt: 4 }}>
-          <Typography variant="h6">Job Skills</Typography>
-          <Typography>{job.skills_required ? job.skills_required.split(',').map(skill => skill.trim()).join(', ') : 'No skills listed for this job'}</Typography>
-
-          <Typography variant="h6" sx={{ mt: 2 }}>Your Skills</Typography>
-          {skills.length === 0 ? (
-            <Typography>No skills listed in your profile</Typography>
-          ) : (
-            skills.map((skill, index) => (
-              <Box key={index} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
-                <Typography>{skill.name}</Typography>
-                <Typography color={skill.verified ? 'green' : 'red'}>
-                  {skill.verified ? 'Verified' : 'Not Verified'}
-                </Typography>
-              </Box>
-            ))
-          )}
-        </Box>
+        {skillGapResult && <SkillGapAnalysis skillGapResult={skillGapResult} setSkillGapResult={setSkillGapResult} />}
 
 
-        <Grid container spacing={4}>
+        <Grid container spacing={4} marginTop={2}>
           <Grid item xs={12} md={8}>
             <Box sx={{ width: '100%', height: '400px', overflowY: 'auto' }}>
               <JobDescription description={job.description} />
@@ -181,7 +184,7 @@ const JobPage = () => {
               <Share></Share>
             </Box>
           </Grid>
-       
+
           <Grid item xs={12} md={4}>
             <Box sx={{ width: '100%', height: '400px', overflowY: 'auto' }}>
               <JobOverviewCard overview={jobData.overview} />
@@ -207,20 +210,30 @@ const JobPage = () => {
         </Box>
       </Container>
 
-      <Snackbar 
-        open={openSnackbar} 
-        autoHideDuration={6000} 
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <Alert 
-          onClose={handleCloseSnackbar} 
+        <Alert
+          onClose={handleCloseSnackbar}
           severity={snackbarSeverity}
           sx={{ width: '100%' }}
         >
           {snackbarMessage}
         </Alert>
+
+
       </Snackbar>
+
+      <MoreDetailsModal
+        open={isMoreDetailsOpen}
+        onClose={handleCloseMoreDetails}
+        userSkills={skillNames}
+        jobSkills={jobSkills}
+        skills={skills}
+      />
     </Box>
   );
 };

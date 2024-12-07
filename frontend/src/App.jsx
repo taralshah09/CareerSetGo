@@ -14,9 +14,10 @@ import BrowseCandidate from './pages/BrowseCandidatePage/BrowseCandidatePage'
 import ResumeBuilder from './pages/ResumeBuilder/ResumeBuilder'
 import SkillsVerficationPage from './pages/SkillsVerificationPage/SkillsVerificationPage'
 import PostJobForm from './pages/PostJobForm/PostJobForm'
-import Course from './pages/Courses/Course'
+import Courses from './pages/Courses/Courses'
 
 import ChoicesGame from './pages/ChoicesGame/ChoicesGame'
+import Roadmap from './pages/Roadmap/Roadmap'
 
 function App() {
   const location = useLocation();
@@ -75,13 +76,14 @@ function App() {
         <Route path="/login" element={<LoginPage />}></Route>
         <Route path="/signup" element={<SignupPage />}></Route>
         <Route path="/employers" element={<EmployerPage />}></Route>
-        <Route path="/dashboard" element={profileData.role === "candidate" ? <Dashboard /> : <h1>Employer</h1>}></Route>
+        <Route path="/dashboard" element={<Dashboard />}></Route>
         <Route path="/resume-builder" element={<ResumeBuilder />}></Route>
         <Route path="/verify/:skillName" element={<SkillsVerficationPage />} ></Route>
         <Route path="/post" element={<PostJobForm />}></Route>
-        <Route path="/course" element={<Course />}></Route>
+        <Route path="/course" element={<Courses />}></Route>
         <Route path="/job/:id" element={<JobPage />}></Route>
         <Route path="/choices-game" element={<ChoicesGame />}></Route>
+        <Route path="/roadmap" element={<Roadmap />}></Route>
       </Routes>
       {!hideNavbarFooter && <Footer />}
     </>

@@ -1,0 +1,208 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Outfit", serif;
+}
+
+:root {
+  --primary-grey: #f1f2f4;
+  --primary-white: #ffffff;
+  --primary-blue: #0a65cc;
+  --dark-text: #18191c;
+  --light-text: #5e6670;
+}
+
+.roadmap-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.roadmap-card {
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+}
+
+.roadmap-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 24px;
+}
+
+.input-group {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.input-item {
+  flex: 1;
+}
+
+.input-label {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #666;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.generate-button {
+  width: 100%;
+  padding: 12px;
+  font-weight: bold;
+  background-color: #4f6ef6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.generate-button.loading {
+  background-color: #b0c4de;
+  cursor: not-allowed;
+}
+
+.generate-button:hover:not(.loading) {
+  background-color: #3b5edc;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 16px;
+}
+
+.roadmap-content {
+  margin-top: 32px;
+}
+
+.month-card {
+  background-color: #f9fafb;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 24px;
+}
+
+.month-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.week-card {
+  margin-bottom: 24px;
+}
+
+.week-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--primary-blue);
+  margin-bottom: 8px;
+}
+
+.task-list {
+  list-style-type: disc;
+  padding-left: 20px;
+  margin-top: 8px;
+}
+
+.task-item {
+  margin-bottom: 5px;
+}
+
+.no-roadmap-message {
+  color: #666;
+  font-size: 1rem;
+  margin-top: 24px;
+}
+
+.markdown-content p {
+  margin-top: 10px;
+}
+
+.markdown-content ul {
+  padding-left: 0px;
+  margin-top: 10px;
+  position: relative;
+  width: 100%;
+  list-style: none;
+}
+
+.markdown-content ul ul {
+  padding-left: 80px; /* Adjust the indentation as needed */
+  list-style: circle;
+  margin-bottom: 35px;
+}
+
+.markdown-content ol ol {
+  padding-left: 80px; /* Adjust the indentation for ordered lists as well */
+}
+
+.markdown-content p {
+  font-size: 18px;
+  padding-left: 30px;
+}
+
+.markdown-content h2,
+.markdown-content h3 {
+  color: var(--primary-blue);
+  font-size: 20px;
+}
+
+.markdown-content h1 {
+  margin-top: 15px;
+  margin-bottom: 20px;
+  width: 100%;
+  font-size: 25px;
+  position: relative;
+}
+
+.markdown-content h1::before {
+  content: "";
+  margin-bottom: 20px;
+  position: absolute;
+  left: 0;
+  top: -10px;
+  background: var(--light-text);
+  height: 1px;
+  width: 100%;
+}
+
+.download-pdf-button{
+    width: 100%;
+    background: var(--primary-blue);
+    color: white;
+    padding: 10px 15px;
+    font-size: 18px;
+    margin-top: 25px;
+    border-radius: 5px;
+    border: 0;
+    outline: 0;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.download-pdf-button:hover{
+    opacity: 0.8;
+}

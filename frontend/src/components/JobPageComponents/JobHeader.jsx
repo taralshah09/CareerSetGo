@@ -1,21 +1,20 @@
 import React from 'react';
 import { Box, Typography, Button, IconButton, Chip, Avatar } from '@mui/material';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import BusinessIcon from '@mui/icons-material/Business';
 import LanguageIcon from '@mui/icons-material/Language';
 import PhoneIcon from '@mui/icons-material/Phone';
 
 const JobHeader = ({ title, company, type, website, contact, badges, logoUrl }) => (
   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-    
+
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
       <Avatar
         alt={company}
         src={logoUrl}
         sx={{ width: 60, height: 60 }}
       />
-      
+
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Typography variant="h4" sx={{ mr: 2 }}>
@@ -54,7 +53,7 @@ const JobHeader = ({ title, company, type, website, contact, badges, logoUrl }) 
       <IconButton>
         <BookmarkBorderIcon />
       </IconButton>
-      <Button
+      {/* <Button
         variant="contained"
         sx={{
           backgroundColor: '#0A65CC',
@@ -64,7 +63,7 @@ const JobHeader = ({ title, company, type, website, contact, badges, logoUrl }) 
         endIcon={<ArrowForwardIcon />}
       >
         Apply Now
-      </Button>
+      </Button> */}
     </Box>
   </Box>
 );
