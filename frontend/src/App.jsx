@@ -16,6 +16,8 @@ import SkillsVerficationPage from './pages/SkillsVerificationPage/SkillsVerifica
 import PostJobForm from './pages/PostJobForm/PostJobForm'
 // import Course from './pages/Courses/Course'
 
+// import Course from './pages/Courses/Course'
+
 import ChoicesGame from './pages/ChoicesGame/ChoicesGame'
 import DashboardEmployer from './pages/DashboardEmployer/DashboardEmployer'
 import Profile from './components/Profile/Profile'
@@ -27,33 +29,12 @@ function App() {
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState({
     fullname: '',
-    id: '',
+    title: '',
     experience: '',
     education: '',
-    profile_picture: '',
-    resume: '',
-    username: '',
-    title: '',
     personal_website: '',
-    nationality: '',
-    date_of_birth: '',
-    gender: '',
-    marital_status: '',
-    biography: '',
-    languages: '',
-    location: '',
-    other_link: '',
-    insta_link: '',
-    twitter_link: '',
-    linkedin_link: '',
-    preferred_work_environment: '',
-    availability_status: '',
-    certifications: '',
-    domain_of_interest: '',
-    skills: '',
-    role: '',
   });
-  
+
   // Fetch existing profile data
   useEffect(() => {
     const fetchProfile = async () => {
@@ -103,6 +84,8 @@ function App() {
         <Route path="/resume-builder" element={<ResumeBuilder />}></Route>
         <Route path="/verify/:skillName" element={<SkillsVerficationPage />} ></Route>
         <Route path="/post" element={<PostJobForm />}></Route>
+        <Route path="/course" element={<Course />}></Route>
+        <Route path="/job/:id" element={<JobPage />}></Route>
         {/* <Route path="/course" element={<Course />}></Route> */}
         <Route path="/job/:id" element={<JobPage />}></Route>
         <Route path="/choices-game" element={<ChoicesGame />}></Route>

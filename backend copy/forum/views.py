@@ -8,82 +8,11 @@ from myapp.models import User, Profile
 from .models import  Thread, Post, Pin
 from .serializers import ThreadSerializer, PostSerializer, PinSerializer, ProfileSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-from myapp.utils import send_email
+from myapp.utils.email_utils import send_email
 import random
 from faker import Faker
 
 fake = Faker()
-
-class RegisterUser(APIView):
-    permission_classes = []
-
-    def post(self, request):
-        serializer = UserSerializer(data=request.data, context={'request': request})
-        if serializer.is_valid():
-            serializer.save()
-
-            user_email = serializer.data['email']
-            subject = "Welcome to CareerSetGo!"
-            plain_message = f"Hello {serializer.data['fullname']},\n\nThank you for registering on CareerSetGo. We're excited to have you!"
-            html_message = f"""
-            <html>
-                <body>
-                    <h1 style="color: #0465CC;">Welcome to CareerSetGo!</h1>
-                    <p>Hello <strong>{serializer.data['fullname']}</strong>,</p>
-                    <p>Thank you for registering on <strong>CareerSetGo</strong>. We're thrilled to have you on board!</p>
-                    <p>Explore exciting opportunities and start your career journey with us.</p>
-                    <hr>
-                    <p style="font-size: 12px; color: gray;">This is an automated message. Please do not reply.</p>
-                </body>
-            </html>
-            """
-            send_email(subject, plain_message, [user_email], html_message)
-
-            return Response({"message": "User registered successfully."}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class LoginView(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        email = request.data.get('email')
-        password = request.data.get('password')
-
-        try:
-            user = User.objects.get(email=email)
-            if user.check_password(password):
-                refresh = RefreshToken.for_user(user)
-                access_token = str(refresh.access_token)
-
-                subject = "Login Notification"
-                plain_message = f"Hello {user.fullname},\n\nYou have successfully logged into CareerSetGo."
-                html_message = f"""
-                <html>
-                    <body>
-                        <h2 style="color: #0A65CC;">Login Notification</h2>
-                        <p>Hello <strong>{user.fullname}</strong>,</p>
-                        <p>You have successfully logged into <strong>CareerSetGo</strong>.</p>
-                        <p>If this wasn't you, please secure your account immediately.</p>
-                        <hr>
-                        <p style="font-size: 12px; color: gray;">This is an automated message. Please do not reply.</p>
-                    </body>
-                </html>
-                """
-                send_email(subject, plain_message, [email], html_message)
-
-                return Response(
-                    {
-                        "access_token": access_token,
-                        "refresh_token": str(refresh),
-                        "message": "Login successful!"
-                    },
-                    status=status.HTTP_200_OK
-                )
-
-            return Response({"error": "Invalid email or password."}, status=status.HTTP_400_BAD_REQUEST)
-        except User.DoesNotExist:
-            return Response({"error": "Invalid email or password."}, status=status.HTTP_400_BAD_REQUEST)
-
 class CreateThreadView(APIView):
     permission_classes = [IsAuthenticated]
 

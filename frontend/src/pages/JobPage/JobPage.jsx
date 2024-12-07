@@ -1,17 +1,30 @@
-import React from 'react';
-import { Box, Container, Grid, Typography } from '@mui/material';
-import Navbar from '../../components/Navbar.jsx';
+import React, { useState } from 'react';
+import { Box, Container, Grid, Typography, Button, Snackbar, Alert } from '@mui/material';
 import JobHeader from '../../components/JobPageComponents/JobHeader.jsx';
 import JobDescription from '../../components/JobDescription.jsx';
 import JobOverviewCard from '../../components/JobPageComponents/JobOverviewCard.jsx';
 import Responsibilities from '../../components/JobPageComponents/Responsibilities.jsx';
 import EmployerDetailsCard from '../../components/JobPageComponents/EmployerDetailsCard.jsx';
 import RelatedJobCard from '../../components/RelatedJobCard.jsx';
-import JobDetails from '../../components/JobPageComponents/JobDetails.jsx';
 import Share from '../../components/Share.jsx';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
+import { useAuth } from '../../auth/AuthProvider.jsx';
 
 const JobPage = () => {
+  const [skillGapResult, setSkillGapResult] = useState(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+
+  const location = useLocation();
+  const { job } = location.state || {}
+  const {user, skills} = useAuth()
+  const user_id = user.profile_id;
+  const skillNames = skills.map(skill => skill.name);
+
+  const {id} = useParams()
+  const job_id = id;
+
   const jobData = {
     title: "Senior UX Designer",
     company: "Instagram",
@@ -62,41 +75,113 @@ const JobPage = () => {
   };
 
 
-  const {id} = useParams()
-  console.log(id)
+  const handleSkillGapAnalysis = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/api/skill-gap-analysis/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': localStorage.getItem('access_token') ? `Bearer ${localStorage.getItem('access_token')}` : '',
+        },
+        body: JSON.stringify({
+          job_id: job_id,
+          user_id: user_id,
+          job_skills: job.skills_required ? job.skills_required.split(',').map(skill => skill.trim()) : [],
+          user_skills: skillNames
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Skill gap analysis failed');
+      }
+
+      const data = await response.json();
+      setSkillGapResult(data);
+      setSnackbarMessage('Skill gap analysis completed successfully!');
+      setSnackbarSeverity('success');
+      setOpenSnackbar(true);
+    } catch (error) {
+      console.error('Error performing skill gap analysis:', error);
+      setSnackbarMessage('Failed to perform skill gap analysis');
+      setSnackbarSeverity('error');
+      setOpenSnackbar(true);
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
+  };
 
   return (
     <Box>
       <Container maxWidth="lg" sx={{ mt: 4 }}>
-      </Container>
-    {/* <Container maxWidth="lg" sx={{ mt: 4 }}> */}
-        <JobDetails />
-      {/* </Container> */}
-
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
-        <JobHeader
-          title={jobData.title}
-          company={jobData.company}
+        <JobHeader 
+          title={job.title}
+          company={job.company_name}
           type={jobData.type}
-          website={jobData.website}
+          website={job.job_domain}
           contact={jobData.contact}
           badges={jobData.badges}
           logoUrl={jobData.employer.logoUrl}
         />
 
+        <Button 
+          variant="contained" 
+          color="primary" 
+          onClick={handleSkillGapAnalysis}
+          sx={{ my: 2 }}
+        >
+          Skill Gap Analysis
+        </Button>
+
+        {skillGapResult && (
+          <Box sx={{ mt: 2, p: 2, backgroundColor: '#f0f0f0', borderRadius: 2 }}>
+            <Typography variant="h6">Skill Gap Analysis Results</Typography>
+            <Typography>
+              Matching Skills: {skillGapResult.matching_skills.join(', ') || 'None'}
+            </Typography>
+            <Typography>
+              Missing Skills: {skillGapResult.missing_skills.join(', ') || 'None'}
+            </Typography>
+            <Typography>
+              Skill Completeness: {skillGapResult.skill_completeness}%
+            </Typography>
+          </Box>
+        )}
+
+        {/* Display Job Skills and User Skills */}
+        <Box sx={{ mt: 4 }}>
+          <Typography variant="h6">Job Skills</Typography>
+          <Typography>{job.skills_required ? job.skills_required.split(',').map(skill => skill.trim()).join(', ') : 'No skills listed for this job'}</Typography>
+
+          <Typography variant="h6" sx={{ mt: 2 }}>Your Skills</Typography>
+          {skills.length === 0 ? (
+            <Typography>No skills listed in your profile</Typography>
+          ) : (
+            skills.map((skill, index) => (
+              <Box key={index} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1 }}>
+                <Typography>{skill.name}</Typography>
+                <Typography color={skill.verified ? 'green' : 'red'}>
+                  {skill.verified ? 'Verified' : 'Not Verified'}
+                </Typography>
+              </Box>
+            ))
+          )}
+        </Box>
+
+
         <Grid container spacing={4}>
           <Grid item xs={12} md={8}>
             <Box sx={{ width: '100%', height: '400px', overflowY: 'auto' }}>
-              <JobDescription description={jobData.description} />
+              <JobDescription description={job.description} />
             </Box>
 
             <Box sx={{ width: '100%', height: '400px', overflowY: 'auto', mt: 3 }}>
               <Responsibilities responsibilities={jobData.responsibilities} />
               <Share></Share>
             </Box>
-
           </Grid>
-
+       
           <Grid item xs={12} md={4}>
             <Box sx={{ width: '100%', height: '400px', overflowY: 'auto' }}>
               <JobOverviewCard overview={jobData.overview} />
@@ -121,6 +206,21 @@ const JobPage = () => {
           </Grid>
         </Box>
       </Container>
+
+      <Snackbar 
+        open={openSnackbar} 
+        autoHideDuration={6000} 
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Alert 
+          onClose={handleCloseSnackbar} 
+          severity={snackbarSeverity}
+          sx={{ width: '100%' }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

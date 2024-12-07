@@ -7,7 +7,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from myapp.models import User, Profile
 from forum.serializers import ThreadSerializer, PostSerializer, PinSerializer, ProfileSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-from myapp.utils import send_email
+from myapp.utils.email_utils import send_email
 import random
 from rest_framework_simplejwt.exceptions import InvalidToken
 from faker import Faker

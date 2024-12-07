@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const FindJob = () => {
   const [jobs, setJobs] = useState([]); // State to hold job data
-  
+
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -50,7 +50,7 @@ const FindJob = () => {
           </div>
           <div className="input-box-3">
             <img src="../images/layers.png" alt="Category Icon" />
-            <select name="category" id="category" style={{ border: "none" }}>
+            <select name="category" id="category">
               <option value="Software Engineer">Software Engineer</option>
               <option value="Frontend Developer">Frontend Developer</option>
               <option value="Backend Developer">Backend Developer</option>
@@ -58,17 +58,17 @@ const FindJob = () => {
             </select>
           </div>
           <div className="input-box-4">
-            Advanced Filter
+            <label htmlFor="filter">Advanced Filter</label>
           </div>
           <button>Find Job</button>
         </div>
       </div>
       <div className="jobs-container">
         <div className="jobs-feed">
-          {Array.isArray(jobs) && jobs.length > 0 ? (
+          {jobs.length > 0 ? (
             jobs.map((job) => (
-              <Link to={`/job/${job.job_id}`} style={{textDecoration:"none",color:"black"}}>
-              <div className="job" key={job.job_id}>
+              <Link to={`/job/${job.job_id}`} style={{textDecoration:"none",color:"black"}} state={{ job }}>
+              <div className="job" key={job.job_id} >
                 <div className="job-header">
                   <div className="job-header-left">
                     <img src="../images/c1.png" alt="Company Logo" />
@@ -91,7 +91,7 @@ const FindJob = () => {
                     <span>{job.salary ? `$${job.salary}` : "Not disclosed"}</span>
                   </div>
                 </div>
-
+             
               </div>
               </Link>
 

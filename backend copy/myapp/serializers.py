@@ -103,3 +103,15 @@ class JobSerializer(serializers.ModelSerializer):
         if not value:
             raise serializers.ValidationError("Skills required cannot be empty.")
         return value
+  
+class SkillGapAnalysisSerializer(serializers.Serializer):
+    job_id = serializers.IntegerField()
+    user_id = serializers.IntegerField()
+    job_skills = serializers.ListField(
+        child=serializers.CharField(max_length=100),
+        allow_empty=False
+    )
+    user_skills = serializers.ListField(
+        child=serializers.CharField(max_length=100),
+        allow_empty=False
+    )

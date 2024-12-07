@@ -5,10 +5,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.exceptions import InvalidToken
 from .models import User, Profile, Job, Wishlist
-from .serializers import UserSerializer, ProfileSerializer, JobSerializer
-from .utils import send_email
+from .serializers import UserSerializer, ProfileSerializer, JobSerializer, SkillGapAnalysisSerializer
+from .utils.email_utils import send_email  # Updated import statement
 import requests
 import json
 
@@ -127,7 +126,7 @@ class UserProfileView(APIView):
         serializer = ProfileSerializer(profile, data=data, partial=True, context={'request': request})
         # for skill in data['skills']:
         #             print(f"Skill: {skill['name']}, Score: {skill['score']}, Verified: {skill['verified']}")
-        print(data['skills'])
+        # print(data['skills'])
         # if 'skills' in data:
                 #  update_skill_score(user, 'java', 5)
         print_skills_from_db(user)
@@ -174,8 +173,9 @@ class JobsView(APIView):
         user_skills = profile.skills if isinstance(profile.skills, list) else json.loads(profile.skills)
         print(f"User Skills: {user_skills}")
 
-        user_skill_names = {skill['name'].lower() for skill in user_skills}
+        user_skill_names = {skill.lower() for skill in user_skills}
         print(f"User Skill Names: {user_skill_names}")
+
 
         jobs = Job.objects.order_by('-created_at')
 
@@ -186,7 +186,7 @@ class JobsView(APIView):
             job_required_skills = {skill.strip().lower() for skill in job_required_skills}  
 
             matching_skills = user_skill_names.intersection(job_required_skills)
-            print(f"Matching Skills for {job.title}: {matching_skills}")
+            print(f"{job.job_id}Matching Skills for {job.title}: {matching_skills}")
 
             if matching_skills:
                 matching_jobs.append(job)
@@ -242,9 +242,9 @@ class fetchcourses(APIView):
                     status=500
                 )
                 
-            url = f'https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q={q}&key={api_key}'
+                
             api_response = requests.get(url)
-            
+
             if api_response.status_code == 200:
                 data = api_response.json()
 
@@ -265,7 +265,6 @@ class fetchcourses(APIView):
                             "link": f"https://www.youtube.com/playlist?list={item['id']['playlistId']}",
                             "thumbnail": item["snippet"]["thumbnails"]["high"]["url"]
                         })
-
                 print(response_data)
                 return Response({"courses": response_data}, status=200)
             else:
@@ -298,7 +297,6 @@ def print_skills_from_db(user):
         profile = Profile.objects.get(user=user)
         skills = profile.skills  # Fetch the JSONField data
 
-        update_skill_score(user, 'java', 5)
         # Debugging: Check the type of skills
         print(f"Skills data type: {type(skills)}")
         print(f"Skills content: {skills}")
@@ -373,15 +371,50 @@ class UpdateSkillScore(APIView):
 
         else:
             return Response({"detail": "Skills data should be a list."}, status=status.HTTP_400_BAD_REQUEST)
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from .serializers import SkillGapAnalysisSerializer
+from .utils.skill_gap_analysis import skill_gap_analysis
 
+class SkillGapAnalysisView(APIView):
+    permission_classes = [IsAuthenticated]
 
-class JobsView(APIView):
-    permission_classes = [AllowAny]
+    def post(self, request):
+        try:
+            # Deserialize the request data
+            serializer = SkillGapAnalysisSerializer(data=request.data)
+            
+            if serializer.is_valid():
+                job_skills = serializer.validated_data['job_skills']
+                user_skills = serializer.validated_data['user_skills']
+                job_id = serializer.validated_data['job_id']
+                user_id = serializer.validated_data['user_id']
 
-    def get(self, request):
-        """
-        Fetches the 5 most recent job postings.
-        """
-        jobs = Job.objects.order_by('-created_at')
-        serializer = JobSerializer(jobs, many=True)
-        return Response(serializer.data)
+                # Call the external function to perform skill gap analysis
+                try:
+                    analysis_result = skill_gap_analysis(user_skills, job_skills)
+                except Exception as e:
+                    return Response({
+                        'error': 'Error in skill gap analysis process',
+                        'details': str(e)
+                    }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+                # Return the successful response
+                return Response({
+                    'job_id': job_id,
+                    'user_id': user_id,
+                    'matching_skills': analysis_result.get('matched_skills', []),
+                    'missing_skills': analysis_result.get('missing_skills', []),
+                    'skill_completeness': analysis_result.get('match_percentage', 0)
+                }, status=status.HTTP_200_OK)
+            
+            # Handle validation errors
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            # General error handling
+            return Response({ 'error': 'An unexpected error occurred',
+                'details': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -11,8 +11,6 @@ from .views import (
     PostDetailView,
     PinListView,
     ProfileView,
-    RegisterUser,
-    LoginView,
     ThreadsByTopicView
 )
 

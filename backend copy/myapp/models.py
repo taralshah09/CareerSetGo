@@ -105,21 +105,27 @@ class Profile(models.Model):
 
 
 class Job(models.Model):
+    
+ 
+    
     job_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255)
     description = models.TextField()
     company_name = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
     salary = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    posted_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posted_jobs")
+    posted_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="posted_jobs")
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
-    is_approved = models.BooleanField(default=False)
-    skills_required = models.TextField(blank=True)
-    job_domain = models.CharField(max_length=30, choices=JOB_DOMAIN_CHOICES, default='')
-    job_type = models.CharField(max_length=10, choices=JOB_TYPE_CHOICES)
+    is_approved = models.BooleanField(default=False)  # Admin approval required
 
-    def __str__(self):
+    
+    
+    skills_required = models.TextField(blank=True)  # ilst of skills & also skillgap analysis will be done through this
+    job_domain = models.CharField(max_length=30, choices=JOB_DOMAIN_CHOICES,default='')  # New domain field
+    job_type = models.CharField(max_length=10, choices=JOB_TYPE_CHOICES) 
+
+    def _str_(self):
         return f"{self.title} at {self.company_name}"
   
 class Course(models.Model):
