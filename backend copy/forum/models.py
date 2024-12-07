@@ -47,10 +47,8 @@ class Bookmark(models.Model):
         logger.debug("Creating string representation for Bookmark by user: %s", self.user.username)
         return f"Bookmark by {self.user.username} on thread {self.thread.subject}"
 
-class Pin(models.Model):
+class Pin(models.Model):    
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    
     def __str__(self):
         logger.debug("Creating string representation for Pin on thread: %s", self.thread.subject)
-        return f"Pin on thread {self.thread.subject}"

@@ -22,7 +22,7 @@ const Bookmark = () => {
 
         const response = await fetch(`/api/bookmark/${user['user_id']}?page=${page}`, {
           headers: {
-            'Authorization': `Bearer ${token}`,  // Send the token in the Authorization header
+            'Authorization': `Bearer ${token}`,  
           },
         });
 

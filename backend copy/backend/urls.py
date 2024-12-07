@@ -19,7 +19,7 @@ urlpatterns = [
     path('api/register/', RegisterUser.as_view(), name='register_user'),
     path('api/login/', LoginView.as_view(), name='login'),  # JWT login
     path('logout/', LogoutView.as_view(), name='logout'),  # JWT logout
-    # path('token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
 ]
 
 # Serve media files during development

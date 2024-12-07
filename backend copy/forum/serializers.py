@@ -34,12 +34,23 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         logger.info("User created with username: %s", user.username)
         return user
+from rest_framework import serializers
+from .models import Post
 
-# Serializer for Post model
+from rest_framework import serializers
+from .models import Post, User
+
 class PostSerializer(serializers.ModelSerializer):
+    author_username = serializers.SerializerMethodField()
+
     class Meta:
         model = Post
         fields = '__all__'
+        read_only_fields = ['id', 'created_at']
+
+    def get_author_username(self, obj):
+        return obj.author.username if obj.author else None
+   
 
 # Serializer for Pin model
 class PinSerializer(serializers.ModelSerializer):
@@ -64,3 +75,12 @@ class ThreadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Thread
         fields = ['id', 'subject', 'content', 'topic', 'creator', 'created_at', 'updated_at']
+
+
+from .models import Bookmark
+
+class BookmarkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bookmark
+        fields = ['id', 'user', 'thread']
+        read_only_fields = ['user']
