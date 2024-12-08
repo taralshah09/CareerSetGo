@@ -1,19 +1,25 @@
 import React, { useState } from 'react';
 import './DashboardEmployer.css';
-import { FaLayerGroup, FaBriefcase, FaCircle, FaCog, FaBookmark ,FaSignOutAlt,FaUserCircle,FaListUl,FaRegIdCard} from 'react-icons/fa';
+import { FaLayerGroup, FaBriefcase, FaCircle, FaCog, FaBookmark, FaSignOutAlt, FaUserCircle, FaListUl, FaRegIdCard, FaMoneyBillAlt } from 'react-icons/fa';
 import OverviewEmployer from '../../components/OverviewEmployer/OverviewEmployer';
+import PostJobForm from '../PostJobForm/PostJobForm';
+import SavedCandidate from '../SavedCandidateEmployer/SavedCandidate';
+import SettingEmployer from '../SettingEmployer/SettingEmployer';
+import MyJobCard from '../../MyJobCard';
+import PricesAndBilling from '../../components/PricesAndBilling/PricesAndBilling';
+
 const DashboardEmployer = () => {
-    const [selectedOption, setSelectedOption] = useState('settings');
+    const [selectedOption, setSelectedOption] = useState('pricing and billing');
 
     const options = [
-      
+
         { id: 'overview', label: 'Overview', icon: <FaLayerGroup /> },
-        { id: 'employers Profile', label: 'Employers Profile', icon: <FaUserCircle /> },
-        { id: 'post a Job', label: 'Post a Job', icon: <FaCircle  /> },
+        // { id: 'employers Profile', label: 'Employers Profile', icon: <FaUserCircle /> },
+        { id: 'post a Job', label: 'Post a Job', icon: <FaCircle /> },
         { id: 'my Jobs', label: 'My Jobs', icon: <FaBriefcase /> },
+        { id: 'pricing and billing', label: 'Pricing and Billing', icon: <FaMoneyBillAlt /> },
         { id: 'saved Candidates', label: 'Saved Candidates', icon: <FaBookmark /> },
-        { id: 'plans & Billing', label: 'Plans & Billing', icon: <FaListUl/> },
-        { id: 'all Companies', label: 'All Companies', icon: <FaRegIdCard /> },
+        // { id: 'all Companies', label: 'All Companies', icon: <FaRegIdCard /> },
         { id: 'settings', label: 'Settings', icon: <FaCog /> },
     ];
 
@@ -21,20 +27,19 @@ const DashboardEmployer = () => {
         switch (selectedOption) {
             case 'overview':
                 return <OverviewEmployer />;
-            case 'employers Profile':
-                return <div>Employers Profile</div>;
+            // case 'employers Profile':
+            //     return <div>Employers Profile</div>;
+            case 'pricing and billing':
+                return <PricesAndBilling />;
             case 'post a Job':
-                return <div>post a Job</div>;
+                return <PostJobForm />;
             case 'saved Candidates':
-                return <div>savedCandidates</div>;
-            case 'plans & Billing':
-                return <div>plans&Billing</div>;
-            case 'all Companies':
-                return <div>allCompanies</div>;
+                return <SavedCandidate />;
+
             case 'my Jobs':
-                return <div>myJobs</div>;
+                return <MyJobCard />;
             case 'settings':
-                return <div>setting</div>;
+                return <SettingEmployer />;
             default:
                 return <div>Select an option from the sidebar</div>;
         }

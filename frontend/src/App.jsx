@@ -17,6 +17,8 @@ import PostJobForm from './pages/PostJobForm/PostJobForm'
 import Courses from './pages/Courses/Courses'
 
 import ChoicesGame from './pages/ChoicesGame/ChoicesGame'
+import DashboardEmployer from './pages/DashboardEmployer/DashboardEmployer'
+import WordToCV from './pages/WordToCV/WordToCV'
 import Roadmap from './pages/Roadmap/Roadmap'
 
 function App() {
@@ -70,19 +72,27 @@ function App() {
   return (
     <>
       {!hideNavbarFooter && <Navbar />}
+
       <Routes>
         <Route index path="/" element={<HomePage />}></Route>
         <Route path="/find-job" element={<FindJob />}></Route>
         <Route path="/login" element={<LoginPage />}></Route>
         <Route path="/signup" element={<SignupPage />}></Route>
         <Route path="/employers" element={<EmployerPage />}></Route>
+        <Route path="/dashboard" element={profileData.role === "candidate" ? <Dashboard /> : <DashboardEmployer />}></Route>
         <Route path="/dashboard" element={<Dashboard />}></Route>
         <Route path="/resume-builder" element={<ResumeBuilder />}></Route>
+        <Route path="/enhance-resume" element={<WordToCV />}></Route>
         <Route path="/verify/:skillName" element={<SkillsVerficationPage />} ></Route>
         <Route path="/post" element={<PostJobForm />}></Route>
         <Route path="/course" element={<Courses />}></Route>
         <Route path="/job/:id" element={<JobPage />}></Route>
         <Route path="/choices-game" element={<ChoicesGame />}></Route>
+      </Routes >
+
+
+      {!hideNavbarFooter && <Footer />
+      }
         <Route path="/roadmap" element={<Roadmap />}></Route>
       </Routes>
       {!hideNavbarFooter && <Footer />}

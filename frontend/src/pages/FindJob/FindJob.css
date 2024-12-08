@@ -1,3 +1,11 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Outfit", serif;
+}
+
 :root {
   --primary-grey: #f1f2f4;
   --primary-white: #ffffff;
@@ -27,7 +35,7 @@
   justify-content: flex-start;
   /* gap: 15px; */
   background: #f1f2f4;
-  padding: 10px 200px;
+  padding: 15px 200px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -48,7 +56,7 @@
 }
 
 /* Input box container styling */
-.input-box {
+.find-job-search .input-box {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -56,7 +64,7 @@
   gap: 15px;
   width: 90%;
   background: var(--primary-white);
-  padding: 5px 0;
+  padding: 0px 0;
   border-radius: 5px;
   /* background: #000; */
 }
@@ -70,7 +78,7 @@
   align-items: center;
   gap: 8px;
   /* background: #ffffff; */
-  padding: 10px 15px;
+  padding: 2px 15px;
   border-radius: 6px;
   /* border: 1px solid #ddd; */
   box-sizing: border-box;
@@ -86,8 +94,7 @@
 }
 
 /* Text input fields */
-.input-box input[type="text"],
-.input-box select {
+.input-box input[type="text"] {
   border: none;
   outline: none;
   font-size: 14px;
@@ -95,12 +102,36 @@
   background: none;
 }
 
+.input-box select {
+  padding: 5px 15px;
+  color: var(--light-text);
+  background: none;
+  outline: 0;
+  border-radius: 5px;
+  appearance: none; /* Removes default dropdown arrow */
+  -webkit-appearance: none; /* Ensures cross-browser compatibility */
+  -moz-appearance: none;
+  font-size: 14px;
+}
+.input-box select:hover {
+  cursor: pointer;
+  padding: 5px 15px;
+  color: var(--light-text);
+  background: none;
+  outline: 0;
+  border-radius: 5px;
+  appearance: none; /* Removes default dropdown arrow */
+  -webkit-appearance: none; /* Ensures cross-browser compatibility */
+  -moz-appearance: none;
+  font-size: 14px;
+}
+
 /* Advanced filter label styling */
-.input-box-4 label {
+.input-box-4 {
   font-size: 14px;
   cursor: pointer;
   color: #4a90e2;
-  text-decoration: underline;
+  font-weight: 600;
 }
 
 /* Find Job button styling */
@@ -108,7 +139,7 @@
   background-color: #4a90e2;
   color: #ffffff;
   border: none;
-  padding: 12px 20px;
+  padding: 5px 20px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 16px;
@@ -141,10 +172,10 @@
 }
 .jobs-container .jobs-filter select {
   padding: 5px 15px;
-  border: 1px solid var(--light-text);
   color: var(--light-text);
   background: none;
   outline: 0;
+  border: 0;
   border-radius: 5px;
 }
 

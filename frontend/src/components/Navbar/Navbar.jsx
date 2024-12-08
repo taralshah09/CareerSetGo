@@ -1,35 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import "./Navbar.css";
-import { NavLink, useNavigate } from 'react-router-dom';  // Import useNavigate here
+import { NavLink, useNavigate } from 'react-router-dom';
 import { fetchWithAuth } from '../../utils/fetchWithAuth';
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const navigate = useNavigate();  // Use useNavigate instead of useHistory
+  const [showResumeDropdown, setShowResumeDropdown] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if access token exists in localStorage
     const token = localStorage.getItem('access_token');
-    setIsLoggedIn(!!token); // Set login status based on token presence
+    setIsLoggedIn(!!token);
   }, []);
 
   const handleLogout = async () => {
     try {
-      // Call the logout API using the fetchWithAuth function
       const response = await fetchWithAuth('http://localhost:8000/logout/', {
         method: 'POST',
         body: JSON.stringify({}),
       });
 
-      // Clear tokens from localStorage
       localStorage.removeItem('access_token');
       localStorage.removeItem('refreshtoken');
-
-      // Update the state to reflect logout
       setIsLoggedIn(false);
-
-      // Redirect the user to the home page or login page after logout
-      navigate('/');  // Use navigate() instead of history.push()
+      navigate('/');
     } catch (error) {
       console.error('Logout failed:', error);
     }
@@ -43,8 +37,19 @@ const Navbar = () => {
           <NavLink to="/find-job" className="nav-link">Find Job</NavLink>
           <NavLink to="/employers" className="nav-link">Employers</NavLink>
           <NavLink to="/dashboard" className="nav-link">Dashboard</NavLink>
-          <NavLink to="/resume-builder" className="nav-link">Resume builder</NavLink>
-          <NavLink to="/customer-support" className="nav-link">Customer Support</NavLink>
+          <div 
+            className="resume-dropdown"
+            onMouseEnter={() => setShowResumeDropdown(true)}
+            onMouseLeave={() => setShowResumeDropdown(false)}
+          >
+            <span className="nav-link">Resume</span>
+            {showResumeDropdown && (
+              <div className="dropdown-content">
+                <NavLink to="/resume-builder" className="dropdown-item">Resume Builder</NavLink>
+                <NavLink to="/enhance-resume" className="dropdown-item">Enhance Resume</NavLink>
+              </div>
+            )}
+          </div>
           <NavLink to="/choices-game" className="nav-link">Choices game</NavLink>
         </ul>
       </nav>

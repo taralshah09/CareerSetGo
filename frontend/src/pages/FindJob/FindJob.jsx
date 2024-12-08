@@ -50,7 +50,7 @@ const FindJob = () => {
           </div>
           <div className="input-box-3">
             <img src="../images/layers.png" alt="Category Icon" />
-            <select name="category" id="category">
+            <select name="category" id="category" style={{ border: "none" }}>
               <option value="Software Engineer">Software Engineer</option>
               <option value="Frontend Developer">Frontend Developer</option>
               <option value="Backend Developer">Backend Developer</option>
@@ -58,7 +58,7 @@ const FindJob = () => {
             </select>
           </div>
           <div className="input-box-4">
-            <label htmlFor="filter">Advanced Filter</label>
+            Advanced Filter
           </div>
           <button>Find Job</button>
         </div>
@@ -91,7 +91,7 @@ const FindJob = () => {
                     <span>{job.salary ? `$${job.salary}` : "Not disclosed"}</span>
                   </div>
                 </div>
-             
+
               </div>
               </Link>
 

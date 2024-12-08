@@ -154,10 +154,13 @@ const FavJobs = () => {
     <div>
       <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#ffffff', overflow: 'hidden' }}>
         <Container maxWidth="xl" sx={{ flex: 1, padding: '1rem', bgcolor: '#ffffff', paddingX: 0 }}>
-          <Typography variant="h6" sx={{ mt: 1, mb: 1, display: 'flex', alignItems: "center", gap: 1 }}>
+          <h2 style={{ fontSize: "20px", marginBottom: "20px" }}>
+            Favourite Jobs
+          </h2 >
+          {/* <Typography variant="h6" sx={{ mt: 1, mb: 1, display: 'flex', alignItems: "center", gap: 1 }}>
             Favourite Jobs <Typography variant="h6">({jobData.length})</Typography>
 
-          </Typography>
+          </Typography> */}
 
           <Grid container spacing={2}>
             {jobsToShow.map((job, index) => (

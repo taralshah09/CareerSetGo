@@ -16,9 +16,13 @@
     "@mui/icons-material": "^6.1.6",
     "@mui/material": "^6.1.6",
     "@react-icons/all-files": "^4.1.0",
+    "@react-pdf/renderer": "^4.1.5",
     "axios": "^1.7.8",
     "html2pdf.js": "^0.10.2",
+    "docx": "^9.1.0",
     "js-cookie": "^3.0.5",
+    "mammoth": "^1.8.0",
+    "marked": "^15.0.3",
     "quill": "^2.0.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -27,7 +31,8 @@
     "react-markdown": "^9.0.1",
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.28.0",
-    "react-to-print": "^3.0.2"
+    "react-to-print": "^3.0.2",
+    "react-toastify": "^10.0.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",

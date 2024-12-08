@@ -106,8 +106,8 @@
 }
 
 .search-box input {
-  border: none;
   outline: none;
+  border: 0;
   width: 100%;
   font-size: 16px;
   color: #495057;
@@ -119,6 +119,7 @@
 }
 .search-bar:hover {
   background: white;
+  border: 0;
 }
 
 .buttons-box {
@@ -156,4 +157,32 @@
 
 .buttons-box button:hover {
   opacity: 0.9;
+}
+
+.resume-dropdown {
+  position: relative;
+  margin-top: 6px;
+  /* display: inline-block; */
+}
+
+.dropdown-content {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  border-radius: 4px;
+}
+
+.dropdown-item {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-item:hover {
+  background-color: #f1f1f1;
 }

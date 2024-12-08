@@ -132,7 +132,3 @@ const JobAlertCard = ({ logo , jobTitle, location, image: imageUrl, jobTiming, s
 };
 
 export default JobAlertCard;
-
-
-
-
