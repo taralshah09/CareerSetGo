@@ -1,0 +1,212 @@
+/* Main container styles */
+.cv-container {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 24px;
+  font-family: Arial, sans-serif;
+}
+
+/* Header styles */
+.cv-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 24px;
+  color: #2c3e50;
+}
+
+.cv-subtitle {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #34495e;
+}
+
+/* Form section styles */
+.upload-section {
+  margin-bottom: 24px;
+}
+
+.file-input {
+  margin-bottom: 16px;
+  padding: 8px;
+  width: 100%;
+  border: 2px dashed #cbd5e0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.file-input:hover {
+  border-color: #4a90e2;
+}
+
+.textarea-container {
+  margin-bottom: 16px;
+}
+
+.job-description-textarea {
+  width: 100%;
+  min-height: 200px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  resize: vertical;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.job-description-textarea:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+/* Button styles */
+.generate-button {
+  background-color: #4a90e2;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.generate-button:hover {
+  background-color: #357abd;
+}
+
+.generate-button:disabled {
+  background-color: #cbd5e0;
+  cursor: not-allowed;
+}
+
+/* Loading state */
+.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+/* Error message styles */
+.error-message {
+  color: #e53e3e;
+  margin-bottom: 16px;
+  padding: 12px;
+  background-color: #fff5f5;
+  border: 1px solid #feb2b2;
+  border-radius: 4px;
+}
+
+/* Output section styles */
+.output-container {
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  background-color: white;
+}
+
+.output-content {
+  line-height: 1.6;
+}
+
+/* Markdown content styles */
+.markdown-content {
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.markdown-content h1 {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 24px 0 16px;
+}
+
+.markdown-content h2 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 20px 0 12px;
+}
+
+.markdown-content h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 16px 0 8px;
+}
+
+.markdown-content p {
+  margin: 12px 0;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  margin: 12px 0;
+  padding-left: 24px;
+}
+
+.markdown-content li {
+  margin: 6px 0;
+}
+
+.markdown-content strong {
+  font-weight: 600;
+}
+
+.markdown-content em {
+  font-style: italic;
+}
+
+.export-section {
+  margin-top: 20px;
+  padding: 15px;
+  border-top: 1px solid #eee;
+}
+
+.export-select {
+  padding: 8px;
+  margin-right: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.export-button {
+  padding: 8px 16px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.export-button:hover {
+  background-color: #45a049;
+}
+
+.export-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .cv-container {
+    padding: 16px;
+  }
+
+  .cv-title {
+    font-size: 24px;
+  }
+
+  .cv-subtitle {
+    font-size: 18px;
+  }
+
+  .generate-button {
+    width: 100%;
+  }
+}
