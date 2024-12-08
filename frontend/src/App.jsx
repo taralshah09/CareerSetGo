@@ -15,14 +15,18 @@ import ResumeBuilder from './pages/ResumeBuilder/ResumeBuilder'
 import SkillsVerficationPage from './pages/SkillsVerificationPage/SkillsVerificationPage'
 import PostJobForm from './pages/PostJobForm/PostJobForm'
 import Courses from './pages/Courses/Courses'
-
 import ChoicesGame from './pages/ChoicesGame/ChoicesGame'
 import DashboardEmployer from './pages/DashboardEmployer/DashboardEmployer'
 import WordToCV from './pages/WordToCV/WordToCV'
 import Roadmap from './pages/Roadmap/Roadmap'
+// import Course from './pages/Courses/Course'
+import Profile from './components/Profile/Profile'
+import { useAuth } from './auth/AuthProvider'
 
 function App() {
   const location = useLocation();
+  const { user } = useAuth()
+  console.log(user?.role);
   const hideNavbarFooter = location.pathname === "/login" || location.pathname === "/signup";
 
   const navigate = useNavigate();
@@ -79,13 +83,15 @@ function App() {
         <Route path="/login" element={<LoginPage />}></Route>
         <Route path="/signup" element={<SignupPage />}></Route>
         <Route path="/employers" element={<EmployerPage />}></Route>
-        <Route path="/dashboard" element={profileData.role === "candidate" ? <Dashboard /> : <DashboardEmployer />}></Route>
+        <Route path="/dashboard" element={user?.role !== "candidate" ? <Dashboard /> : <DashboardEmployer />}></Route>
         <Route path="/dashboard" element={<Dashboard />}></Route>
         <Route path="/resume-builder" element={<ResumeBuilder />}></Route>
         <Route path="/enhance-resume" element={<WordToCV />}></Route>
         <Route path="/verify/:skillName" element={<SkillsVerficationPage />} ></Route>
         <Route path="/post" element={<PostJobForm />}></Route>
         <Route path="/course" element={<Courses />}></Route>
+        <Route path="/job/:id" element={<JobPage />}></Route>
+        {/* <Route path="/course" element={<Course />}></Route> */}
         <Route path="/job/:id" element={<JobPage />}></Route>
         <Route path="/choices-game" element={<ChoicesGame />}></Route>
         <Route path="/roadmap" element={<Roadmap />}></Route>

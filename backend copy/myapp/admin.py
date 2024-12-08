@@ -1,49 +1,128 @@
-
-
 # from django.contrib import admin
 # from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-# from .models import User, Profile, Course, Job
+# from django.utils.html import format_html
+# from import_export.admin import ImportExportModelAdmin
+# from .models import User, Profile, Job, Course, Wishlist, AppliedJob
 
-# # Custom User Admin
 # class UserAdmin(BaseUserAdmin):
-#     model = User
-#     list_display = ('id', 'username', 'email', 'fullname', 'createdat', 'updatedat', 'is_staff', 'is_active')
-#     search_fields = ('username', 'email')
-#     ordering = ('-createdat',)
+#     # Enhanced list display with color-coded status
+#     def is_active_status(self, obj):
+#         if obj.is_active:
+#             return format_html('<span class="badge bg-success">Active</span>')
+#         return format_html('<span class="badge bg-danger">Inactive</span>')
+#     is_active_status.short_description = 'Status'
+#     # Enhanced list display with role color coding
+#     def role_display(self, obj):
+#         role_colors = {
+#             'admin': 'bg-primary',
+#             'recruiter': 'bg-warning',
+#             'candidate': 'bg-info'
+#         }
+#         color = role_colors.get(obj.role.lower(), 'bg-secondary')
+#         return format_html(f'<span class="badge {color}">{obj.role}</span>')
+#     role_display.short_description = 'Role'
 
-# # Custom Profile Admin
-# class ProfileAdmin(admin.ModelAdmin):
-#     model = Profile
-#     list_display = ('profile_id', 'user', 'skills', 'education', 'age', 'experience', 'location', 'role', 'phone_no')
-#     search_fields = ('user__username', 'skills', 'education')
-#     ordering = ('user',)
+#     list_display = ('id', 'fullname', 'username', 'email', 'role_display', 'is_active_status', 'is_staff', '')
+#     list_display_links = ('username', 'email')
+#     list_filter = ('is_staff', 'is_active', 'role')
+#     search_fields = ('username', 'email', 'fullname')
+#     ordering = ('id',)
+#     filter_horizontal = ('groups', 'user_permissions')
+    
+#     fieldsets = (
+#         (None, {'fields': ('email', 'password')}),
+#         ('Personal Info', {'fields': ('fullname', 'username', 'role')}),
+#         ('Permissions', {
+#             'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
+#             'classes': ('collapse',)
+#         }),
+#         ('Important Dates', {'fields': ('last_login', '')}),
+#     )
+    
+#     add_fieldsets = (
+#         (None, {
+#             'classes': ('wide',),
+#             'fields': ('email', 'username', 'password1', 'password2', 'role', 'is_active', 'is_staff'),
+#         }),
+#     )
+#     readonly_fields = ('',)
 
-# # Custom Course Admin
-# class CourseAdmin(admin.ModelAdmin):
-#     model = Course
-#     list_display = ('course_id', 'title', 'instructor', 'start_date', 'end_date', 'created_at')
-#     search_fields = ('title', 'instructor')
-#     ordering = ('-created_at',)
+# @admin.register(Profile)
+# class ProfileAdmin(ImportExportModelAdmin):
+#     # Added profile image preview
+#     def profile_image_preview(self, obj):
+#         if obj.profile_picture:
+#             return format_html('<img src="{}" style="max-height:100px; max-width:100px;" />'.format(obj.profile_picture.url))
+#         return 'No Image'
+#     profile_image_preview.short_description = 'Profile Image'
 
-# # Custom Job Admin with Approve/Reject actions
+#     list_display = ('user', 'phone_no', 'nationality', 'title', 'location', 'profile_image_preview', 'date_of_birth')
+#     search_fields = ('user__username', 'user__email', 'phone_no', 'title', 'location')
+#     list_filter = ('nationality', 'gender')
+#     list_per_page = 20
+
 # @admin.register(Job)
-# class JobAdmin(admin.ModelAdmin):
-#     list_display = ('job_id', 'title', 'company_name', 'location', 'posted_by', 'created_at', 'is_approved')
-#     list_filter = ('is_approved', 'location')
-#     search_fields = ('title', 'company_name', 'posted_by__username')
-#     actions = ['approve_jobs', 'reject_jobs']
+# class JobAdmin(ImportExportModelAdmin):
+#     # Added job status color coding
+#     def job_status(self, obj):
+#         if obj.is_approved:
+#             return format_html('<span class="badge bg-success">Approved</span>')
+#         return format_html('<span class="badge bg-warning">Pending</span>')
+#     job_status.short_description = 'Status'
 
-#     def approve_jobs(self, request, queryset):
-#         queryset.update(is_approved=True)
-#         self.message_user(request, "Selected jobs have been approved.")
-#     approve_jobs.short_description = "Approve selected jobs"
+#     list_display = ('title', 'company_name', 'location', 'job_domain', 'job_type', 'job_status', '')
+#     search_fields = ('title', 'company_name', 'location', 'skills_required')
+#     list_filter = ('job_domain', 'job_type', 'is_approved', '')
+#     # ordering = ('-',)
+#     list_per_page = 20
 
-#     def reject_jobs(self, request, queryset):
-#         queryset.update(is_approved=False)
-#         self.message_user(request, "Selected jobs have been rejected.")
-#     reject_jobs.short_description = "Reject selected jobs"
+# @admin.register(Course)
+# class CourseAdmin(ImportExportModelAdmin):
+#     # Added course duration calculation
+#     def course_duration(self, obj):
+#         if obj.start_date and obj.end_date:
+#             duration = (obj.end_date - obj.start_date).days
+#             return f"{duration} days"
+#         return "N/A"
+#     course_duration.short_description = 'Duration'
 
-# # Register models with the admin site
+#     list_display = ('title', 'instructor', 'start_date', 'end_date', 'course_duration', '')
+#     search_fields = ('title', 'instructor', 'description')
+#     list_filter = ('start_date', 'end_date')
+#     ordering = ('-',)
+#     list_per_page = 20
+
+# @admin.register(Wishlist)
+# class WishlistAdmin(ImportExportModelAdmin):
+#     list_display = ('user', 'job', 'added_at')
+#     search_fields = ('user__username', 'job__title')
+#     ordering = ('-added_at',)
+#     list_per_page = 20
+
+# @admin.register(AppliedJob)
+# class AppliedJobAdmin(ImportExportModelAdmin):
+#     # Added application status color coding
+#     def application_status(self, obj):
+#         status_colors = {
+#             'pending': 'bg-warning',
+#             'reviewed': 'bg-info',
+#             'accepted': 'bg-success',
+#             'rejected': 'bg-danger'
+#         }
+#         status = getattr(obj, 'status', 'pending').lower()
+#         color = status_colors.get(status, 'bg-secondary')
+#         return format_html(f'<span class="badge {color}">{status}</span>')
+#     application_status.short_description = 'Status'
+
+#     list_display = ('user', 'job', 'applied_at', 'application_status')
+#     search_fields = ('user__username', 'job__title')
+#     ordering = ('-applied_at',)
+#     list_per_page = 20
+
+# # Register custom User model with customized UserAdmin
 # admin.site.register(User, UserAdmin)
-# admin.site.register(Profile, ProfileAdmin)
-# admin.site.register(Course, CourseAdmin)
+
+# # Optional: Customize admin site header
+# admin.site.site_header = 'Job Portal Administration'
+# admin.site.site_title = 'Job Portal Admin'
+# admin.site.index_title = 'Welcome to Job Portal Admin'

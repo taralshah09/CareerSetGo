@@ -1,7 +1,8 @@
 from rest_framework import serializers
-from .models import User, Profile, Job
+from .models import User, Profile, Job,Company,AppliedJob
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 import logging
+from rest_framework.exceptions import AuthenticationFailed
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +15,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         logger.info(f"Token issued for user: {user.username}")
         return token
 
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -23,18 +23,8 @@ class UserSerializer(serializers.ModelSerializer):
             'password': {'write_only': True},
         }
 
-    # def create(self, validated_data):
-    #     """Create a new user with encrypted password."""
-    #     return User.objects.create_user(
-    #         username=validated_data['username'],
-    #         email=validated_data['email'],
-    #         password=validated_data['password'],
-    #         fullname=validated_data['fullname'],
-    #         role=validated_data.get('role', User.RECRUITER)  # Replace hardcoding with model constants
-    #     )
-
     def create(self, validated_data):
-    # """Create a new user with encrypted password."""
+        """Create a new user with encrypted password."""
         role = validated_data.get('role', 'recruiter')  # Use string default instead
 
         return User.objects.create_user(
@@ -43,8 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
             password=validated_data['password'],
             fullname=validated_data['fullname'],
             role=role
-    )
-
+        )
 
     def validate_email(self, value):
         """Validate that the email is unique."""
@@ -58,7 +47,6 @@ class UserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("A user with this username already exists.")
         return value
 
-
 class ProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
     fullname = serializers.CharField(source='user.fullname', required=False)
@@ -67,12 +55,13 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = [
-            'fullname', 'profile_id', 'experience', 'education', 'profile_picture', 'resume', 
+            'fullname', 'id', 'experience', 'education', 'profile_picture', 'resume', 
             'username', 'title', 'personal_website', 'nationality', 'date_of_birth', 'gender',
             'marital_status', 'biography', 'languages', 'location', 'other_link', 'insta_link',
             'twitter_link', 'linkedin_link', 'preferred_work_environment', 'availability_status',
             'certifications', 'domain_of_interest', 'skills','role'
         ]
+        
         extra_kwargs = {
             field: {'required': False} for field in [
                 'profile_picture', 'resume', 'experience', 'education', 'biography', 
@@ -114,7 +103,7 @@ class JobSerializer(serializers.ModelSerializer):
         if not value:
             raise serializers.ValidationError("Skills required cannot be empty.")
         return value
-  
+    
 class SkillGapAnalysisSerializer(serializers.Serializer):
     job_id = serializers.IntegerField()
     user_id = serializers.IntegerField()
@@ -126,3 +115,29 @@ class SkillGapAnalysisSerializer(serializers.Serializer):
         child=serializers.CharField(max_length=100),
         allow_empty=False
     )
+
+
+class CompanySerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)  # Set automatically to the logged-in user
+
+    class Meta:
+        model = Company
+        fields = [
+            'user', 'company_id', 'name', 'about_us', 'org_type', 'industry_type', 'team_size', 
+            'years_of_experience', 'logo', 'banner_image', 'website', 'company_email', 'company_phone', 
+            'location', 'map_location', 'company_vision', 'linkedin_profile', 'twitter_profile', 
+            'facebook_profile', 'instagram_profile', 'created_at', 'updated_at',
+        ]
+        read_only_fields = ['created_at', 'updated_at']
+
+    def validate_user(self, value):
+        if value.role != 'recruiter':
+            raise serializers.ValidationError("Only recruiters can own a company profile.")
+        return value
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        # Only update fields provided in the request
+        return super().update(instance, validated_data)

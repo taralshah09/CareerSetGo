@@ -27,6 +27,7 @@ const JobPage = () => {
   const { user, skills } = useAuth()
   const user_id = user?.profile_id;
   const skillNames = skills.map(skill => skill.name);
+  console.log("Skillnames : " + skillNames)
 
   const { id } = useParams()
   const job_id = id;

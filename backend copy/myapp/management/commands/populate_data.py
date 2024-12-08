@@ -32,9 +32,6 @@ class Command(BaseCommand):
 
         # Ensure we don't create duplicate data
         self.stdout.write(self.style.WARNING('Clearing existing job and user data...'))
-        Job.objects.all().delete()
-        Profile.objects.all().delete()
-        User.objects.filter(role='candidate').delete()
         
         with transaction.atomic():
             try:

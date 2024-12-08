@@ -335,9 +335,9 @@ const OtherFields = () => {
                 <label className="form-label">Professional Skills</label>
                 <div className="input-group">
                     <div className="input-skills">
-                        {formData.skills.map((skill, index) => (
+                        {formData?.skills?.map((skill, index) => (
                             <div className="item-badge" key={index}>
-                                <p>{skill.name.length > 10 ? skill.name.substr(0, 10) + "..." : skill.name}</p>
+                                <p>{skill?.name?.length > 10 ? skill?.name.substr(0, 10) + "..." : skill?.name}</p>
                                 <span onClick={() => handleRemoveSkill(index)}>
                                     <i className="fa-solid fa-xmark"></i>
                                 </span>

@@ -8,27 +8,27 @@ const FindJob = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-          const response = await fetch("http://127.0.0.1:8000/api/jobs/", {
-              method: 'GET',
-              headers: {
-                  'Content-Type': 'application/json',
-                  // Include token if user is authenticated
-                  'Authorization': localStorage.getItem('access_token') ? `Bearer ${localStorage.getItem('access_token')}` : '',
-              },
-          });
-  
-          if (response.ok) {
-              const data = await response.json();
-              setJobs(data.jobs);  // Update state with fetched job data
-          } else {
-              const errorData = await response.json();
-              console.error('Error fetching jobs:', errorData);
-          }
+        const response = await fetch("http://127.0.0.1:8000/api/jobs/", {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            // Include token if user is authenticated
+            'Authorization': localStorage.getItem('access_token') ? `Bearer ${localStorage.getItem('access_token')}` : '',
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setJobs(data.jobs);  // Update state with fetched job data
+        } else {
+          const errorData = await response.json();
+          console.error('Error fetching jobs:', errorData);
+        }
       } catch (error) {
-          console.error('Error fetching jobs:', error);
+        console.error('Error fetching jobs:', error);
       }
-  };
-  
+    };
+
 
     fetchJobs(); // Fetch jobs when the component mounts
   }, []);
@@ -50,7 +50,7 @@ const FindJob = () => {
           </div>
           <div className="input-box-3">
             <img src="../images/layers.png" alt="Category Icon" />
-            <select name="category" id="category" style={{ border: "none" }}>
+            <select name="category" id="category">
               <option value="Software Engineer">Software Engineer</option>
               <option value="Frontend Developer">Frontend Developer</option>
               <option value="Backend Developer">Backend Developer</option>
@@ -58,7 +58,7 @@ const FindJob = () => {
             </select>
           </div>
           <div className="input-box-4">
-            Advanced Filter
+            <label htmlFor="filter">Advanced Filter</label>
           </div>
           <button>Find Job</button>
         </div>
@@ -67,32 +67,32 @@ const FindJob = () => {
         <div className="jobs-feed">
           {jobs.length > 0 ? (
             jobs.map((job) => (
-              <Link to={`/job/${job.job_id}`} style={{textDecoration:"none",color:"black"}} state={{ job }}>
-              <div className="job" key={job.job_id} >
-                <div className="job-header">
-                  <div className="job-header-left">
-                    <img src="../images/c1.png" alt="Company Logo" />
-                  </div>
-                  <div className="job-header-right">
-                    <div className="job-header-right-top">
-                      <p>{job.company_name}</p>
-                      <span>{job.featured ? "Featured" : "Standard"}</span>
+              <Link key={`${job.job_id}`} to={`/job/${job.job_id}`} style={{ textDecoration: "none", color: "black" }} state={{ job }}>
+                <div className="job" key={job.job_id} >
+                  <div className="job-header">
+                    <div className="job-header-left">
+                      <img src="../images/c1.png" alt="Company Logo" />
                     </div>
-                    <div className="job-header-right-bottom">
-                      <img src="../images/location.png" alt="Location Icon" />
-                      <span>{job.location}</span>
+                    <div className="job-header-right">
+                      <div className="job-header-right-top">
+                        <p>{job.company_name}</p>
+                        <span>{job.featured ? "Featured" : "Standard"}</span>
+                      </div>
+                      <div className="job-header-right-bottom">
+                        <img src="../images/location.png" alt="Location Icon" />
+                        <span>{job.location}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="job-footer">
-                  <p>{job.title}</p>
-                  <div className="job-footer-bottom">
-                    <span>{job.job_type}</span>
-                    <span>{job.salary ? `$${job.salary}` : "Not disclosed"}</span>
+                  <div className="job-footer">
+                    <p>{job.title}</p>
+                    <div className="job-footer-bottom">
+                      <span>{job.job_type}</span>
+                      <span>{job.salary ? `$${job.salary}` : "Not disclosed"}</span>
+                    </div>
                   </div>
-                </div>
 
-              </div>
+                </div>
               </Link>
 
             ))
