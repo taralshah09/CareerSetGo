@@ -3,7 +3,8 @@ import { useAuth } from '../../auth/AuthProvider';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
-import './roadmap.css';
+import "./Roadmap.css";
+
 import html2pdf from 'html2pdf.js';
 import { Button, CircularProgress } from '@mui/material';
 

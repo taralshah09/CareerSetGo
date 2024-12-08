@@ -25,6 +25,7 @@ const AuthProvider = ({ children }) => {
                         : typeof data.skills === 'string'
                             ? JSON.parse(data.skills)
                             : []);
+                    console.log(data.user_id)
                 }
             } catch (error) {
                 console.error('Error fetching profile data:', error);
@@ -42,6 +43,7 @@ const AuthProvider = ({ children }) => {
 
 // Custom hook for using the context
 const useAuth = () => {
+
     return useContext(UserContext);
 };
 

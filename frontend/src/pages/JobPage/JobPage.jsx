@@ -25,7 +25,7 @@ const JobPage = () => {
   const jobSkills = job.skills_required.split(", ");
   console.log(job)
   const { user, skills } = useAuth()
-  const user_id = user?.profile_id;
+  const user_id = user.id;
   const skillNames = skills.map(skill => skill.name);
   console.log("Skillnames : " + skillNames)
 

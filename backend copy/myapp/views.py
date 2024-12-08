@@ -455,7 +455,8 @@ class UpdateSkillScore(APIView):
         else:
             return Response({"detail": "Skills data should be a list."}, status=status.HTTP_400_BAD_REQUEST)
 
-
+import logging
+import traceback
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -463,21 +464,88 @@ from rest_framework.permissions import IsAuthenticated
 from .serializers import SkillGapAnalysisSerializer
 from .utils.skill_gap_analysis import skill_gap_analysis
 
+# class SkillGapAnalysisView(APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def post(self, request):
+#         serializer = SkillGapAnalysisSerializer(data=request.data)
+        
+#         if serializer.is_valid():
+#             job_skills = serializer.validated_data['job_skills']
+#             user_skills = serializer.validated_data['user_skills']
+#             job_id = serializer.validated_data['job_id']
+#             user_id = serializer.validated_data['user_id']
+
+#             # Call the external function
+#             analysis_result = skill_gap_analysis(user_skills, job_skills)
+
+#             return Response({
+#                 'job_id': job_id,
+#                 'user_id': user_id,
+#                 'matching_skills': analysis_result['matched_skills'],
+#                 'missing_skills': analysis_result['missing_skills'],
+#                 'skill_completeness': analysis_result['match_percentage']
+#             }, status=status.HTTP_200_OK)
+        
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+logger = logging.getLogger(__name__)
+
 class SkillGapAnalysisView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = SkillGapAnalysisSerializer(data=request.data)
-        
-        if serializer.is_valid():
-            job_skills = serializer.validated_data['job_skills']
-            user_skills = serializer.validated_data['user_skills']
-            job_id = serializer.validated_data['job_id']
-            user_id = serializer.validated_data['user_id']
+        try:
+            # Log the incoming request data (be cautious with sensitive information)
+            logger.info(f"Received skill gap analysis request from user: {request.user.id}")
+            
+            # Validate serializer
+            serializer = SkillGapAnalysisSerializer(data=request.data)
+            
+            # Detailed validation with specific error handling
+            if not serializer.is_valid():
+                # Log validation errors
+                logger.warning(f"Validation errors: {serializer.errors}")
+                return Response({
+                    'error': 'Invalid input',
+                    'details': serializer.errors
+                }, status=status.HTTP_400_BAD_REQUEST)
 
-            # Call the external function
-            analysis_result = skill_gap_analysis(user_skills, job_skills)
+            # Extract validated data
+            validated_data = serializer.validated_data
+            job_skills = validated_data['job_skills']
+            user_skills = validated_data['user_skills']
+            job_id = validated_data['job_id']
+            user_id = validated_data['user_id']
 
+            # Log skills for debugging
+            logger.debug(f"Job Skills: {job_skills}")
+            logger.debug(f"User Skills: {user_skills}")
+
+            try:
+                # Call the skill gap analysis function with error handling
+                analysis_result = skill_gap_analysis(user_skills, job_skills)
+            except Exception as analysis_error:
+                # Log any errors in skill gap analysis
+                logger.error(f"Skill gap analysis error: {str(analysis_error)}")
+                logger.error(traceback.format_exc())
+                
+                return Response({
+                    'error': 'Skill gap analysis failed',
+                    'message': str(analysis_error)
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            # Validate analysis result structure
+            if not all(key in analysis_result for key in ['matched_skills', 'missing_skills', 'match_percentage']):
+                logger.error(f"Unexpected analysis result structure: {analysis_result}")
+                return Response({
+                    'error': 'Invalid analysis result',
+                    'details': analysis_result
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            # Log successful analysis
+            logger.info(f"Skill gap analysis completed for User {user_id}, Job {job_id}")
+
+            # Return analysis result
             return Response({
                 'job_id': job_id,
                 'user_id': user_id,
@@ -485,8 +553,17 @@ class SkillGapAnalysisView(APIView):
                 'missing_skills': analysis_result['missing_skills'],
                 'skill_completeness': analysis_result['match_percentage']
             }, status=status.HTTP_200_OK)
-        
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            # Catch-all for any unexpected errors
+            logger.critical(f"Unexpected error in skill gap analysis: {str(e)}")
+            logger.critical(traceback.format_exc())
+            
+            return Response({
+                'error': 'An unexpected error occurred',
+                'message': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class CompanyView(APIView):
     permission_classes = [IsAuthenticated]

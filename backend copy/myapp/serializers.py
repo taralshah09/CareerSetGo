@@ -104,19 +104,55 @@ class JobSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Skills required cannot be empty.")
         return value
     
+# class SkillGapAnalysisSerializer(serializers.Serializer):
+#     job_id = serializers.IntegerField()
+#     user_id = serializers.IntegerField()
+#     job_skills = serializers.ListField(
+#         child=serializers.CharField(max_length=100),
+#         allow_empty=False
+#     )
+#     user_skills = serializers.ListField(
+#         child=serializers.CharField(max_length=100),
+#         allow_empty=False
+#     )
+
+from rest_framework import serializers
+
 class SkillGapAnalysisSerializer(serializers.Serializer):
-    job_id = serializers.IntegerField()
-    user_id = serializers.IntegerField()
+    job_id = serializers.IntegerField(required=True, min_value=1)
+    user_id = serializers.IntegerField(required=True, min_value=1)
     job_skills = serializers.ListField(
-        child=serializers.CharField(max_length=100),
-        allow_empty=False
+        child=serializers.CharField(max_length=100, allow_null=False, allow_blank=False),
+        required=True,
+        allow_empty=False,
+        min_length=1
     )
     user_skills = serializers.ListField(
-        child=serializers.CharField(max_length=100),
-        allow_empty=False
+        child=serializers.CharField(max_length=100, allow_null=False, allow_blank=False),
+        required=True,
+        allow_empty=False,
+        min_length=1
     )
 
+    def validate_job_skills(self, value):
+        # Additional custom validation for job skills
+        if not value:
+            raise serializers.ValidationError("Job skills list cannot be empty.")
+        return value
 
+    def validate_user_skills(self, value):
+        # Additional custom validation for user skills
+        if not value:
+            raise serializers.ValidationError("User skills list cannot be empty.")
+        return value
+
+    def validate(self, data):
+        # Additional cross-field validation if needed
+        if 'job_skills' in data and 'user_skills' in data:
+            # Example of additional validation
+            if len(data['job_skills']) > 50 or len(data['user_skills']) > 50:
+                raise serializers.ValidationError("Skills lists cannot exceed 50 items.")
+        return data
 class CompanySerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)  # Set automatically to the logged-in user
 
