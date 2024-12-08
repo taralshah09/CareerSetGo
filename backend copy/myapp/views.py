@@ -5,11 +5,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import User, Profile, Job, Wishlist
-from .serializers import UserSerializer, ProfileSerializer, JobSerializer, SkillGapAnalysisSerializer
+from .models import  Profile, Job, Wishlist,Company,AppliedJob
+from .serializers import  ProfileSerializer, JobSerializer, SkillGapAnalysisSerializer,CompanySerializer
 from .utils.email_utils import send_email  # Updated import statement
 import requests
 import json
+
 
 def send_registration_email(user_email, fullname):
     subject = "Welcome to CareerSetGo!"
@@ -418,3 +419,65 @@ class SkillGapAnalysisView(APIView):
             return Response({ 'error': 'An unexpected error occurred',
                 'details': str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+
+class CompanyView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            company = Company.objects.get(user=request.user)
+            serializer = CompanySerializer(company)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Company.DoesNotExist:
+            return Response({"detail": "Company profile not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    def post(self, request):
+        if Company.objects.filter(user=request.user).exists():
+            return Response({"detail": "Company profile already exists."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = CompanySerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request):
+        try:
+            company = Company.objects.get(user=request.user)
+        except Company.DoesNotExist:
+            return Response({"detail": "Company profile not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        data = {key: value for key, value in request.data.items() if value is not None}
+        serializer = CompanySerializer(company, data=data, partial=True, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ApplyForJobView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, job_id):
+        user = request.user
+
+        # Check if the job exists
+        try:
+            job = Job.objects.get(job_id=job_id)
+        except Job.DoesNotExist:
+            return Response({'error': 'Job not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Check if the user has already applied for the job
+        if AppliedJob.objects.filter(user=user, job=job).exists():
+            return Response({'error': 'You have already applied for this job.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create a new application
+        AppliedJob.objects.create(user=user, job=job)
+
+        return Response({'message': 'Job application submitted successfully.'}, status=status.HTTP_201_CREATED)

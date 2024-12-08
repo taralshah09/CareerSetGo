@@ -15,6 +15,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('myapp.urls')),  
     path('', include('forum.urls')),
+
     path('api-auth/', include('rest_framework.urls')),
     path('api/register/', RegisterUser.as_view(), name='register_user'),
     path('api/login/', LoginView.as_view(), name='login'),  # JWT login

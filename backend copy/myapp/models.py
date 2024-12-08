@@ -26,6 +26,44 @@ JOB_TYPE_CHOICES = [
     ('onsite', 'Onsite'),
     ('remote', 'Remote'),
 ]
+COMPANY_SIZE_CHOICES = [
+    ('1-10', '1-10 Employees'),
+    ('11-50', '11-50 Employees'),
+    ('51-200', '51-200 Employees'),
+    ('201-500', '201-500 Employees'),
+    ('501-1000', '501-1000 Employees'),
+    ('1001-5000', '1001-5000 Employees'),
+    ('5000+', '5000+ Employees')
+]
+
+INDUSTRY_TYPE_CHOICES = [
+    ('tech', 'Technology'),
+    ('finance', 'Financial Services'),
+    ('healthcare', 'Healthcare'),
+    ('education', 'Education'),
+    ('manufacturing', 'Manufacturing'),
+    ('retail', 'Retail'),
+    ('consulting', 'Consulting'),
+    ('media', 'Media & Entertainment'),
+    ('energy', 'Energy'),
+    ('telecommunications', 'Telecommunications'),
+    ('agriculture', 'Agriculture'),
+    ('automotive', 'Automotive'),
+    ('ecommerce', 'E-commerce'),
+    ('transportation', 'Transportation'),
+    ('other', 'Other')
+]
+
+ORGANIZATION_TYPE_CHOICES = [
+    ('startup', 'Startup'),
+    ('small_business', 'Small Business'),
+    ('mid_size', 'Mid-size Company'),
+    ('enterprise', 'Enterprise'),
+    ('non_profit', 'Non-Profit'),
+    ('government', 'Government Organization'),
+    ('public', 'Public Company'),
+    ('private', 'Private Company')
+]
 
 
 
@@ -110,7 +148,6 @@ class Job(models.Model):
     
     job_id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255)
-    description = models.TextField()
     company_name = models.CharField(max_length=255)
     location = models.CharField(max_length=255)
     salary = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
@@ -118,10 +155,13 @@ class Job(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     is_approved = models.BooleanField(default=False)  # Admin approval required
+    
 
     
+    #responsibility
     
     skills_required = models.TextField(blank=True)  # ilst of skills & also skillgap analysis will be done through this
+    description = models.TextField(max_length=800)  # ilst of skills & also skillgap analysis will be done through this
     job_domain = models.CharField(max_length=30, choices=JOB_DOMAIN_CHOICES,default='')  # New domain field
     job_type = models.CharField(max_length=10, choices=JOB_TYPE_CHOICES) 
 
@@ -170,44 +210,6 @@ class AppliedJob(models.Model):
 from django.db import models
 from django.conf import settings
 
-COMPANY_SIZE_CHOICES = [
-    ('1-10', '1-10 Employees'),
-    ('11-50', '11-50 Employees'),
-    ('51-200', '51-200 Employees'),
-    ('201-500', '201-500 Employees'),
-    ('501-1000', '501-1000 Employees'),
-    ('1001-5000', '1001-5000 Employees'),
-    ('5000+', '5000+ Employees')
-]
-
-INDUSTRY_TYPE_CHOICES = [
-    ('tech', 'Technology'),
-    ('finance', 'Financial Services'),
-    ('healthcare', 'Healthcare'),
-    ('education', 'Education'),
-    ('manufacturing', 'Manufacturing'),
-    ('retail', 'Retail'),
-    ('consulting', 'Consulting'),
-    ('media', 'Media & Entertainment'),
-    ('energy', 'Energy'),
-    ('telecommunications', 'Telecommunications'),
-    ('agriculture', 'Agriculture'),
-    ('automotive', 'Automotive'),
-    ('ecommerce', 'E-commerce'),
-    ('transportation', 'Transportation'),
-    ('other', 'Other')
-]
-
-ORGANIZATION_TYPE_CHOICES = [
-    ('startup', 'Startup'),
-    ('small_business', 'Small Business'),
-    ('mid_size', 'Mid-size Company'),
-    ('enterprise', 'Enterprise'),
-    ('non_profit', 'Non-Profit'),
-    ('government', 'Government Organization'),
-    ('public', 'Public Company'),
-    ('private', 'Private Company')
-]
 
 class Company(models.Model):
     # Basic Information

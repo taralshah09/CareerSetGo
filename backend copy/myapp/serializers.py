@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Profile, Job
+from .models import User, Profile, Job,Company,AppliedJob
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 import logging
 from rest_framework.exceptions import AuthenticationFailed
@@ -115,3 +115,30 @@ class SkillGapAnalysisSerializer(serializers.Serializer):
         child=serializers.CharField(max_length=100),
         allow_empty=False
     )
+
+
+
+class CompanySerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)  # Set automatically to the logged-in user
+
+    class Meta:
+        model = Company
+        fields = [
+            'user', 'company_id', 'name', 'about_us', 'org_type', 'industry_type', 'team_size', 
+            'years_of_experience', 'logo', 'banner_image', 'website', 'company_email', 'company_phone', 
+            'location', 'map_location', 'company_vision', 'linkedin_profile', 'twitter_profile', 
+            'facebook_profile', 'instagram_profile', 'created_at', 'updated_at',
+        ]
+        read_only_fields = ['created_at', 'updated_at']
+
+    def validate_user(self, value):
+        if value.role != 'recruiter':
+            raise serializers.ValidationError("Only recruiters can own a company profile.")
+        return value
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        # Only update fields provided in the request
+        return super().update(instance, validated_data)

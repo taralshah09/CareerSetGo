@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from myapp.models import User, Profile
-from forum.serializers import ThreadSerializer, PostSerializer, PinSerializer, ProfileSerializer
+from forum.serializers import ThreadSerializer, PostSerializer, PinSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from myapp.utils.email_utils import send_email
 import random
@@ -56,7 +56,7 @@ class LoginView(APIView):
 
     def post(self, request):
         # Extract credentials
-        email = request.data.get('email', '').strip()
+        email = request.data.get('email', '')
         password = request.data.get('password', '')
 
         # Validate input

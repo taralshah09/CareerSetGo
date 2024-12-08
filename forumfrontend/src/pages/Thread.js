@@ -49,7 +49,8 @@ const Thread = () => {
       }
     }
     getBookmark()
-  }, [threadID, user])
+    // }, [threadID, user])
+  }, [user])
 
   // Thread fetch
   useEffect(() => {
@@ -116,7 +117,7 @@ const Thread = () => {
   const fetchMorePosts = async () => {
     const nextPage = page + 1
     const data = await fetchPosts(nextPage)
-    
+
     if (data && data.results.length > 0) {
       setPosts(prevPosts => [...prevPosts, ...data.results])
       setPage(nextPage)

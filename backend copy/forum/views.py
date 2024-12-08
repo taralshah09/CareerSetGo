@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from myapp.models import User, Profile
+from myapp.models import User, Profile,AppliedJob
 from .models import  Thread, Post, Pin, Bookmark, Thread
 from .serializers import BookmarkSerializer,ThreadSerializer, PostSerializer, PinSerializer, ProfileSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -283,3 +283,5 @@ class BookmarkCreateDeleteView(APIView):
             return Response({"message": "Bookmark removed successfully"}, status=status.HTTP_204_NO_CONTENT)
         except Bookmark.DoesNotExist:
             return Response({"error": "Bookmark not found"}, status=status.HTTP_404_NOT_FOUND)
+
+
