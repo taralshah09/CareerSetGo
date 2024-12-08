@@ -16,6 +16,7 @@ import SkillsVerficationPage from './pages/SkillsVerificationPage/SkillsVerifica
 import PostJobForm from './pages/PostJobForm/PostJobForm'
 import ChoicesGame from './pages/ChoicesGame/ChoicesGame'
 import DashboardEmployer from './pages/DashboardEmployer/DashboardEmployer'
+import WordToCV from './pages/WordToCV/WordToCV'
 
 function App() {
   const location = useLocation();
@@ -78,10 +79,13 @@ function App() {
         <Route path="/employers" element={<EmployerPage />}></Route>
         <Route path="/dashboard" element={profileData.role === "candidate" ? <Dashboard /> : <DashboardEmployer />}></Route>
         <Route path="/resume-builder" element={<ResumeBuilder />}></Route>
+        <Route path="/enhance-resume" element={<WordToCV />}></Route>
         <Route path="/verify/:skillName" element={<SkillsVerficationPage />} ></Route>
         <Route path="/post" element={<PostJobForm />}></Route>
         <Route path="/choices-game" element={<ChoicesGame />}></Route>
       </Routes >
+
+
       {!hideNavbarFooter && <Footer />
       }
     </>
