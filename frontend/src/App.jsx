@@ -88,13 +88,8 @@ function App() {
         <Route path="/course" element={<Courses />}></Route>
         <Route path="/job/:id" element={<JobPage />}></Route>
         <Route path="/choices-game" element={<ChoicesGame />}></Route>
-      </Routes >
-
-
-      {!hideNavbarFooter && <Footer />
-      }
         <Route path="/roadmap" element={<Roadmap />}></Route>
-      </Routes>
+      </Routes >
       {!hideNavbarFooter && <Footer />}
     </>
   )
