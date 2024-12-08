@@ -1,0 +1,212 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Outfit", serif;
+}
+
+:root {
+  --primary-grey: #f1f2f4;
+  --primary-white: #ffffff;
+  --primary-blue: #0a65cc;
+  --dark-text: #18191c;
+  --light-text: #5e6670;
+}
+
+.prices-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  padding: 15px 0;
+}
+
+.prices-container .prices-container-top {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: center;
+  padding: 0 55px;
+}
+
+.prices-container .prices-container-top .left {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: start;
+  width: 100%;
+  padding: 0 15px;
+  gap: 15px;
+}
+.prices-container .prices-container-top .left h2 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.prices-container .prices-container-top .right {
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  padding-left: 25px;
+  align-items: start;
+  justify-content: start;
+}
+
+.prices-container .prices-container-top .right img {
+  width: 270px;
+}
+
+.prices-container .prices-container-bottom {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 25px;
+  padding: 0 55px;
+  padding-top: 35px;
+  margin: 20px 0;
+}
+.prices-container .prices-container-bottom .plans {
+  display: flex;
+  flex-direction: column;
+  max-width: 300px;
+  width: 100%;
+  align-items: flex-start;
+  justify-content: space-between;
+  height: 415px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+  padding: 20px 15px;
+  position: relative;
+}
+.prices-container .prices-container-bottom .plans .top {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.prices-container .prices-container-bottom .plans .top h3 {
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  color: var(--dark-text);
+}
+.prices-container .prices-container-bottom .plans .top p {
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: var(--light-text);
+}
+.prices-container .prices-container-bottom .plans .top h2 {
+  color: var(--primary-blue);
+  font-size: 35px;
+}
+.prices-container .prices-container-bottom .plans .top h2 span {
+  color: var(--light-text);
+  font-weight: 400;
+  font-size: 15px;
+}
+
+.prices-container .prices-container-bottom .plans ul {
+  width: 100%;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+  position: relative;
+  gap: 5px;
+}
+.prices-container .prices-container-bottom .plans ul::before {
+  content: "";
+  background: var(--light-text);
+  width: 100%;
+  height: 0.5px;
+  position: absolute;
+  top: -10px;
+}
+.prices-container .prices-container-bottom .plans ul::after {
+  content: "";
+  background: var(--light-text);
+  width: 100%;
+  height: 0.5px;
+  position: absolute;
+  bottom: -10px;
+}
+.prices-container .prices-container-bottom .plans ul li {
+  margin-top: 2px;
+  color: var(--light-text);
+  position: relative;
+  padding-left: 25px;
+}
+
+.prices-container .prices-container-bottom .plans ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  background: var(--primary-grey);
+  background-image: url("../../../public/images/list.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 50%;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+}
+
+.get-plan-btn {
+  background: #e7f0fa;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  outline: 0;
+  border-radius: 5px;
+  font-size: 15px;
+  padding: 10px 15px;
+  gap: 15px;
+  color: var(--primary-blue);
+  font-weight: 500;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.get-plan-btn img {
+  width: 15px;
+  height: 15px;
+}
+
+.get-plan-btn:hover {
+  opacity: 0.8;
+}
+
+#regular::before {
+  content: "Recommended";
+  position: absolute;
+  top: -25px;
+  left: 10%;
+  text-align: center;
+  width: 75%;
+  height: 25px;
+  font-size: 18px;
+  color: white;
+  background: var(--primary-blue);
+  border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+}
+
+#regular {
+  border: 2px solid var(--primary-blue);
+  transform: scale(1.05);
+}
+
+#regular button {
+  background: var(--primary-blue);
+  color: white;
+}
