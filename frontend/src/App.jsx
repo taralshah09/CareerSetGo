@@ -36,8 +36,8 @@ function App() {
         <Route path="/resume-builder" element={<ResumeBuilder />}></Route>
         <Route path="/post" element={<PostJobForm/>}></Route>
       </Routes>
-      {/* <FindEmployer></FindEmployer>
-      {/* <BrowseCandidate></BrowseCandidate> */}
+      {/* <FindEmployer></FindEmployer>*/}
+      {/* {<BrowseCandidate></BrowseCandidate> } */}
       {/* <EmployerPage></EmployerPage> */}
       {/* <FindEmployer></FindEmployer> */}
         {/* <AccountSetup></AccountSetup> */}
