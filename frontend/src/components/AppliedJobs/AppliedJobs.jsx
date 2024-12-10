@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Typography, Grid, Pagination } from "@mui/material";
 import JobCard from "./JobCard";
+import "./AppliedJobs.css"
 
 const AppliedJobs = () => {
   const jobs = [
@@ -89,11 +90,11 @@ const AppliedJobs = () => {
 
   return (
     <Box>
-      <Box sx={{ mt: 4, px: 4 }}>
+      <Box sx={{ mt: 2.5, px: 2 }}>
         {/* Title */}
-        <Typography variant="h6" sx={{ mb: 2 }}>
+        <h2 style={{fontSize:"20px"}}>
           Applied Jobs ({jobs.length})
-        </Typography>
+        </h2 >
 
         {/* Table Headers */}
         <Grid
@@ -106,7 +107,7 @@ const AppliedJobs = () => {
           }}
         >
           <Grid item xs={6}>
-            <Typography variant="body2" sx={{ fontWeight: "bold",ml:2, color: "gray" }}>
+            <Typography variant="body2" sx={{ fontWeight: "bold", ml: 2, color: "gray" }}>
               Jobs
             </Typography>
           </Grid>
@@ -146,7 +147,7 @@ const AppliedJobs = () => {
 
         {/* Pagination */}
         <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-          <Pagination  color="primary" />
+          <Pagination color="primary" />
         </Box>
       </Box>
     </Box>

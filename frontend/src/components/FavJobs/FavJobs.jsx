@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import "./FavJobs.css"
-import { Box, Grid, Typography, Container, List, ListItem, ListItemText, Link  } from '@mui/material';
+import { Box, Grid, Typography, Container, List, ListItem, ListItemText, Link } from '@mui/material';
 import JobCard from '../FavJobCardComponent/FavJobCard.jsx';
 import PaginationComponent from '../BrowseCandidateComponents/Pagination.jsx';
 
 const jobData = [
   {
-    logo : "../images/c1.png" ,
+    logo: "../images/c1.png",
     jobTitle: 'Software Engineer',
     jobTiming: 'Full-time',
     location: 'San Francisco, CA',
@@ -14,16 +14,16 @@ const jobData = [
     deadline: '3 days remaining',
   },
   {
-    logo : "../images/c2.png" ,
+    logo: "../images/c2.png",
     jobTitle: 'Software Engineer',
     jobTiming: 'Full-time',
     location: 'San Francisco, CA',
     salary: '$120,000 - $140,000',
     deadline: '3 days remaining',
   },
-  
+
   {
-    logo : "../images/c3.png" ,
+    logo: "../images/c3.png",
     jobTitle: 'UI/UX Designer',
     jobTiming: 'Full-time',
     location: 'Los Angeles, CA',
@@ -31,16 +31,16 @@ const jobData = [
     deadline: '5 days remaining',
   },
   {
-    logo : "../images/c1.png" ,
+    logo: "../images/c1.png",
     jobTitle: 'Product Manager',
     jobTiming: 'Full-time',
     location: 'Chicago, IL',
     salary: '$110,000 - $130,000',
     deadline: '1 day remaining',
   },
- 
+
   {
-    logo : "../images/c2.png" ,
+    logo: "../images/c2.png",
     jobTitle: 'Software Engineer',
     jobTiming: 'Full-time',
     location: 'San Francisco, CA',
@@ -48,7 +48,7 @@ const jobData = [
     deadline: '3 days remaining',
   },
   {
-    logo : "../images/c3.png" ,
+    logo: "../images/c3.png",
     jobTitle: 'Data Scientist',
     jobTiming: 'Part-time',
     location: 'New York, NY',
@@ -56,7 +56,7 @@ const jobData = [
     deadline: 'Deadline expired',
   },
   {
-    logo : "../images/c1.png" ,
+    logo: "../images/c1.png",
     jobTitle: 'UI/UX Designer',
     jobTiming: 'Full-time',
     location: 'Los Angeles, CA',
@@ -64,7 +64,7 @@ const jobData = [
     deadline: '5 days remaining',
   },
   {
-    logo : "../images/c2.png" ,
+    logo: "../images/c2.png",
     jobTitle: 'UI/UX Designer',
     jobTiming: 'Full-time',
     location: 'Los Angeles, CA',
@@ -72,16 +72,16 @@ const jobData = [
     deadline: '5 days remaining',
   },
   {
-    logo : "../images/c3.png" ,
+    logo: "../images/c3.png",
     jobTitle: 'Product Manager',
     jobTiming: 'Full-time',
     location: 'Chicago, IL',
     salary: '$110,000 - $130,000',
     deadline: '1 day remaining',
   },
- 
+
   {
-    logo : "../images/c1.png" ,
+    logo: "../images/c1.png",
     jobTitle: 'Software Engineer',
     jobTiming: 'Full-time',
     location: 'San Francisco, CA',
@@ -89,7 +89,7 @@ const jobData = [
     deadline: '3 days remaining',
   },
   {
-    logo : "../images/c2.png" ,
+    logo: "../images/c2.png",
     jobTitle: 'UI/UX Designer',
     jobTiming: 'Full-time',
     location: 'Los Angeles, CA',
@@ -97,7 +97,7 @@ const jobData = [
     deadline: '5 days remaining',
   },
   {
-    logo : "../images/c3.png" ,
+    logo: "../images/c3.png",
     jobTitle: 'UI/UX Designer',
     jobTiming: 'Full-time',
     location: 'Los Angeles, CA',
@@ -105,16 +105,16 @@ const jobData = [
     deadline: '5 days remaining',
   },
   {
-    logo : "../images/c1.png" ,
+    logo: "../images/c1.png",
     jobTitle: 'Software Engineer',
     jobTiming: 'Full-time',
     location: 'San Francisco, CA',
     salary: '$120,000 - $140,000',
     deadline: '3 days remaining',
   },
-  
+
   {
-    logo : "../images/c2.png" ,
+    logo: "../images/c2.png",
     jobTitle: 'UI/UX Designer',
     jobTiming: 'Full-time',
     location: 'Los Angeles, CA',
@@ -122,7 +122,7 @@ const jobData = [
     deadline: '5 days remaining',
   },
   {
-    logo : "../images/c1.png" ,
+    logo: "../images/c1.png",
     jobTitle: 'Product Manager',
     jobTiming: 'Full-time',
     location: 'Chicago, IL',
@@ -130,7 +130,7 @@ const jobData = [
     deadline: '1 day remaining',
   },
   {
-    logo : "../images/c2.png" ,
+    logo: "../images/c2.png",
     jobTitle: 'Web Developer',
     jobTiming: 'Full-time',
     location: 'Seattle, WA',
@@ -152,26 +152,29 @@ const FavJobs = () => {
   const jobsToShow = sortedJobs.slice((page - 1) * perPage, page * perPage);
   return (
     <div>
-       <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#ffffff', overflow: 'hidden' }}>
-      <Container maxWidth="xl" sx={{ flex: 1, padding: '1rem', bgcolor: '#ffffff'  , paddingX : 0}}>
-        <Typography variant="h6" sx={{ mt: 1 , mb : 1 , display:'flex' , alignItems : "center", gap : 1}}>
-          Favourite Jobs <Typography variant="h6">({ jobData.length})</Typography>
-         
-        </Typography>
+      <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#ffffff', overflow: 'hidden' }}>
+        <Container maxWidth="xl" sx={{ flex: 1, padding: '1rem', bgcolor: '#ffffff', paddingX: 0 }}>
+          <h2 style={{ fontSize: "20px", marginBottom: "20px" }}>
+            Favourite Jobs
+          </h2 >
+          {/* <Typography variant="h6" sx={{ mt: 1, mb: 1, display: 'flex', alignItems: "center", gap: 1 }}>
+            Favourite Jobs <Typography variant="h6">({jobData.length})</Typography>
 
-        <Grid container spacing={2}>
-          {jobsToShow.map((job, index) => (
-            <Grid item xs={12} key={index}>
-              <JobCard {...job} />
-            </Grid>
-          ))}
-        </Grid>
+          </Typography> */}
 
-        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
-          <PaginationComponent count={totalPages} page={page} onChange={handlePageChange} />
-        </Box>
-      </Container>
-    </Box>
+          <Grid container spacing={2}>
+            {jobsToShow.map((job, index) => (
+              <Grid item xs={12} key={index}>
+                <JobCard {...job} />
+              </Grid>
+            ))}
+          </Grid>
+
+          <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: '2rem' }}>
+            <PaginationComponent count={totalPages} page={page} onChange={handlePageChange} />
+          </Box>
+        </Container>
+      </Box>
     </div>
   )
 }

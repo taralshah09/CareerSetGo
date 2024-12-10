@@ -1,8 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Outfit", serif;
+}
+
+:root {
+  --primary-grey: #f1f2f4;
+  --primary-white: #ffffff;
+  --primary-blue: #0a65cc;
+  --dark-text: #18191c;
+  --light-text: #5e6670;
+}
+
 .container {
-  /* min-width: 550px;  add while media queires*/
-  /* min-width: fit-content;  */
   min-height: 450px;
-  /* max-width: 750px; */
   display: flex;
   flex-direction: column;
   width: 55vw;
@@ -28,7 +41,7 @@
 
 .header::-webkit-scrollbar-thumb {
   border-radius: 20px;
-  background-color: #6b46c1;
+  background-color: var(--primary-blue);
 }
 
 .header .section {
@@ -42,8 +55,8 @@
 }
 
 .header .active {
-  border-bottom: 2px solid #6b46c1;
-  color: #6b46c1;
+  border-bottom: 2px solid var(--primary-blue);
+  color: var(--primary-blue);
 }
 
 .body {
@@ -83,7 +96,7 @@
 }
 
 .chips .new {
-  color: #6b46c1;
+  color: var(--primary-blue);
   font-weight: bold;
   letter-spacing: 1px;
   cursor: pointer;
@@ -114,14 +127,14 @@
 }
 
 .chips .active {
-  background-color: #6b46c1;
+  background-color: var(--primary-blue);
 }
 
 .body button {
   width: fit-content;
   padding: 8px 16px;
   border-radius: 5px;
-  background-color: #6b46c1;
+  background-color: var(--primary-blue);
   color: #fff;
   outline: none;
   border: none;
@@ -139,16 +152,15 @@
   transform: translateY(2px);
 }
 
-@media only screen and (min-width: 960px) and (max-width: 1390px){
-  .container{
-    min-width: fit-content; 
+@media only screen and (min-width: 960px) and (max-width: 1390px) {
+  .container {
+    min-width: fit-content;
     max-width: 750px;
     min-height: 450px;
   }
 }
 
-
-@media only screen and (min-width: 700px) and (max-width: 959px){
+@media only screen and (min-width: 700px) and (max-width: 959px) {
   .container {
     min-width: 550px;
     min-height: 450px;
@@ -199,7 +211,7 @@
     height: fit-content;
     margin: 0 auto;
   }
-  .row{
+  .row {
     flex-direction: column;
   }
   .chip {
@@ -216,7 +228,7 @@
     height: fit-content;
     margin: 0 auto;
   }
-  .row{
+  .row {
     flex-direction: column;
   }
   .chip {
@@ -233,7 +245,7 @@
     height: fit-content;
     margin: 0 auto;
   }
-  .row{
+  .row {
     flex-direction: column;
   }
   .chip {
@@ -250,7 +262,7 @@
     height: fit-content;
     margin: 0 auto;
   }
-  .row{
+  .row {
     flex-direction: column;
   }
   .chip {

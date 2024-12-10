@@ -1,0 +1,169 @@
+/* General Styles */
+.chatbot-container {
+    width: 80%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    color: #333;
+  }
+  
+  /* Chatbot Heading */
+  .chatbot-heading {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  /* Chat History Styles */
+  .chat-history {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: calc(100vh - 150px);
+  }
+  
+  /* Message Styles */
+  .message {
+    max-width: 60%;
+    padding: 10px;
+    border-radius: 8px;
+    margin: 5px 0;
+    word-wrap: break-word;
+    display: inline-block;
+    clear: both;
+  }
+  
+  .message.bot {
+    background-color: #e0e0e0;
+    align-self: flex-start;
+  }
+  
+  .message.user {
+    background-color: #4A90E2;
+    color: white;
+    align-self: flex-end;
+  }
+  
+  /* Input Container */
+  .input-container {
+    position: sticky;
+    bottom: 0;
+    width: 90%; /* Reduce width */
+    background-color: #fff;
+    padding: 10px 15px; /* Reduce padding */
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    margin: 0 auto; /* Center input container */
+  }
+  
+  .input-container input {
+    flex-grow: 1;
+    padding: 8px; /* Reduce padding */
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+  }
+  
+  .input-container button {
+    padding: 8px 15px; /* Adjust button size */
+    border: none;
+    background-color: #4A90E2;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .input-container button:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+  }
+  
+  .input-container button:hover:not(:disabled) {
+    background-color: #4A90E2;
+  }
+  
+  /* Voice Button */
+  .input-container button:nth-child(2) {
+    background-color: #4A90E2;
+    padding: 8px 12px; /* Adjust size */
+  }
+  
+  .input-container button:nth-child(2):hover:not(:disabled) {
+    background-color: #4A90E2;
+  }
+  
+  /* Score Display */
+  .score-display {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-top: 20px;
+    color: #333;
+  }
+  
+  /* Modal Styles */
+.modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    max-width: 90%;
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+  }
+  
+  button {
+    background-color: #56bc80;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  button:hover {
+    background-color: #48a362;
+  }
+  

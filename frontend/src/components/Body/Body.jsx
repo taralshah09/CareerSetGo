@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useReactToPrint } from 'react-to-print';
-import { ArrowDown } from "react-feather"; 
+import { ArrowDown } from "react-feather";
 import styles from "./Body.module.css";
 import Editor from "../Editor/Editor";
 import Resume from "../Resume/Resume";
@@ -21,7 +21,7 @@ const Body = () => {
 
   const contentRef = useRef();
 
-  const reactToPrintFn = useReactToPrint({ contentRef , documentTitle:"My Resume"});
+  const reactToPrintFn = useReactToPrint({ contentRef, documentTitle: "My Resume" });
 
   const [resumeInformation, setResumeInformation] = useState({
     [sections.basicInfo]: {
@@ -83,18 +83,21 @@ const Body = () => {
         <button onClick={reactToPrintFn}>Print</button>
       </div>
       <div className={styles.main}>
-        <Editor
-          sections={sections}
-          information={resumeInformation}
-          setInformation={setResumeInformation}
-        />
-
-        <Resume
-          ref={contentRef}
-          sections={sections}
-          information={resumeInformation}
-          activeColor={activeColor}
-        />
+        <div className="editor">
+          <Editor
+            sections={sections}
+            information={resumeInformation}
+            setInformation={setResumeInformation}
+          />
+        </div>
+        <div className="resume">
+          <Resume
+            ref={contentRef}
+            sections={sections}
+            information={resumeInformation}
+            activeColor={activeColor}
+          />
+        </div>
       </div>
     </div>
   );
