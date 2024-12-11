@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import "./Chatbot.css";
 
@@ -6,10 +6,14 @@ const Chatbot = () => {
   const [messages, setMessages] = useState([]);
   const [currentInput, setCurrentInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [score, setScore] = useState(null); 
+  const [score, setScore] = useState(null);
   const [questionCount, setQuestionCount] = useState(0);
   const [isListening, setIsListening] = useState(false);
-  const [userAnswers, setUserAnswers] = useState([]); 
+  const [userAnswers, setUserAnswers] = useState([]);
+  const [askedQuestions, setAskedQuestions] = useState([]);
+  const [speakingIndex, setSpeakingIndex] = useState(null);
+
+  const chatEndRef = useRef(null); // Reference to the bottom of the chat
 
   const headingText =
     "Tell me a bit about yourself. What are your key skills and your experience?";
@@ -23,22 +27,42 @@ const Chatbot = () => {
     speechSynthesis.speak(utterance);
   };
 
+  const stopSpeaking = () => {
+    speechSynthesis.cancel();
+    setSpeakingIndex(null);
+  };
+
   const addMessage = (text, sender) => {
     setMessages((prev) => [...prev, { text, sender }]);
-    if (sender === "bot") speak(text);
   };
 
   const fetchAIResponse = async (userInput) => {
     setLoading(true);
     try {
+      if (questionCount >= 10) {
+        return ''; // Explicitly return empty string if at or beyond 10 questions
+      }
+
       const genAI = new GoogleGenerativeAI("AIzaSyD3rn502lgtJKrJNWtfwwSQN6vw96la53U");
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-      // Formulate the prompt
-      const prompt = `You are an AI interview assistant. Based on the user's input: - Ask clarifying questions about their profile (skills, experience, goals). - Once the profile is complete, ask skill-based questions. - Assign scores to each answer based on its quality or relevance. User Input: ${userInput} Response Format: - If asking questions: Return only the question. - If evaluating answers: Provide a concise explanation and update the score.`;
-
+  
+      const prompt = `
+        You are an AI interview assistant. Based on the user's input:
+        - Ask only one question at a time about their profile (skills, experience, goals).
+        - Avoid repeating questions. Previously asked questions: ${askedQuestions.join(", ")}.
+        - If it's time for skill-based questions, ask them based on the user's earlier responses.
+        - Assign a score (1-10) to answers and provide the total score after all questions.
+        - IMPORTANT: Do not generate a question if 10 questions have already been asked.
+        User Input: "${userInput}"
+        Response Format:
+        - If asking questions: Only return the question.
+        - If evaluating answers: Provide a concise evaluation and updated score.
+      `;
+  
       const result = await model.generateContent(prompt);
-      return result.response.text();
+      const botResponse = result.response.text().trim();
+  
+      return botResponse;
     } catch (error) {
       console.error("Error fetching AI response:", error);
       return "Oops, something went wrong. Please try again!";
@@ -48,22 +72,28 @@ const Chatbot = () => {
   };
 
   const handleSend = async () => {
-    if (!currentInput.trim() || questionCount >= 10) return;
-
-    addMessage(currentInput, "user");
-
-    setUserAnswers((prev) => [...prev, currentInput]);
-
-    const botResponse = await fetchAIResponse(currentInput);
-    addMessage(botResponse, "bot");
-
-    if (botResponse.includes("Score:")) {
-      const extractedScore = parseInt(botResponse.match(/Score: (\d+)/)?.[1]);
-      if (extractedScore) setScore((prev) => prev + extractedScore);
+    if (!currentInput.trim() || questionCount >= 10) {
+      return; // Completely stop processing if at or beyond 10 questions
     }
-    
-    setQuestionCount((prev) => prev + 1);
-
+  
+    addMessage(currentInput, "user");
+    setUserAnswers((prev) => [...prev, currentInput]);
+  
+    const botResponse = await fetchAIResponse(currentInput);
+  
+    // Only add a bot response if the question count is less than 10
+    if (questionCount < 10) {
+      addMessage(botResponse, "bot");
+      setAskedQuestions((prev) => [...prev, botResponse]);
+  
+      if (botResponse.includes("Score:")) {
+        const extractedScore = parseInt(botResponse.match(/Score: (\d+)/)?.[1]);
+        if (extractedScore) setScore((prev) => (prev || 0) + extractedScore);
+      }
+  
+      setQuestionCount((prev) => prev + 1);
+    }
+  
     setCurrentInput("");
   };
 
@@ -86,7 +116,12 @@ const Chatbot = () => {
     }
   };
 
-  // Handle final scoring after 10 questions
+  // Scroll to the bottom of the chat whenever messages are updated
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // Final scoring after 10 questions
   useEffect(() => {
     if (questionCount === 10) {
       const calculateFinalScore = async () => {
@@ -95,14 +130,16 @@ const Chatbot = () => {
           const genAI = new GoogleGenerativeAI("AIzaSyD3rn502lgtJKrJNWtfwwSQN6vw96la53U");
           const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-          // Formulate a prompt to evaluate all the answers given by the user
-          const prompt = `You are an AI interview assistant. Evaluate the following answers based on their quality and relevance: User's answers: ${userAnswers.join(" ")} After evaluating, provide the final score for this user (out of 10). Response Format: - Provide the final score and a brief explanation of how you calculated it.`;
-// duplicate que removal, enhance the prompt and try it will ask 1 que 
+          const prompt = `
+            You are an AI interview assistant. Evaluate the following answers:
+            User's answers: ${userAnswers.join(" ")}
+            Provide a final score (out of 10) and a brief explanation of how it was calculated.
+          `;
 
           const result = await model.generateContent(prompt);
-          addMessage(result.response.text(), "bot");
+          addMessage(result.response.text().trim(), "bot");
         } catch (error) {
-          console.error("Error fetching final score:", error);
+          console.error("Error calculating final score:", error);
           addMessage("There was an issue calculating the score. Please try again later.", "bot");
         } finally {
           setLoading(false);
@@ -113,7 +150,15 @@ const Chatbot = () => {
     }
   }, [questionCount, userAnswers]);
 
-  // Handle Enter key to send message
+  const toggleSpeak = (text, index) => {
+    if (speakingIndex === index) {
+      stopSpeaking();
+    } else {
+      setSpeakingIndex(index);
+      speak(text);
+    }
+  };
+
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -131,12 +176,21 @@ const Chatbot = () => {
         {messages.map((msg, index) => (
           <div key={index} className={`message ${msg.sender}`}>
             {msg.text}
+            {msg.sender === "bot" && (
+              <button
+                onClick={() => toggleSpeak(msg.text, index)}
+                className="speak-button"
+              >
+                {speakingIndex === index ? "🔈 Stop" : "🔊 Speak"}
+              </button>
+            )}
           </div>
         ))}
         {loading && <div className="message bot">...</div>}
+        <div ref={chatEndRef} /> {/* This div will trigger the scroll */}
       </div>
 
-      {/* Hide Score Display Until 10 Questions Are Answered */}
+      {/* Score Display */}
       {questionCount === 10 && score !== null && (
         <div className="score-display">Your Final Score: {score} / 10</div>
       )}
@@ -147,7 +201,7 @@ const Chatbot = () => {
           type="text"
           value={currentInput}
           onChange={(e) => setCurrentInput(e.target.value)}
-          onKeyDown={handleKeyDown} 
+          onKeyDown={handleKeyDown}
           placeholder="Type your message..."
           disabled={questionCount === 10}
         />
