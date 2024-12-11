@@ -255,3 +255,13 @@ class Company(models.Model):
 
     class Meta:
         verbose_name_plural = 'Companies'
+
+
+class ParsedResume(models.Model):
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
+    phone = models.CharField(max_length=15)
+    education = models.TextField()
+    experience = models.TextField()
+    skills = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)

@@ -22,6 +22,8 @@ import Roadmap from './pages/Roadmap/Roadmap'
 // import Course from './pages/Courses/Course'
 import Profile from './components/Profile/Profile'
 import { useAuth } from './auth/AuthProvider'
+import FileUpload from './components/FileUpload'
+
 
 function App() {
   const location = useLocation();
@@ -95,6 +97,8 @@ function App() {
         <Route path="/job/:id" element={<JobPage />}></Route>
         <Route path="/choices-game" element={<ChoicesGame />}></Route>
         <Route path="/roadmap" element={<Roadmap />}></Route>
+        <Route path="/file" element={<FileUpload />}></Route>
+
       </Routes >
       {!hideNavbarFooter && <Footer />}
     </>

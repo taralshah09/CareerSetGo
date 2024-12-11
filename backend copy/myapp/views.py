@@ -622,3 +622,37 @@ class ApplyForJobView(APIView):
         AppliedJob.objects.create(user=user, job=job)
 
         return Response({'message': 'Job application submitted successfully.'}, status=status.HTTP_201_CREATED)
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser
+from docx import Document
+import re
+
+class ResumeParserAPIView(APIView):
+    permission_classes=[AllowAny]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def post(self, request, *args, **kwargs):
+        file = request.FILES['resume']
+        if file.name.endswith('.docx'):
+            doc = Document(file)
+            text = "\n".join([paragraph.text for paragraph in doc.paragraphs])
+            
+            # Parsing logic (basic example):
+            name = re.search(r"Name[:\-]?\s*(.+)", text, re.I)
+            email = re.search(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}", text)
+            phone = re.search(r"\+?\d[\d -]{8,12}\d", text)
+            
+            data = {
+                "name": name.group(1).strip() if name else "N/A",
+                "email": email.group(0) if email else "N/A",
+                "phone": phone.group(0) if phone else "N/A",
+                "education": "Extracted education details",  # Add custom logic
+                "experience": "Extracted experience details",  # Add custom logic
+                "skills": "Extracted skills details",  # Add custom logic
+            }
+            return Response(data, status=200)
+        else:
+            return Response({"error": "Unsupported file format. Upload a .docx file."}, status=400)

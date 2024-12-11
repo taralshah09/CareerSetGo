@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Profile, Job,Company,AppliedJob
+from .models import User, Profile, Job,Company,AppliedJob,ParsedResume
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 import logging
 from rest_framework.exceptions import AuthenticationFailed
@@ -177,3 +177,9 @@ class CompanySerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         # Only update fields provided in the request
         return super().update(instance, validated_data)
+
+
+class ParsedResumeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ParsedResume
+        fields = '__all__'
