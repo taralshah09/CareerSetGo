@@ -12,8 +12,14 @@ const Chatbot = () => {
   const [userAnswers, setUserAnswers] = useState([]);
   const [askedQuestions, setAskedQuestions] = useState([]);
   const [speakingIndex, setSpeakingIndex] = useState(null);
+  const [showInterviewTips, setShowInterviewTips] = useState(false);
+  const [finalScoreDetails, setFinalScoreDetails] = useState(null);
+  const [isInterviewCompleted, setIsInterviewCompleted] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [timerActive, setTimerActive] = useState(false);
 
-  const chatEndRef = useRef(null); // Reference to the bottom of the chat
+  const chatEndRef = useRef(null);
+  const timerRef = useRef(null);
 
   const headingText =
     "Tell me a bit about yourself. What are your key skills and your experience?";
@@ -21,6 +27,29 @@ const Chatbot = () => {
   const SpeechRecognition =
     window.SpeechRecognition || window.webkitSpeechRecognition;
   const recognition = SpeechRecognition ? new SpeechRecognition() : null;
+
+  const interviewTips = {
+    dos: [
+      "Research the company before the interview",
+      "Prepare specific examples that showcase your skills",
+      "Practice common interview questions",
+      "Dress professionally and appropriately",
+      "Arrive 10-15 minutes early",
+      "Bring copies of your resume",
+      "Maintain good eye contact",
+      "Listen carefully and ask thoughtful questions"
+    ],
+    donts: [
+      "Don't speak negatively about previous employers",
+      "Avoid using slang or informal language",
+      "Don't provide vague or generic answers",
+      "Avoid interrupting the interviewer",
+      "Don't lie or exaggerate your qualifications",
+      "Avoid discussing salary too early",
+      "Don't use your phone during the interview",
+      "Avoid appearing unprepared or disinterested"
+    ]
+  };
 
   const speak = (text) => {
     const utterance = new SpeechSynthesisUtterance(text);
@@ -40,25 +69,24 @@ const Chatbot = () => {
     setLoading(true);
     try {
       if (questionCount >= 10) {
-        return ''; // Explicitly return empty string if at or beyond 10 questions
+        return ""; 
       }
 
       const genAI = new GoogleGenerativeAI("AIzaSyD3rn502lgtJKrJNWtfwwSQN6vw96la53U");
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
   
       const prompt = `
-        You are an AI interview assistant. Based on the user's input:
-        - Ask only one question at a time about their profile (skills, experience, goals).
-        - Avoid repeating questions. Previously asked questions: ${askedQuestions.join(", ")}.
-        - If it's time for skill-based questions, ask them based on the user's earlier responses.
-        - Assign a score (1-10) to answers and provide the total score after all questions.
-        - IMPORTANT: Do not generate a question if 10 questions have already been asked.
-        User Input: "${userInput}"
-        Response Format:
-        - If asking questions: Only return the question.
-        - If evaluating answers: Provide a concise evaluation and updated score.
-      `;
-  
+      You are an AI interview assistant. Based on the user's input:
+      - Ask one relevant question about their profile (skills, experience, goals).
+      - Avoid repeating questions. Previously asked questions: ${askedQuestions.join(", ")}.
+      - If skill-based questions are appropriate, ask based on prior responses.
+      - Stop if 10 questions have been asked.
+      User Input: "${userInput}"
+      Response Format:
+      - If asking: Return only the question.
+      - If evaluating: Provide a concise evaluation.
+    `;
+    
       const result = await model.generateContent(prompt);
       const botResponse = result.response.text().trim();
   
@@ -71,30 +99,72 @@ const Chatbot = () => {
     }
   };
 
+  const startTimer = () => {
+    setTimerActive(true);
+    timerRef.current = setInterval(() => {
+      setElapsedTime((prev) => prev + 1);
+    }, 1000);
+  };
+
+  const stopTimer = () => {
+    clearInterval(timerRef.current);
+    setTimerActive(false);
+  };
+
   const handleSend = async () => {
     if (!currentInput.trim() || questionCount >= 10) {
-      return; // Completely stop processing if at or beyond 10 questions
+      return;
     }
   
+    if (questionCount === 0 && !timerActive) {
+      startTimer(); 
+    }
+
     addMessage(currentInput, "user");
     setUserAnswers((prev) => [...prev, currentInput]);
   
     const botResponse = await fetchAIResponse(currentInput);
   
-    // Only add a bot response if the question count is less than 10
     if (questionCount < 10) {
       addMessage(botResponse, "bot");
       setAskedQuestions((prev) => [...prev, botResponse]);
-  
-      if (botResponse.includes("Score:")) {
-        const extractedScore = parseInt(botResponse.match(/Score: (\d+)/)?.[1]);
-        if (extractedScore) setScore((prev) => (prev || 0) + extractedScore);
-      }
-  
       setQuestionCount((prev) => prev + 1);
     }
   
+    if (questionCount === 9) {
+      stopTimer(); 
+      await calculateFinalScore();
+    }
+  
     setCurrentInput("");
+  };
+
+  const calculateFinalScore = async () => {
+    try {
+      const genAI = new GoogleGenerativeAI("AIzaSyD3rn502lgtJKrJNWtfwwSQN6vw96la53U");
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+      const prompt = `
+        You are an AI interview assistant. Evaluate the following answers:
+        User's answers: ${userAnswers.join(" ")}
+        Total time taken by the user: ${Math.floor(elapsedTime / 60)} minutes and ${elapsedTime % 60} seconds.
+        Provide a detailed score breakdown including:
+        1. Overall score out of 10
+        2. Strengths in the interview
+        3. Areas for improvement
+        4. Impact of time taken on performance
+        5. Brief performance summary
+      `;
+
+      const result = await model.generateContent(prompt);
+      const scoreDetails = result.response.text().trim();
+
+      setIsInterviewCompleted(true);
+      setFinalScoreDetails(scoreDetails);
+    } catch (error) {
+      console.error("Error calculating final score:", error);
+      setFinalScoreDetails("There was an issue calculating the score. Please try again later.");
+    }
   };
 
   const startListening = () => {
@@ -116,39 +186,9 @@ const Chatbot = () => {
     }
   };
 
-  // Scroll to the bottom of the chat whenever messages are updated
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
-  // Final scoring after 10 questions
-  useEffect(() => {
-    if (questionCount === 10) {
-      const calculateFinalScore = async () => {
-        setLoading(true);
-        try {
-          const genAI = new GoogleGenerativeAI("AIzaSyD3rn502lgtJKrJNWtfwwSQN6vw96la53U");
-          const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-          const prompt = `
-            You are an AI interview assistant. Evaluate the following answers:
-            User's answers: ${userAnswers.join(" ")}
-            Provide a final score (out of 10) and a brief explanation of how it was calculated.
-          `;
-
-          const result = await model.generateContent(prompt);
-          addMessage(result.response.text().trim(), "bot");
-        } catch (error) {
-          console.error("Error calculating final score:", error);
-          addMessage("There was an issue calculating the score. Please try again later.", "bot");
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      calculateFinalScore();
-    }
-  }, [questionCount, userAnswers]);
 
   const toggleSpeak = (text, index) => {
     if (speakingIndex === index) {
@@ -171,6 +211,43 @@ const Chatbot = () => {
       {/* Heading */}
       <div className="chatbot-heading">{headingText}</div>
 
+      {/* Time Tracker */}
+      <div className="time-tracker">
+        Time Elapsed: {Math.floor(elapsedTime / 60)}:{elapsedTime % 60 < 10 ? `0${elapsedTime % 60}` : elapsedTime % 60} (mm:ss)
+      </div>
+
+      {/* Interview Tips Section */}
+      <div className="interview-tips-container">
+        <button 
+          className="tips-toggle-btn" 
+          onClick={() => setShowInterviewTips(!showInterviewTips)}
+        >
+          {showInterviewTips ? 'Hide Interview Tips' : 'Show Interview Tips'}
+        </button>
+        
+        {showInterviewTips && (
+          <div className="tips-content">
+            <div className="tips-section dos">
+              <h3>Do's</h3>
+              <ul>
+                {interviewTips.dos.map((tip, index) => (
+                  <li key={index}>{tip}</li>
+                ))}
+              </ul>
+            </div>
+            
+            <div className="tips-section donts">
+              <h3>Don'ts</h3>
+              <ul>
+                {interviewTips.donts.map((tip, index) => (
+                  <li key={index}>{tip}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Chat History */}
       <div className="chat-history">
         {messages.map((msg, index) => (
@@ -181,21 +258,26 @@ const Chatbot = () => {
                 onClick={() => toggleSpeak(msg.text, index)}
                 className="speak-button"
               >
-                {speakingIndex === index ? "🔈 Stop" : "🔊 Speak"}
+                {speakingIndex === index ? "Stop" : "Speak"}
               </button>
             )}
           </div>
         ))}
-        {loading && <div className="message bot">...</div>}
-        <div ref={chatEndRef} /> {/* This div will trigger the scroll */}
+        {loading && <div className="message bot">Typing ...</div>}
+        <div ref={chatEndRef} />
       </div>
 
-      {/* Score Display */}
-      {questionCount === 10 && score !== null && (
-        <div className="score-display">Your Final Score: {score} / 10</div>
+      {isInterviewCompleted && finalScoreDetails && (
+        <div className="final-score-container">
+          <div className="final-score-card">
+            <h2>Interview Assessment</h2>
+            <pre className="final-score-details">{finalScoreDetails}</pre>
+            <p>Total time taken: {Math.floor(elapsedTime / 60)} minutes and {elapsedTime % 60} seconds.</p>
+          </div>
+        </div>
       )}
 
-      {/* Input Box */}
+
       <div className="input-container">
         <input
           type="text"
@@ -203,14 +285,17 @@ const Chatbot = () => {
           onChange={(e) => setCurrentInput(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Type your message..."
-          disabled={questionCount === 10}
+          disabled={isInterviewCompleted}
         />
-        <button onClick={handleSend} disabled={loading || questionCount === 10}>
+        <button 
+          onClick={handleSend} 
+          disabled={loading || isInterviewCompleted}
+        >
           Send
         </button>
         <button
           onClick={startListening}
-          disabled={loading || isListening || questionCount === 10}
+          disabled={loading || isListening || isInterviewCompleted}
         >
           {isListening ? "Listening..." : "Speak"}
         </button>

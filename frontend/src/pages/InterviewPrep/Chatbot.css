@@ -161,7 +161,7 @@ button {
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  margin-top: 10px;
+  margin: 10px;
 }
 
 button:hover {
@@ -175,4 +175,125 @@ button:hover {
 .chat-history::-webkit-scrollbar {
   display: none; 
 }
-  
+
+.interview-tips-container {
+  margin: 20px 0;
+  font-family: Arial, sans-serif;
+}
+
+.tips-toggle-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.tips-toggle-btn:hover {
+  background-color: #45a049;
+}
+
+.tips-content {
+  display: flex;
+  margin-top: 10px;
+  gap: 20px;
+}
+
+.tips-section {
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+}
+
+.tips-section.dos h3 {
+  color: #4CAF50;
+}
+
+.tips-section.donts h3 {
+  color: #f44336;
+}
+
+.tips-section ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.tips-section li {
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+.final-score-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.final-score-card {
+  background: white;
+  border-radius: 10px;
+  padding: 30px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80%;
+  overflow-y: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.final-score-card h2 {
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.final-score-details {
+  white-space: pre-wrap;
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  color: #555;
+}
+
+.time-tracker {
+font-size: 14px;
+color: #555;
+margin: 10px 0;
+text-align: right;
+}
+
+.final-time {
+font-size: 16px;
+font-weight: bold;
+margin-top: 10px;
+color: #333;
+}
+.time-tracker {
+font-size: 14px;
+color: #555;
+margin: 10px 0;
+text-align: center;
+font-weight: bold;
+}
+
+.final-score-details {
+background-color: #f9f9f9; /* Light background for readability */
+border: 1px solid #ddd; /* Subtle border */
+border-radius: 8px; /* Rounded corners */
+padding: 16px; /* Add some padding for spacing */
+font-family: "Courier New", Courier, monospace; /* Monospace font for structured look */
+font-size: 1rem; /* Slightly larger font size */
+color: #000000; /* Darker text for contrast */
+white-space: pre-wrap; /* Ensures text wraps within container */
+overflow-x: auto; /* Adds horizontal scroll for long lines */
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+margin-top: 16px; /* Add spacing from surrounding elements */
+}
