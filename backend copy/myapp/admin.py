@@ -4,14 +4,12 @@ from django.utils.html import format_html
 from import_export.admin import ImportExportModelAdmin
 from .models import User, Profile, Job, Course, Wishlist, AppliedJob
 class UserAdmin(BaseUserAdmin):
-    # Enhanced list display with color-coded status
     def is_active_status(self, obj):
         if obj.is_active:
             return format_html('<span class="badge bg-success">Active</span>')
         return format_html('<span class="badge bg-danger">Inactive</span>')
     is_active_status.short_description = 'Status'
     
-    # Enhanced list display with role color coding
     def role_display(self, obj):
         role_colors = {
             'admin': 'bg-primary',
@@ -45,10 +43,9 @@ class UserAdmin(BaseUserAdmin):
             'fields': ('email', 'username', 'password1', 'password2', 'role', 'is_active', 'is_staff'),
         }),
     )
-    readonly_fields = ()  # Empty tuple instead of empty string
+    readonly_fields = ()  
 @admin.register(Profile)
 class ProfileAdmin(ImportExportModelAdmin):
-    # Added profile image preview
     def profile_image_preview(self, obj):
         if obj.profile_picture:
             return format_html('<img src="{}" style="max-height:100px; max-width:100px;" />'.format(obj.profile_picture.url))
@@ -62,7 +59,6 @@ class ProfileAdmin(ImportExportModelAdmin):
 
 @admin.register(Job)
 class JobAdmin(ImportExportModelAdmin):
-    # Added job status color coding
     def job_status(self, obj):
         if obj.is_approved:
             return format_html('<span class="badge bg-success">Approved</span>')

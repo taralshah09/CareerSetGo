@@ -1,16 +1,16 @@
-from django.shortcuts import get_object_or_404
-from django.http import JsonResponse
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import  Profile, Job, Wishlist,Company,AppliedJob
 from .serializers import  ProfileSerializer, JobSerializer, SkillGapAnalysisSerializer,CompanySerializer
-from .utils.email_utils import send_email  # Updated import statement
+from .utils.email_utils import send_email  
 import requests
 import json
-
 
 def send_registration_email(user_email, fullname):
     subject = "Welcome to CareerSetGo!"
@@ -45,7 +45,6 @@ def send_login_notification(user_email, fullname):
     </html>
     """
     send_email(subject, plain_message, [user_email], html_message)
-
 
 class CurrentUserView(APIView):
     permission_classes = [IsAuthenticated]
@@ -147,7 +146,7 @@ class LogoutView(APIView):
 
         try:
             token = RefreshToken(refresh_token)
-            token.blacklist()  # This will blacklist the token
+            token.blacklist()  
             return Response({"message": "Logged out successfully!"}, status=status.HTTP_200_OK)
         except InvalidToken:
             return Response({"error": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
@@ -163,114 +162,202 @@ class RecentJobsView(APIView):
 # class JobsView(APIView):
 #     permission_classes = [IsAuthenticated]
 
+#     def normalize_skills(self, skills):
+#         """Normalize skills to a set of lowercase strings, handling different input formats."""
+#         if isinstance(skills, str):
+#             try:
+#                 skills = json.loads(skills)
+#             except json.JSONDecodeError:
+#                 # If it's a comma-separated string
+#                 return {s.strip().lower() for s in skills.split(',')}
+
+#         if isinstance(skills, list):
+#             # Handle list of dictionaries with 'name' key
+#             if skills and isinstance(skills[0], dict) and 'name' in skills[0]:
+#                 return {skill['name'].strip().lower() for skill in skills}
+#             # Handle list of strings
+#             return {skill.strip().lower() for skill in skills}
+            
+#         return set()
+
 #     def get(self, request):
-#         user = request.user
-
 #         try:
+#             # Get user profile
 #             profile = Profile.objects.get(user=request.user)
-#         except Profile.DoesNotExist:
-#             return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
-        
-#         user_skills = profile.skills if isinstance(profile.skills, list) else json.loads(profile.skills)
-#         print(f"User Skills: {user_skills}")
-
-#         user_skill_names = {skill['name'].lower() for skill in user_skills}
-#         print(f"User Skill Names: {user_skill_names}")
-
-
-#         jobs = Job.objects.order_by('-created_at')
-
-#         matching_jobs = []
-
-#         for job in jobs:
-#             job_required_skills = job.skills_required.split(",") 
-#             job_required_skills = {skill.strip().lower() for skill in job_required_skills}  
-
-#             matching_skills = user_skill_names.intersection(job_required_skills)
-#             print(f"{job.job_id}Matching Skills for {job.title}: {matching_skills}")
-
-#             if matching_skills:
-#                 matching_jobs.append(job)
-
-#         if matching_jobs:
-#             serializer = JobSerializer(matching_jobs, many=True)
+            
+#             # Normalize user skills
+#             user_skills = self.normalize_skills(profile.skills)
+#             print(f"Normalized User Skills: {user_skills}")
+            
+#             # Get all jobs and sort by creation date
+#             jobs = Job.objects.order_by('-created_at')
+            
+#             matching_jobs = []
+#             for job in jobs:
+#                 # Normalize job skills
+#                 job_skills = self.normalize_skills(job.skills_required)
+#                 print(f"Job ID {job.job_id} - {job.title}")
+#                 print(f"Normalized Job Skills: {job_skills}")
+                
+#                 # Find matching skills
+#                 matching_skills = user_skills.intersection(job_skills)
+#                 print(f"Matching Skills: {matching_skills}")
+                
+#                 if matching_skills:
+#                     # Calculate match percentage
+#                     match_percentage = (len(matching_skills) / len(job_skills)) * 100
+#                     job.match_percentage = round(match_percentage, 1)
+#                     matching_jobs.append(job)
+            
+#             if matching_jobs:
+#                 # Sort by match percentage
+#                 matching_jobs.sort(key=lambda x: x.match_percentage, reverse=True)
+#                 serializer = JobSerializer(matching_jobs, many=True)
+                
+#                 return Response({
+#                     "jobs": serializer.data,
+#                     "total_matches": len(matching_jobs)
+#                 })
+            
 #             return Response({
-#                 "jobs" : serializer.data
-#             })
-#         else:
-#             return Response({"message": "No matching jobs found."}, status=status.HTTP_404_NOT_FOUND)
+#                 "message": "No matching jobs found.",
+#                 "user_skills": list(user_skills)  # Include for debugging
+#             }, status=status.HTTP_404_NOT_FOUND)
+            
+#         except Profile.DoesNotExist:
+#             return Response(
+#                 {"detail": "Profile not found."}, 
+#                 status=status.HTTP_404_NOT_FOUND
+#             )
+#         except Exception as e:
+#             return Response(
+#                 {"detail": f"An error occurred: {str(e)}"}, 
+#                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
+#             )
 
+import json
+import re
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
-import json
+from rest_framework.permissions import IsAuthenticated
 
 class JobsView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def normalize_skills(self, skills):
-        """Normalize skills to a set of lowercase strings, handling different input formats."""
-        if isinstance(skills, str):
-            try:
-                skills = json.loads(skills)
-            except json.JSONDecodeError:
-                # If it's a comma-separated string
-                return {s.strip().lower() for s in skills.split(',')}
-
-        if isinstance(skills, list):
-            # Handle list of dictionaries with 'name' key
-            if skills and isinstance(skills[0], dict) and 'name' in skills[0]:
-                return {skill['name'].strip().lower() for skill in skills}
-            # Handle list of strings
-            return {skill.strip().lower() for skill in skills}
+    def extract_skills_from_json(self, skills_json):
+        """
+        Extract skills from JSON-formatted string
+        Handles complex skill representations
+        """
+        try:
+            # Parse JSON string
+            skills_list = json.loads(skills_json)
             
-        return set()
+            # Extract skill names, handling different input formats
+            if isinstance(skills_list, list):
+                # Handle list of dictionaries with 'name' key
+                if skills_list and isinstance(skills_list[0], dict) and 'name' in skills_list[0]:
+                    skills = [skill['name'].strip().lower() for skill in skills_list]
+                # Handle list of strings
+                else:
+                    skills = [str(skill).strip().lower() for skill in skills_list]
+            
+            # Handle single dictionary
+            elif isinstance(skills_list, dict):
+                skills = [str(skill).strip().lower() for skill in skills_list.values()]
+            
+            # Handle string input
+            else:
+                skills = [str(skills_list).strip().lower()]
+            
+            # Remove any empty skills
+            return [skill for skill in skills if skill]
+        
+        except (json.JSONDecodeError, TypeError, AttributeError):
+            # Fallback for non-JSON or malformed input
+            return []
+
+    def normalize_skill_matching(self, user_skills, job_skills):
+        """
+        Advanced skill matching with multiple strategies
+        """
+        # Convert skills to lowercase for case-insensitive matching
+        user_skills = set(user_skills)
+        job_skills = set(job_skills)
+        
+        # Strategy 1: Exact match
+        exact_matches = user_skills.intersection(job_skills)
+        
+        # Strategy 2: Partial match (substring detection)
+        partial_matches = set()
+        for user_skill in user_skills:
+            for job_skill in job_skills:
+                if user_skill in job_skill or job_skill in user_skill:
+                    partial_matches.add(user_skill)
+        
+        # Combine matches
+        all_matches = exact_matches.union(partial_matches)
+        
+        # Calculate match percentage
+        if job_skills:
+            match_percentage = (len(all_matches) / len(job_skills)) * 100
+        else:
+            match_percentage = 0
+        
+        return round(match_percentage, 1), list(all_matches)
 
     def get(self, request):
         try:
-            # Get user profile
+            # Retrieve user profile
             profile = Profile.objects.get(user=request.user)
             
-            # Normalize user skills
-            user_skills = self.normalize_skills(profile.skills)
-            print(f"Normalized User Skills: {user_skills}")
+            # Extract user skills from JSON
+            user_skills = self.extract_skills_from_json(json.dumps(profile.skills)) if profile.skills else []
             
-            # Get all jobs and sort by creation date
-            jobs = Job.objects.order_by('-created_at')
+            # Retrieve approved jobs
+            jobs = Job.objects.filter(is_approved=True).order_by('-created_at')
             
+            # Matching jobs container
             matching_jobs = []
+            
+            # Process each job
             for job in jobs:
-                # Normalize job skills
-                job_skills = self.normalize_skills(job.skills_required)
-                print(f"Job ID {job.job_id} - {job.title}")
-                print(f"Normalized Job Skills: {job_skills}")
+                # Extract job skills
+                job_skills = self.extract_skills_from_json(json.dumps(job.skills_required)) if job.skills_required else []
                 
-                # Find matching skills
-                matching_skills = user_skills.intersection(job_skills)
-                print(f"Matching Skills: {matching_skills}")
+                # Perform skill matching
+                match_percentage, matched_skills = self.normalize_skill_matching(user_skills, job_skills)
                 
-                if matching_skills:
-                    # Calculate match percentage
-                    match_percentage = (len(matching_skills) / len(job_skills)) * 100
-                    job.match_percentage = round(match_percentage, 1)
+                # Add jobs with any skill match
+                if match_percentage > 0:
+                    # Dynamically add match information to job
+                    job.match_percentage = match_percentage
+                    job.matched_skills = matched_skills
                     matching_jobs.append(job)
             
+            # Sort jobs by match percentage
+            matching_jobs.sort(key=lambda x: x.match_percentage, reverse=True)
+            
+            # Prepare response
             if matching_jobs:
-                # Sort by match percentage
-                matching_jobs.sort(key=lambda x: x.match_percentage, reverse=True)
-                serializer = JobSerializer(matching_jobs, many=True)
+                serializer = JobSerializer(matching_jobs, many=True, context={
+                    'request': request,
+                    'matched_skills': True
+                })
                 
                 return Response({
                     "jobs": serializer.data,
-                    "total_matches": len(matching_jobs)
+                    "total_matches": len(matching_jobs),
+                    "user_skills": user_skills
                 })
             
+            # No matching jobs
             return Response({
                 "message": "No matching jobs found.",
-                "user_skills": list(user_skills)  # Include for debugging
+                "user_skills": user_skills
             }, status=status.HTTP_404_NOT_FOUND)
-            
+        
         except Profile.DoesNotExist:
             return Response(
                 {"detail": "Profile not found."}, 
@@ -281,6 +368,7 @@ class JobsView(APIView):
                 {"detail": f"An error occurred: {str(e)}"}, 
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
 
 class PostJobView(APIView):
     permission_classes = [IsAuthenticated]

@@ -1,4 +1,3 @@
-# Merged models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, AbstractUser
 from django.db import models
 from django.utils import timezone
@@ -20,7 +19,6 @@ JOB_DOMAIN_CHOICES = [
     ('fintech', 'Financial Technology'),
     ('healthtech', 'Health Technology'),
 ]
-
 JOB_TYPE_CHOICES = [
     ('hybrid', 'Hybrid'),
     ('onsite', 'Onsite'),

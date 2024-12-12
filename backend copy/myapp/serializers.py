@@ -84,26 +84,44 @@ class ProfileSerializer(serializers.ModelSerializer):
         # Update Profile fields
         return super().update(instance, validated_data)
 
+# class JobSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Job
+        
+#         fields = [
+#             'job_id', 'title', 'description', 'company_name', 'location', 'salary',
+#             'job_type', 'job_domain', 'skills_required','created_at'
+#         ]
+
+#     def validate_salary(self, value):
+#         """Ensure salary is a positive value."""
+#         if value < 0:
+#             raise serializers.ValidationError("Salary must be a positive number.")
+#         return value
+
+#     def validate_skills_required(self, value):
+#         """Ensure skills_required is not empty."""
+#         if not value:
+#             raise serializers.ValidationError("Skills required cannot be empty.")
+#         return value
+    
+    
 class JobSerializer(serializers.ModelSerializer):
+    match_percentage = serializers.FloatField(read_only=True, required=False)
+    matched_skills = serializers.ListField(
+        child=serializers.CharField(), 
+        read_only=True, 
+        required=False
+    )
+
     class Meta:
         model = Job
         fields = [
-            'job_id', 'title', 'description', 'company_name', 'location', 'salary',
-            'job_type', 'job_domain', 'skills_required','created_at'
+            'job_id', 'title', 'company_name', 'location', 
+            'salary', 'skills_required', 'description', 
+            'job_domain', 'job_type', 'match_percentage', 
+            'matched_skills','created_at'
         ]
-
-    def validate_salary(self, value):
-        """Ensure salary is a positive value."""
-        if value < 0:
-            raise serializers.ValidationError("Salary must be a positive number.")
-        return value
-
-    def validate_skills_required(self, value):
-        """Ensure skills_required is not empty."""
-        if not value:
-            raise serializers.ValidationError("Skills required cannot be empty.")
-        return value
-    
 # class SkillGapAnalysisSerializer(serializers.Serializer):
 #     job_id = serializers.IntegerField()
 #     user_id = serializers.IntegerField()
