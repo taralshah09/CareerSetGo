@@ -6,8 +6,8 @@ import { Document, Packer, Paragraph, TextRun } from 'docx';
 import { pdf } from '@react-pdf/renderer';
 import { Document as PDFDocument, Page, Text, View, StyleSheet, PDFDownloadLink } from '@react-pdf/renderer';
 import './WordToCV.css';
+import { marked } from 'marked';
 
-// Define PDF styles
 const pdfStyles = StyleSheet.create({
     page: {
         flexDirection: 'column',
@@ -24,17 +24,20 @@ const pdfStyles = StyleSheet.create({
     }
 });
 
-// PDF Document Component
-const PDFResume = ({ content }) => (
-    <PDFDocument>
-        <Page size="A4" style={pdfStyles.page}>
-            <View style={pdfStyles.section}>
-                <Text style={pdfStyles.text}>{content}</Text>
-            </View>
-        </Page>
-    </PDFDocument>
-);
+const PDFResume = ({ content }) => {
+    // Convert the markdown content to HTML
+    const htmlContent = marked(content);
 
+    return (
+        <PDFDocument>
+            <Page size="A4" style={pdfStyles.page}>
+                <View style={pdfStyles.section}>
+                    <Text style={pdfStyles.text}>{htmlContent}</Text>
+                </View>
+            </Page>
+        </PDFDocument>
+    );
+};
 const WordToCV = () => {
     const [docContent, setDocContent] = useState('');
     const [docHtml, setDocHtml] = useState('');
@@ -43,6 +46,7 @@ const WordToCV = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [exportFormat, setExportFormat] = useState('');
+    const [outputContent, setOutputContent] = useState("")
 
     const generateResume = async () => {
         if (!docContent || !jobDescription) {
@@ -77,6 +81,8 @@ const WordToCV = () => {
                 6. Focuses on achievements and quantifiable results
     
                 Format the response as a properly formatted markdown document, ensuring all links from the original resume are preserved.
+
+                fragment the resume into key-fields of the resume as name , email , github , linkedin and other fields in the form of object and in that object for a field like projects it can also be an array of objects
             `;
 
             const result = await model.generateContent(prompt);
@@ -127,7 +133,6 @@ const WordToCV = () => {
         if (exportFormat === 'word') {
             exportToWord();
         }
-        // PDF export is handled by PDFDownloadLink component
     };
 
     const handleFileUpload = (event) => {

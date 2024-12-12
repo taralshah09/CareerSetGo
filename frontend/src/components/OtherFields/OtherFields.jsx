@@ -181,16 +181,13 @@ const OtherFields = () => {
 
         const token = localStorage.getItem('access_token');
 
-        // Format date to YYYY-MM-DD if it exists
         const formatDate = (dateString) => {
             if (!dateString) return null;
             const date = new Date(dateString);
-            return date.toISOString().split('T')[0]; // This will format to YYYY-MM-DD
+            return date.toISOString().split('T')[0];
         };
 
-        // Ensure skills are in the correct format for DRF serializer
         const formattedSkills = formData.skills.map(skill => {
-            // Handle both string and object formats
             if (typeof skill === 'string') {
                 return {
                     name: skill,
@@ -206,7 +203,6 @@ const OtherFields = () => {
         });
 
 
-        // Create an object that matches the Django serializer's expected structure
         const dataToSend = {
             fullname: formData.fullName,
             title: formData.headline,
@@ -229,7 +225,6 @@ const OtherFields = () => {
 
         console.log("data to send : " + dataToSend.skills)
 
-        // Create FormData for file uploads
         const formDataToSend = new FormData();
 
         Object.keys(dataToSend).forEach(key => {
@@ -257,7 +252,6 @@ const OtherFields = () => {
                 const data = await response.json();
                 console.log('Profile updated successfully:', data);
 
-                // Show success toast
                 toast.success('Profile updated successfully!', {
                     position: "top-right",
                     autoClose: 3000,
@@ -276,7 +270,6 @@ const OtherFields = () => {
                 const errorData = await response.json();
                 console.error('Error updating profile:', errorData);
 
-                // Show error toast
                 toast.error('Failed to update profile. Please try again.', {
                     position: "top-right",
                     autoClose: 5000,
@@ -291,7 +284,6 @@ const OtherFields = () => {
         } catch (error) {
             console.error('Error submitting profile:', error);
 
-            // Show error toast for network/unexpected errors
             toast.error('An unexpected error occurred. Please try again later.', {
                 position: "top-right",
                 autoClose: 5000,
@@ -306,7 +298,6 @@ const OtherFields = () => {
     };
 
     const handleRemoveSkill = (index) => {
-        // Create a new array excluding the skill at the given index
         const updatedSkills = formData.skills.filter((_, i) => i !== index);
 
         setFormData({
@@ -331,7 +322,6 @@ const OtherFields = () => {
                 theme="light"
             />
             <form className="profile-form" onSubmit={handleSubmit}>
-                {/* Professional Skills */}
                 <label className="form-label">Professional Skills</label>
                 <div className="input-group">
                     <div className="input-skills">

@@ -146,6 +146,8 @@
 
 .markdown-content li {
   margin: 6px 0;
+  margin-left: 48px;
+  list-style: disc;
 }
 
 .markdown-content strong {

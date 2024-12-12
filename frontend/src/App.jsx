@@ -22,6 +22,7 @@ import Roadmap from './pages/Roadmap/Roadmap'
 // import Course from './pages/Courses/Course'
 import Profile from './components/Profile/Profile'
 import { useAuth } from './auth/AuthProvider'
+import SoftSkillsTrainer from './pages/SoftSkills/SoftSkills'
 
 function App() {
   const location = useLocation();
@@ -79,6 +80,7 @@ function App() {
 
       <Routes>
         <Route index path="/" element={<HomePage />}></Route>
+        {/* <Route index path="/" element={<SoftSkillsTrainer/>}></Route> */}
         <Route path="/find-job" element={<FindJob />}></Route>
         <Route path="/login" element={<LoginPage />}></Route>
         <Route path="/signup" element={<SignupPage />}></Route>
