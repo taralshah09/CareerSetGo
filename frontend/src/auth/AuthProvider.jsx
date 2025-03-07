@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import api from '../api/axios';
 
 // Create a context
 const UserContext = createContext();
@@ -22,7 +23,7 @@ const AuthProvider = ({ children }) => {
             }
 
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/user/profile/', {
+                const response = await api.get('/api/user/profile/', {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     },
@@ -71,7 +72,7 @@ const AuthProvider = ({ children }) => {
 
         try {
             // Send a request to blacklist the refresh token
-            const response = await fetch('http://127.0.0.1:8000/logout/', {
+            const response = await api.get('/logout/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

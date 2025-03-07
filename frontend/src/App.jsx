@@ -45,7 +45,7 @@ function App() {
       if (!token) return;
 
       try {
-        const data = await fetchWithAuth('http://127.0.0.1:8000/api/user/profile/');
+        const data = await fetchWithAuth('/api/user/profile/');
         setProfileData({
           fullname: data.fullname || '',
           title: data.title || '',

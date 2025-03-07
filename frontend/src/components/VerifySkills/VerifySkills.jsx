@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './VerifySkills.css'; // Import the CSS file
 import { useNavigate } from "react-router-dom"
+import api from '../../api/axios';
 
 const VerifySkills = () => {
     const navigate = useNavigate()
@@ -9,7 +10,7 @@ const VerifySkills = () => {
         const token = localStorage.getItem('access_token');
         const fetchData = async () => {
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/user/profile/', {
+                const response = await api.get('/api/user/profile/', {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     },

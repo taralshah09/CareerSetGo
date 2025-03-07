@@ -26,7 +26,7 @@ const Personal = () => {
             }
 
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/user/profile/', {
+                const response = await api.get('/api/user/profile/', {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     },
@@ -89,7 +89,7 @@ const Personal = () => {
         }
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/user/profile/', {
+            const response = await api.get('/api/user/profile/', {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${token}`,

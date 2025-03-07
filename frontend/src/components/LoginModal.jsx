@@ -10,7 +10,7 @@ const LoginModal = ({ onClose, onSuccess }) => {
       // Handle ID token (credential) flow
       if (response.credential) {
         // Send the ID token to your backend
-        const res = await axios.post('http://127.0.0.1:8000/api/auth/google/callback/', {
+        const res = await axios.post('http://127.0.0.1:8000api/auth/google/callback/', {
           id_token: response.credential,
         });
 

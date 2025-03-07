@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Box, Typography, Button, Checkbox, FormControlLabel, Link, Grid, CircularProgress, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import api from '../../api/axios';
 
 const FormWrapper = () => {
   const emailRef = useRef();
@@ -41,7 +42,7 @@ const FormWrapper = () => {
       setLoading(true); // Set loading to true when submission starts
 
       // Send POST request to Django backend for registration
-      const response = await fetch('http://127.0.0.1:8000/api/register/', {
+      const response = await api.get('/api/register/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

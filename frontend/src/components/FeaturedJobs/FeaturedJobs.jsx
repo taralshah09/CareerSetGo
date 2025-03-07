@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./FeaturedJobs.css";
+import api from "../../api/axios";
 
 const FeaturedJobs = () => {
   const [jobs, setJobs] = useState([]); // State to hold jobs data
@@ -8,7 +9,7 @@ const FeaturedJobs = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/recent-jobs/', {
+        const response = await api.get('/api/recent-jobs/', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

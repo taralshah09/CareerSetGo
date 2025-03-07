@@ -12,7 +12,7 @@ import { useAuth } from '../../auth/AuthProvider.jsx';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import SkillGapAnalysis from '../../components/SkillGapAnalysis/SkillGapAnalysis.jsx';
 import MoreDetailsModal from '../../components/MoreDetailsModal/MoreDetailsModal.jsx';
-
+import api from '../../api/axios.js';
 
 const JobPage = () => {
   const [skillGapResult, setSkillGapResult] = useState(null);
@@ -86,7 +86,7 @@ const JobPage = () => {
 
   const handleSkillGapAnalysis = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/skill-gap-analysis/', {
+      const response = await api.get('/api/skill-gap-analysis/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

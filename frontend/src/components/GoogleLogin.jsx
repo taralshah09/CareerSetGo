@@ -1,6 +1,7 @@
 import React from 'react';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
+import api from '../api/axios';
 
 const GoogleLoginComponent = ({ onSuccess, onError }) => {
   const handleSuccess = async (response) => {
@@ -9,7 +10,7 @@ const GoogleLoginComponent = ({ onSuccess, onError }) => {
       // Handle ID token (credential) flow
       if (response.credential) {
         // Send the ID token to your backend
-        const res = await axios.post('http://127.0.0.1:8000/api/auth/google/callback/', {
+        const res = await api.post('/api/auth/google/callback/', {
           id_token: response.credential,
         });
         

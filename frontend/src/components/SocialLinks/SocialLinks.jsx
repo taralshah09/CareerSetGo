@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './SocialLinks.css';
+import api from '../../api/axios';
 
 const SocialLinks = () => {
     const [profileData, setProfileData] = useState({
@@ -22,7 +23,7 @@ const SocialLinks = () => {
         const token = localStorage.getItem('access_token');
         const fetchData = async () => {
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/user/profile/', {
+                const response = await api.get('/api/user/profile/', {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     },
@@ -65,7 +66,7 @@ const SocialLinks = () => {
         const token = localStorage.getItem('access_token');
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/user/profile/', {
+            const response = await api.get('/api/user/profile/', {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${token}`,

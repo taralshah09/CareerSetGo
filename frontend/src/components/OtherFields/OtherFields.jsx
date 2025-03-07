@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './OtherFields.css';
+
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import api from '../../api/axios';
 const OtherFields = () => {
     const [formData, setFormData] = useState({
         fullName: '',
@@ -33,7 +35,7 @@ const OtherFields = () => {
         const fetchProfileData = async () => {
             const token = localStorage.getItem('access_token');
             try {
-                const response = await fetch('http://127.0.0.1:8000/api/user/profile/', {
+                const response = await api.get('/api/user/profile/', {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     },
@@ -245,7 +247,7 @@ const OtherFields = () => {
         }
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/user/profile/', {
+            const response = await api.get('/api/user/profile/', {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${token}`,

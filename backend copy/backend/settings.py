@@ -7,7 +7,7 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Security settings
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-h(a9i&vl0vknxoxbj1#abh0!-r)w%4sw()stj)857ifbp2&w%u')
+SECRET_KEY = 'django-insecure-h(a9i&vl0vknxoxbj1#abh0!-r)w%4sw()stj)857ifbp2&w%u'
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 # Allowed hosts for Render
@@ -16,7 +16,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1',
 # Add Render-specific host
 if 'RENDER_EXTERNAL_HOSTNAME' in os.environ:
     ALLOWED_HOSTS.append(os.environ.get('RENDER_EXTERNAL_HOSTNAME'))
-
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Application definition
 INSTALLED_APPS = [
     'adminlte3',
@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    # 'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions',
     'import_export',
     'django.contrib.messages',

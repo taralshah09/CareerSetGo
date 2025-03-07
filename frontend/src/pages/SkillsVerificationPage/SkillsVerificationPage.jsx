@@ -93,7 +93,7 @@ const SkillsVerificationPage = () => {
                 return;
             }
 
-            const response = await fetch('http://127.0.0.1:8000/api/update-skill-score/', {
+            const response = await api.get('/api/update-skill-score/', {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${token}`,

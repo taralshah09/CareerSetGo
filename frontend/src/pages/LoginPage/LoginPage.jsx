@@ -6,6 +6,7 @@ import { useAuth } from '../../auth/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, CircularProgress, Alert } from '@mui/material';
 import Logo from '../../components/Logo'; // Replace with your logo component
+import api from '../../api/axios';
 
 const LoginPage = () => {
   const { loginUser } = useAuth();
@@ -22,7 +23,7 @@ const LoginPage = () => {
       // Handle ID token (credential) flow
       if (response.credential) {
         // Send the ID token to your backend
-        const res = await axios.post('http://127.0.0.1:8000/api/auth/google/callback/', {
+        const res = await api.post('/api/auth/google/callback/', {
           id_token: response.credential,
         });
 

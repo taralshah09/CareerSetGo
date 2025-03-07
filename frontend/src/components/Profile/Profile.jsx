@@ -4,6 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-quill/dist/quill.snow.css';
 import "./Profile.css";
+import api from '../../api/axios';
 
 const Profile = () => {
     const [formData, setFormData] = useState({
@@ -44,7 +45,7 @@ const Profile = () => {
         });
 
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/user/profile/', {
+            const response = await api.get('/api/user/profile/', {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Bearer ${token}`,
