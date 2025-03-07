@@ -1,5 +1,5 @@
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
@@ -11,6 +11,7 @@ from .serializers import  ProfileSerializer, JobSerializer, SkillGapAnalysisSeri
 from .utils.email_utils import send_email  
 import requests
 import json
+
 
 def send_registration_email(user_email, fullname):
     subject = "Welcome to CareerSetGo!"
@@ -57,28 +58,32 @@ class CurrentUserView(APIView):
             return Response(serializer.data)
         return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
 
+# Example: UpdateProfile view
 class UpdateProfile(APIView):
     permission_classes = [IsAuthenticated]
-
+    
     def post(self, request):
         user = request.user
-        if Profile.objects.filter(user=user).exists():
-            return Response({"detail": "Profile already exists."}, status=status.HTTP_400_BAD_REQUEST)
-
-        data = request.data
-        data['user'] = user.id
-        serializer = ProfileSerializer(data=data, context={'request': request})
-
+        profile, created = Profile.objects.get_or_create(user=user)  # Better than checking exists()
+        
+        serializer = ProfileSerializer(profile, data=request.data, context={'request': request})
         if serializer.is_valid():
-            # Log skills field
-            skills = data.get('skills', [])
-            print(f"Skills received for creation: {skills}")
-
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
+            send_registration_email(user.email, user.fullname)
+            return Response(serializer.data, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def patch(self, request):
+        user = request.user
+        profile = get_object_or_404(Profile, user=user)  # Simpler error handling
+        
+        serializer = ProfileSerializer(profile, data=request.data, partial=True, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
     def patch(self, request):
         user = request.user
         try:
@@ -151,14 +156,21 @@ class LogoutView(APIView):
         except InvalidToken:
             return Response({"error": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
 
+from django.core.cache import cache
+
 class RecentJobsView(APIView):
-    permission_classes = [AllowAny]
-
     def get(self, request):
-        jobs = Job.objects.order_by('-created_at')[:5]
-        serializer = JobSerializer(jobs, many=True)
-        return Response(serializer.data)
-
+        cache_key = 'recent_jobs'
+        jobs = cache.get(cache_key)
+        
+        if not jobs:
+            jobs = Job.objects.order_by('-created_at')[:5]
+            serializer = JobSerializer(jobs, many=True)
+            cache.set(cache_key, serializer.data, timeout=3600)  # Cache for 1 hour
+            return Response(serializer.data)
+        return Response(jobs)
+           
+            
 # class JobsView(APIView):
 #     permission_classes = [IsAuthenticated]
 
@@ -235,139 +247,132 @@ class RecentJobsView(APIView):
 #                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
 #             )
 
-import json
-import re
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+# class JobsView(APIView):
+#     permission_classes = [IsAuthenticated]
 
-class JobsView(APIView):
-    permission_classes = [IsAuthenticated]
+#     def extract_skills_from_json(self, skills_json):
+#         """
+#         Extract skills from JSON-formatted string
+#         Handles complex skill representations
+#         """
+#         try:
+#             # Parse JSON string
+#             skills_list = json.loads(skills_json)
+            
+#             # Extract skill names, handling different input formats
+#             if isinstance(skills_list, list):
+#                 # Handle list of dictionaries with 'name' key
+#                 if skills_list and isinstance(skills_list[0], dict) and 'name' in skills_list[0]:
+#                     skills = [skill['name'].strip().lower() for skill in skills_list]
+#                 # Handle list of strings
+#                 else:
+#                     skills = [str(skill).strip().lower() for skill in skills_list]
+            
+#             # Handle single dictionary
+#             elif isinstance(skills_list, dict):
+#                 skills = [str(skill).strip().lower() for skill in skills_list.values()]
+            
+#             # Handle string input
+#             else:
+#                 skills = [str(skills_list).strip().lower()]
+            
+#             # Remove any empty skills
+#             return [skill for skill in skills if skill]
+        
+#         except (json.JSONDecodeError, TypeError, AttributeError):
+#             # Fallback for non-JSON or malformed input
+#             return []
 
-    def extract_skills_from_json(self, skills_json):
-        """
-        Extract skills from JSON-formatted string
-        Handles complex skill representations
-        """
-        try:
-            # Parse JSON string
-            skills_list = json.loads(skills_json)
-            
-            # Extract skill names, handling different input formats
-            if isinstance(skills_list, list):
-                # Handle list of dictionaries with 'name' key
-                if skills_list and isinstance(skills_list[0], dict) and 'name' in skills_list[0]:
-                    skills = [skill['name'].strip().lower() for skill in skills_list]
-                # Handle list of strings
-                else:
-                    skills = [str(skill).strip().lower() for skill in skills_list]
-            
-            # Handle single dictionary
-            elif isinstance(skills_list, dict):
-                skills = [str(skill).strip().lower() for skill in skills_list.values()]
-            
-            # Handle string input
-            else:
-                skills = [str(skills_list).strip().lower()]
-            
-            # Remove any empty skills
-            return [skill for skill in skills if skill]
+#     def normalize_skill_matching(self, user_skills, job_skills):
+#         """
+#         Advanced skill matching with multiple strategies
+#         """
+#         # Convert skills to lowercase for case-insensitive matching
+#         user_skills = set(user_skills)
+#         job_skills = set(job_skills)
         
-        except (json.JSONDecodeError, TypeError, AttributeError):
-            # Fallback for non-JSON or malformed input
-            return []
+#         # Strategy 1: Exact match
+#         exact_matches = user_skills.intersection(job_skills)
+        
+#         # Strategy 2: Partial match (substring detection)
+#         partial_matches = set()
+#         for user_skill in user_skills:
+#             for job_skill in job_skills:
+#                 if user_skill in job_skill or job_skill in user_skill:
+#                     partial_matches.add(user_skill)
+        
+#         # Combine matches
+#         all_matches = exact_matches.union(partial_matches)
+        
+#         # Calculate match percentage
+#         if job_skills:
+#             match_percentage = (len(all_matches) / len(job_skills)) * 100
+#         else:
+#             match_percentage = 0
+        
+#         return round(match_percentage, 1), list(all_matches)
 
-    def normalize_skill_matching(self, user_skills, job_skills):
-        """
-        Advanced skill matching with multiple strategies
-        """
-        # Convert skills to lowercase for case-insensitive matching
-        user_skills = set(user_skills)
-        job_skills = set(job_skills)
-        
-        # Strategy 1: Exact match
-        exact_matches = user_skills.intersection(job_skills)
-        
-        # Strategy 2: Partial match (substring detection)
-        partial_matches = set()
-        for user_skill in user_skills:
-            for job_skill in job_skills:
-                if user_skill in job_skill or job_skill in user_skill:
-                    partial_matches.add(user_skill)
-        
-        # Combine matches
-        all_matches = exact_matches.union(partial_matches)
-        
-        # Calculate match percentage
-        if job_skills:
-            match_percentage = (len(all_matches) / len(job_skills)) * 100
-        else:
-            match_percentage = 0
-        
-        return round(match_percentage, 1), list(all_matches)
-
-    def get(self, request):
-        try:
-            # Retrieve user profile
-            profile = Profile.objects.get(user=request.user)
+#     def get(self, request):
+#         try:
+#             # Retrieve user profile
+#             profile = Profile.objects.get(user=request.user)
             
-            # Extract user skills from JSON
-            user_skills = self.extract_skills_from_json(json.dumps(profile.skills)) if profile.skills else []
+#             # Extract user skills from JSON
+#             user_skills = self.extract_skills_from_json(json.dumps(profile.skills)) if profile.skills else []
             
-            # Retrieve approved jobs
-            jobs = Job.objects.filter(is_approved=True).order_by('-created_at')
+#             # Retrieve approved jobs
+#             jobs = Job.objects.filter(is_approved=True).order_by('-created_at')
             
-            # Matching jobs container
-            matching_jobs = []
+#             # Matching jobs container
+#             matching_jobs = []
             
-            # Process each job
-            for job in jobs:
-                # Extract job skills
-                job_skills = self.extract_skills_from_json(json.dumps(job.skills_required)) if job.skills_required else []
+#             # Process each job
+#             for job in jobs:
+#                 # Extract job skills
+#                 job_skills = self.extract_skills_from_json(json.dumps(job.skills_required)) if job.skills_required else []
                 
-                # Perform skill matching
-                match_percentage, matched_skills = self.normalize_skill_matching(user_skills, job_skills)
+#                 # Perform skill matching
+#                 match_percentage, matched_skills = self.normalize_skill_matching(user_skills, job_skills)
                 
-                # Add jobs with any skill match
-                if match_percentage > 0:
-                    # Dynamically add match information to job
-                    job.match_percentage = match_percentage
-                    job.matched_skills = matched_skills
-                    matching_jobs.append(job)
+#                 # Add jobs with any skill match
+#                 if match_percentage > 0:
+#                     # Dynamically add match information to job
+#                     job.match_percentage = match_percentage
+#                     job.matched_skills = matched_skills
+#                     matching_jobs.append(job)
             
-            # Sort jobs by match percentage
-            matching_jobs.sort(key=lambda x: x.match_percentage, reverse=True)
+#             # Sort jobs by match percentage
+#             matching_jobs.sort(key=lambda x: x.match_percentage, reverse=True)
             
-            # Prepare response
-            if matching_jobs:
-                serializer = JobSerializer(matching_jobs, many=True, context={
-                    'request': request,
-                    'matched_skills': True
-                })
+#             # Prepare response
+#             if matching_jobs:
+#                 serializer = JobSerializer(matching_jobs, many=True, context={
+#                     'request': request,
+#                     'matched_skills': True
+#                 })
                 
-                return Response({
-                    "jobs": serializer.data,
-                    "total_matches": len(matching_jobs),
-                    "user_skills": user_skills
-                })
+#                 return Response({
+#                     "jobs": serializer.data,
+#                     "total_matches": len(matching_jobs),
+#                     "user_skills": user_skills
+#                 })
             
-            # No matching jobs
-            return Response({
-                "message": "No matching jobs found.",
-                "user_skills": user_skills
-            }, status=status.HTTP_404_NOT_FOUND)
+#             # No matching jobs
+#             return Response({
+#                 "message": "No matching jobs found.",
+#                 "user_skills": user_skills
+#             }, status=status.HTTP_404_NOT_FOUND)
         
-        except Profile.DoesNotExist:
-            return Response(
-                {"detail": "Profile not found."}, 
-                status=status.HTTP_404_NOT_FOUND
-            )
-        except Exception as e:
-            return Response(
-                {"detail": f"An error occurred: {str(e)}"}, 
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+#         except Profile.DoesNotExist:
+#             return Response(
+#                 {"detail": "Profile not found."}, 
+#                 status=status.HTTP_404_NOT_FOUND
+#             )
+#         except Exception as e:
+#             return Response(
+#                 {"detail": f"An error occurred: {str(e)}"}, 
+#                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
+#             )
 
 
 class PostJobView(APIView):
@@ -486,63 +491,47 @@ def print_skills_from_db(user):
     except Exception as e:
         print(f"Error: {e}")
         
-        
 class UpdateSkillScore(APIView):
     permission_classes = [IsAuthenticated]
 
     def patch(self, request):
-        user = request.user
+        profile = get_object_or_404(Profile, user=request.user)
+        skills_data = request.data.get('skills')
         
-        try:
-            profile = Profile.objects.get(user=user)
-        except Profile.DoesNotExist:
-            return Response({"detail": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
-
-        skills_data = request.data.get("skills")
         if not skills_data:
-            return Response({"detail": "Skills data is required."}, status=status.HTTP_400_BAD_REQUEST)
-
-        if isinstance(skills_data, list):
-            for skill_data in skills_data:
-                skill_name = skill_data.get("name")
-                new_score = skill_data.get("score")
-
-                if skill_name and new_score is not None:
-                    # Automatically set verified based on the score
-                    verified = new_score > 8  # Set verified to True if score > 5, otherwise False
-
-                    updated = False
-                    if profile.skills:
-                        if isinstance(profile.skills, str):
-                            profile.skills = json.loads(profile.skills)
-
-                        # Update the skill if it exists in the user's profile
-                        for skill in profile.skills:
-                            if skill["name"] == skill_name:
-                                skill["score"] = new_score
-                                skill["verified"] = verified
-                                updated = True
-                                break
-                        
-                        # If the skill does not exist, add it to the list
-                        if not updated:
-                            profile.skills.append({
-                                "name": skill_name,
-                                "score": new_score,
-                                "verified": verified
-                            })
-
-                        profile.skills = json.dumps(profile.skills)  # Convert back to JSON string if needed
-                        profile.save()
-
-                    return Response({"detail": "Skill score updated successfully."}, status=status.HTTP_200_OK)
+            return Response({"error": "Skills data required"}, status=status.HTTP_400_BAD_REQUEST)
+            
+        try:
+            current_skills = profile.skills if profile.skills else []
+            if isinstance(current_skills, str):
+                current_skills = json.loads(current_skills)
                 
-                else:
-                    return Response({"detail": "Invalid skill data."}, status=status.HTTP_400_BAD_REQUEST)
+            updated_skills = self._update_skills(current_skills, skills_data)
+            profile.skills = updated_skills
+            profile.save()
+            
+            return Response({"message": "Skills updated successfully"}, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error(f"Skill update failed: {str(e)}")
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-        else:
-            return Response({"detail": "Skills data should be a list."}, status=status.HTTP_400_BAD_REQUEST)
-
+    def _update_skills(self, current_skills, new_skills_data):
+        skills_dict = {skill['name']: skill for skill in current_skills}
+        
+        for skill_data in new_skills_data:
+            name = skill_data.get('name')
+            score = skill_data.get('score')
+            
+            if name and score is not None:
+                skills_dict[name] = {
+                    'name': name,
+                    'score': score,
+                    'verified': score > 8
+                }
+                
+        return list(skills_dict.values())
+    
+    
 import logging
 import traceback
 from rest_framework import status
@@ -710,3 +699,161 @@ class ApplyForJobView(APIView):
         AppliedJob.objects.create(user=user, job=job)
 
         return Response({'message': 'Job application submitted successfully.'}, status=status.HTTP_201_CREATED)
+
+
+# Import the EnhancedJobRecommendationSystem class (assumed already implemented)
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.db.models import Q
+from .models import Job, Profile, User
+from django.contrib.auth import get_user_model
+
+class JobRecommendationAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        profile = get_object_or_404(Profile, user=request.user)
+        
+        # Build base query
+        jobs = Job.objects.filter(is_approved=True)
+        
+        # Apply filters
+        if profile.domain_of_interest:
+            jobs = jobs.filter(job_domain=profile.domain_of_interest)
+            
+        if profile.job_type:
+            jobs = jobs.filter(job_type=profile.job_type)
+            
+        if profile.skills:
+            skills_query = Q()
+            user_skills = [skill['name'].lower() for skill in profile.skills]
+            for skill in user_skills:
+                skills_query |= Q(skills_required__icontains=skill)
+            jobs = jobs.filter(skills_query)
+            
+        # Add scoring
+        jobs = jobs.annotate(
+            relevance_score=Count('id')  # Add more sophisticated scoring
+        ).order_by('-relevance_score', '-created_at')[:10]
+        
+        serializer = JobSerializer(jobs, many=True)
+        return Response({
+            'recommendations': serializer.data,
+            'total': jobs.count()
+        })
+    def get(self, request):
+        # Get the current user's profile
+        try:
+            user_profile = Profile.objects.get(user=request.user)
+        except Profile.DoesNotExist:
+            return Response({'error': 'User profile not found'}, status=404)
+        
+        # Extract user preferences and skills
+        user_skills = user_profile.skills or []
+        preferred_domain = user_profile.domain_of_interest
+        preferred_job_type = user_profile.job_type
+        
+        # Build a queryset for job recommendations
+        recommended_jobs = Job.objects.filter(is_approved=True)
+        
+        # Filter by user's preferred domain
+        if preferred_domain:
+            recommended_jobs = recommended_jobs.filter(job_domain=preferred_domain)
+        
+        # Filter by job type preference
+        if preferred_job_type:
+            recommended_jobs = recommended_jobs.filter(job_type=preferred_job_type)
+        
+        # Additional filtering based on skills match
+        if user_skills:
+            # Create a complex query to match skills
+            skills_query = Q()
+            for skill in user_skills:
+                skills_query |= Q(skills_required__icontains=skill)
+            
+            recommended_jobs = recommended_jobs.filter(skills_query)
+        
+        # Further refine recommendations
+        # You can add more sophisticated matching logic here
+        # For example, sorting by relevance, date, etc.
+        recommended_jobs = recommended_jobs.order_by('-created_at')[:10]
+        
+        # Serialize job recommendations
+        recommendations = []
+        for job in recommended_jobs:
+            recommendations.append({
+                'job_id': job.job_id,
+                'title': job.title,
+                'company_name': job.company_name,
+                'location': job.location,
+                'job_domain': job.get_job_domain_display(),
+                'job_type': job.get_job_type_display(),
+                'skills_required': job.skills_required,
+                'salary': float(job.salary) if job.salary else None,
+                'description': job.description
+            })
+        
+        return Response({
+            'recommendations': recommendations,
+            'total_recommendations': len(recommendations)
+        })
+
+
+
+    def get(self, request):
+        # Get the current user's profile
+        try:
+            user_profile = Profile.objects.get(user=request.user)
+        except Profile.DoesNotExist:
+            return Response({'error': 'User profile not found'}, status=404)
+        
+        # Extract user preferences and skills
+        user_skills = user_profile.skills or []
+        preferred_domain = user_profile.domain_of_interest
+        preferred_job_type = user_profile.job_type
+        
+        # Build a queryset for job recommendations
+        recommended_jobs = Job.objects.filter(is_approved=True)
+        
+        # Filter by user's preferred domain
+        if preferred_domain:
+            recommended_jobs = recommended_jobs.filter(job_domain=preferred_domain)
+        
+        # Filter by job type preference
+        if preferred_job_type:
+            recommended_jobs = recommended_jobs.filter(job_type=preferred_job_type)
+        
+        # Additional filtering based on skills match
+        if user_skills:
+            # Create a complex query to match skills
+            skills_query = Q()
+            for skill in user_skills:
+                skills_query |= Q(skills_required__icontains=skill)
+            
+            recommended_jobs = recommended_jobs.filter(skills_query)
+        
+        # Further refine recommendations
+        # You can add more sophisticated matching logic here
+        # For example, sorting by relevance, date, etc.
+        recommended_jobs = recommended_jobs.order_by('-created_at')[:10]
+        
+        # Serialize job recommendations
+        recommendations = []
+        for job in recommended_jobs:
+            recommendations.append({
+                'job_id': job.job_id,
+                'title': job.title,
+                'company_name': job.company_name,
+                'location': job.location,
+                'job_domain': job.get_job_domain_display(),
+                'job_type': job.get_job_type_display(),
+                'skills_required': job.skills_required,
+                'salary': float(job.salary) if job.salary else None,
+                'description': job.description
+            })
+        
+        return Response({
+            'recommendations': recommendations,
+            'total_recommendations': len(recommendations)
+        })

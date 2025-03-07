@@ -14,18 +14,30 @@ const Navbar = () => {
   }, []);
 
   const handleLogout = async () => {
+    const refreshToken = localStorage.getItem('refresh_token'); // Get refresh token from storage
+  
     try {
-      const response = await fetchWithAuth('http://localhost:8000/logout/', {
+      const response = await fetch('http://localhost:8000/logout/', {
         method: 'POST',
-        body: JSON.stringify({}),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`, // Include access token for authentication
+        },
+        body: JSON.stringify({ refresh_token: refreshToken }), // Send refresh token in the request body
       });
-
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refreshtoken');
-      setIsLoggedIn(false);
-      navigate('/');
+  
+      if (response.ok) {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user'); // Clear user data
+        setIsLoggedIn(false); // Update login state
+        navigate('/'); // Redirect to homepage
+      } else {
+        const errorData = await response.json();
+        console.error('Logout failed:', errorData);
+      }
     } catch (error) {
-      console.error('Logout failed:', error);
+      console.error('Error during logout:', error);
     }
   };
 

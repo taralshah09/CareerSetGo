@@ -1,0 +1,31 @@
+/* HomePage.css */
+.welcome-section {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #f8f9fa; /* Light gray background */
+  }
+  
+  .welcome-heading {
+    font-size: 28px;
+    font-weight: 600;
+    color: #2c3e50; /* Dark blue-gray for heading */
+    margin-bottom: 10px;
+  }
+  
+  .welcome-email {
+    font-size: 18px;
+    color: #7f8c8d; /* Gray for email */
+    margin: 0;
+  }
+  
+  .error-message {
+    text-align: center;
+    padding: 20px;
+    color: #e74c3c; /* Red for errors */
+    font-size: 16px;
+    background-color: #f8d7da; /* Light red background for errors */
+    border: 1px solid #f5c6cb; /* Border for error message */
+    border-radius: 4px;
+    margin: 20px auto;
+    max-width: 400px;
+  }

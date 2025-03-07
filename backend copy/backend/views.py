@@ -13,6 +13,7 @@ from rest_framework_simplejwt.exceptions import InvalidToken
 from faker import Faker
 from myapp.serializers import UserSerializer
 fake = Faker()
+
 import logging
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
@@ -148,17 +149,173 @@ class LoginView(APIView):
             html_message=html_message,
             fail_silently=False
         )
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
+from rest_framework.permissions import IsAuthenticated
+import logging
+
+logger = logging.getLogger(__name__)
+
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         refresh_token = request.data.get('refresh_token')
         if not refresh_token:
-            return Response({"error": "Refresh token is required."}, status=status.HTTP_400_BAD_REQUEST)
+            logger.warning("Logout attempt with missing refresh token.")
+            return Response(
+                {"error": "Refresh token is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
         try:
             token = RefreshToken(refresh_token)
-            token.blacklist()  # This will blacklist the token
-            return Response({"message": "Logged out successfully!"}, status=status.HTTP_200_OK)
+            token.blacklist()  # Blacklist the token
+            logger.info(f"User {request.user} logged out successfully.")
+            return Response(
+                {"message": "Logged out successfully!"},
+                status=status.HTTP_200_OK
+            )
         except InvalidToken:
-            return Response({"error": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+            logger.warning(f"Invalid refresh token provided by user {request.user}.")
+            return Response(
+                {"error": "Invalid token."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except TokenError as e:
+            logger.error(f"Token blacklisting failed for user {request.user}: {e}")
+            return Response(
+                {"error": "An error occurred during logout."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+# views.py
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.conf import settings
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import login
+from myapp.models import User
+from .settings import GOOGLE_CLIENT_ID,GOOGLE_CLIENT_SECRET,GOOGLE_REDIRECT_URI
+
+class GoogleLoginRedirectView(APIView):
+
+    def get(self, request):
+        google_auth_url = (
+            f"https://accounts.google.com/o/oauth2/v2/auth?"
+            f"response_type=code&"
+            f"client_id={GOOGLE_CLIENT_ID}&"
+            # f"client_secret: {GOOGLE_CLIENT_SECRET}&",
+            f"redirect_uri={GOOGLE_REDIRECT_URI}&"
+            f"scope=openid%20email%20profile&"
+            f"access_type=offline"
+        )
+        return Response({"auth_url": google_auth_url})
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import AllowAny
+import requests
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.conf import settings
+from myapp.models import User
+class GoogleCallbackView(APIView):
+    permission_classes = [AllowAny]  # Allow unauthenticated access
+
+    def post(self, request):
+        print("Request data:", request.data)  # Debug
+        
+        # Handle ID token (from credential flow)
+        id_token_value = request.data.get('id_token')
+        if id_token_value:
+            try:
+                # Verify the token directly
+                idinfo = id_token.verify_oauth2_token(
+                    id_token_value,
+                    google_requests.Request(),
+                    settings.GOOGLE_CLIENT_ID
+                )
+                
+                email = idinfo['email']
+                user, created = User.objects.get_or_create(
+                    email=email,
+                    defaults={
+                        'username': idinfo.get('sub'),
+                        'fullname': idinfo.get('name', '')
+                    }
+                )
+
+                refresh = RefreshToken.for_user(user)
+                return Response({
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                    'user': {
+                        'email': user.email,
+                        'fullname': user.fullname,
+                        'role': user.role
+                    }
+                })
+            except Exception as e:
+                print("ID token verification error:", str(e))
+                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        # Handle authorization code (from auth-code flow)
+        code = request.data.get('code')
+        if code:
+            try:
+                print("Exchanging code:", code)
+                token_url = "https://oauth2.googleapis.com/token"
+                token_data = {
+                    "code": code,
+                    "client_id": settings.GOOGLE_CLIENT_ID,
+                    "client_secret": settings.GOOGLE_CLIENT_SECRET,
+                    "redirect_uri": settings.GOOGLE_REDIRECT_URI,
+                    "grant_type": "authorization_code",
+                }
+                response = requests.post(token_url, data=token_data)
+                tokens = response.json()
+                print("Token response:", tokens)
+                
+                if 'error' in tokens:
+                    return Response({"error": tokens.get('error_description', tokens['error'])}, 
+                                   status=status.HTTP_400_BAD_REQUEST)
+
+                idinfo = id_token.verify_oauth2_token(
+                    tokens['id_token'],
+                    google_requests.Request(),
+                    settings.GOOGLE_CLIENT_ID
+                )
+
+                email = idinfo['email']
+                user, created = User.objects.get_or_create(
+                    email=email,
+                    defaults={
+                        'username': idinfo.get('sub'),
+                        'fullname': idinfo.get('name', '')
+                    }
+                )
+
+                refresh = RefreshToken.for_user(user)
+                return Response({
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                    'user': {
+                        'email': user.email,
+                        'fullname': user.fullname,
+                        'role': user.role
+                    }
+                })
+            except Exception as e:
+                print("Code exchange error:", str(e))
+                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                
+        return Response({"error": "Either code or id_token is required"}, 
+                       status=status.HTTP_400_BAD_REQUEST)

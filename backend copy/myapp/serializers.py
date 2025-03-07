@@ -84,57 +84,19 @@ class ProfileSerializer(serializers.ModelSerializer):
         # Update Profile fields
         return super().update(instance, validated_data)
 
-# class JobSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Job
-        
-#         fields = [
-#             'job_id', 'title', 'description', 'company_name', 'location', 'salary',
-#             'job_type', 'job_domain', 'skills_required','created_at'
-#         ]
-
-#     def validate_salary(self, value):
-#         """Ensure salary is a positive value."""
-#         if value < 0:
-#             raise serializers.ValidationError("Salary must be a positive number.")
-#         return value
-
-#     def validate_skills_required(self, value):
-#         """Ensure skills_required is not empty."""
-#         if not value:
-#             raise serializers.ValidationError("Skills required cannot be empty.")
-#         return value
-    
-    
-class JobSerializer(serializers.ModelSerializer):
-    match_percentage = serializers.FloatField(read_only=True, required=False)
-    matched_skills = serializers.ListField(
-        child=serializers.CharField(), 
-        read_only=True, 
-        required=False
+      
+class SkillGapAnalysisSerializer(serializers.Serializer):
+    job_id = serializers.IntegerField()
+    user_id = serializers.IntegerField()
+    job_skills = serializers.ListField(
+        child=serializers.CharField(max_length=100),
+        allow_empty=False
+    )
+    user_skills = serializers.ListField(
+        child=serializers.CharField(max_length=100),
+        allow_empty=False
     )
 
-    class Meta:
-        model = Job
-        fields = [
-            'job_id', 'title', 'company_name', 'location', 
-            'salary', 'skills_required', 'description', 
-            'job_domain', 'job_type', 'match_percentage', 
-            'matched_skills','created_at'
-        ]
-# class SkillGapAnalysisSerializer(serializers.Serializer):
-#     job_id = serializers.IntegerField()
-#     user_id = serializers.IntegerField()
-#     job_skills = serializers.ListField(
-#         child=serializers.CharField(max_length=100),
-#         allow_empty=False
-#     )
-#     user_skills = serializers.ListField(
-#         child=serializers.CharField(max_length=100),
-#         allow_empty=False
-#     )
-
-from rest_framework import serializers
 
 class SkillGapAnalysisSerializer(serializers.Serializer):
     job_id = serializers.IntegerField(required=True, min_value=1)
@@ -171,6 +133,7 @@ class SkillGapAnalysisSerializer(serializers.Serializer):
             if len(data['job_skills']) > 50 or len(data['user_skills']) > 50:
                 raise serializers.ValidationError("Skills lists cannot exceed 50 items.")
         return data
+
 class CompanySerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)  # Set automatically to the logged-in user
 
@@ -195,3 +158,17 @@ class CompanySerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         # Only update fields provided in the request
         return super().update(instance, validated_data)
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import serializers
+from django.conf import settings
+import os
+
+
+# Define a serializer for the Job model
+class JobSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Job
+        fields = "__all__"
+

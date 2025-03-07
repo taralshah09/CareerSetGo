@@ -7,7 +7,7 @@ import FlowChart from '../../components/FlowChart/FlowChart';
 import PopularCategory from '../../components/PopularCategory/PopularCategory';
 import FeaturedJobs from '../../components/FeaturedJobs/FeaturedJobs';
 import Users from '../../components/Users/Users';
-import ClientTestimonial from '../../components/ClientTestimonialComponents/ClientTestimonial'
+import ClientTestimonial from '../../components/ClientTestimonialComponents/ClientTestimonial';
 
 const HomePage = () => {
   const [userData, setUserData] = useState(null);
@@ -29,6 +29,14 @@ const HomePage = () => {
 
   return (
     <>
+      {/* Welcome Section */}
+      {userData && (
+        <div className="welcome-section">
+          <div className="welcome-card">
+            <h2>Welcome, {userData.fullname}</h2>
+          </div>
+        </div>
+      )}
       <HeroSection />
       <PopularVacanies />
       <FlowChart />
@@ -37,13 +45,14 @@ const HomePage = () => {
       <Users />
       <ClientTestimonial />
 
-      {userData && (
-        <div>
-          <h2>Welcome, {userData.fullname}</h2>
-          <p>Email: {userData.email}</p>
+    
+
+      {/* Error Message */}
+      {errorMessage && (
+        <div className="error-message">
+          <p>{errorMessage}</p>
         </div>
       )}
-      {errorMessage && <p>{errorMessage}</p>}
     </>
   );
 };

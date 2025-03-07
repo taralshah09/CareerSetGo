@@ -1,0 +1,30 @@
+services:
+  - type: web
+    name: django-app
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput"
+    startCommand: "gunicorn backend.wsgi:application"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
+      - key: DJANGO_SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: DEBUG
+        value: false
+      - key: ALLOWED_HOSTS
+        value: your-app-name.onrender.com
+      - key: CORS_ORIGINS
+        value: https://your-app-name.onrender.com
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_REDIRECT_URI
+        value: https://your-app-name.onrender.com/api/auth/google/callback/
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false

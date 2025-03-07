@@ -1,54 +1,23 @@
 from pathlib import Path
 import os
 from decouple import config
-import os
-
-
+import dj_database_url
 
 # Base directory path
 BASE_DIR = Path(__file__).resolve().parent.parent
-import os
-from decouple import config
-
-# Debug and Allowed Hosts
-DEBUG = config('DEBUG', default=False, cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=lambda v: [s.strip() for s in v.split(',')])
-
-# Dynamic CORS Origins
-CORS_ALLOWED_ORIGINS = config('CORS_ORIGINS', default='', cast=lambda v: [s.strip() for s in v.split(',')])
-# Media settings
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Security settings
-SECRET_KEY = 'django-insecure-h(a9i&vl0vknxoxbj1#abh0!-r)w%4sw()stj)857ifbp2&w%u'
-DEBUG = True  # Change to False in production
-ALLOWED_HOSTS = [
-    'localhost', 
-    '127.0.0.1', 
-    '*-3000.githubpreview.dev',
-    '*-5173.githubpreview.dev'
-]  # Add hostnames for production
-CORS_ALLOW_ALL_ORIGINS = False  # More secure
-CORS_ALLOWED_ORIGINS = [
-    # MyApp Frontend URLs
-    'http://localhost:3000',    # Local React app for myapp
-    'http://127.0.0.1:3000',    
-    'https://*-3000.githubpreview.dev',  # GitHub Codespaces pattern
-    
-    # Forum App Frontend URLs
-    'http://localhost:5173',    # Local Vite app for forum
-    'http://127.0.0.1:5173',
-    'https://*-5173.githubpreview.dev',  # GitHub Codespaces pattern
-    
-    # Add any other specific URLs
-    'https://*.gitpod.io',
-    'https://*.github.dev'
-]
-CORS_ALLOW_CREDENTIALS = True
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-h(a9i&vl0vknxoxbj1#abh0!-r)w%4sw()stj)857ifbp2&w%u')
+DEBUG = config('DEBUG', default=False, cast=bool)
 
-# eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzMyMjE0MzkxLCJpYXQiOjE3MzIyMTM0OTEsImp0aSI6Ijg3YThiMDg5MTdmYzQzNmNiMGRlMTZkYjA1NWE4NWYzIiwidXNlcl9pZCI6MX0.EM1McdKgK_PrhttiAPve2oZQEXa8DYzJzok5qHzwOHM
-# Installed apps
+# Allowed hosts for Render
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', 
+                      cast=lambda v: [s.strip() for s in v.split(',')])
+# Add Render-specific host
+if 'RENDER_EXTERNAL_HOSTNAME' in os.environ:
+    ALLOWED_HOSTS.append(os.environ.get('RENDER_EXTERNAL_HOSTNAME'))
+
+# Application definition
 INSTALLED_APPS = [
     'adminlte3',
     'adminlte3_theme',
@@ -56,128 +25,106 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-     'import_export',
+    'import_export',
     'django.contrib.messages',
-    'rest_framework_simplejwt',  # JWT Authentication
+    'rest_framework_simplejwt',
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     'myapp',
-    
     'forum',
 ]
 
-# Middleware configuration
+# Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',  # Can be removed if not using session
-    'corsheaders.middleware.CorsMiddleware',  # CORS middleware
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Add for static file serving
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# Custom user model
-AUTH_USER_MODEL = 'myapp.User'
-
 # CORS configuration
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5173',  # Replace with your frontend URL
-    'http://127.0.0.1:5173',  # Replace with your frontend URL
- 'http://localhost:3000'
-]
+CORS_ALLOWED_ORIGINS = config('CORS_ORIGINS', 
+                            default='http://localhost:3000,http://127.0.0.1:3000',
+                            cast=lambda v: [s.strip() for s in v.split(',')])
 CORS_ALLOW_CREDENTIALS = True
 
-# URL configuration
-ROOT_URLCONF = 'backend.urls'
-
-# WSGI application
-WSGI_APPLICATION = 'backend.wsgi.application'
-
-# Database configuration
+# Database configuration for Render
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=config('DATABASE_URL', default='sqlite:///' + str(BASE_DIR / 'db.sqlite3')),
+        conn_max_age=600
+    )
 }
 
-# Password validation
-AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
-]
-
-# Localization settings
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
-USE_I18N = True
-USE_TZ = True
-
 # Static files
-STATIC_URL = 'static/'
-STATIC_ROOT  = os.path.join(BASE_DIR,'static')
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Default primary key field type
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# Media files
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Django REST framework configuration for JWT authentication
+# REST Framework and JWT
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',  # JWT Authentication
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
 }
 
-# Session settings are removed since we're using JWT now
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Can be removed if no session is needed
-SESSION_COOKIE_SAMESITE = 'Lax'  # Or 'Strict' or 'None' if you're using cross-origin requests
-
-# JWT Settings (configure expiration and other settings as needed)
 from datetime import timedelta
-
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=25),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'ROTATE_REFRESH_TOKENS': False,
-     'TOKEN_TYPE': 'access',
     'BLACKLIST_AFTER_ROTATION': True,
     'ALGORITHM': 'HS256',
     'SIGNING_KEY': SECRET_KEY,
-    'VERIFYING_KEY': None,
-    'AUDIENCE': None,
-    'ISSUER': None,
     'AUTH_HEADER_TYPES': ('Bearer',),
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
     'TOKEN_OBTAIN_SERIALIZER': 'myapp.serializers.CustomTokenObtainPairSerializer',
 }
 
-# CSRF settings: remove CSRF-related configurations since JWT doesn't use CSRF
-# CSRF_COOKIE_HTTPONLY = False
-# CSRF_COOKIE_NAME = "csrftoken"
-# CSRF_HEADER_NAME = "X-CSRFToken"
-# CSRF_TRUSTED_ORIGINS = []  # Empty, no CSRF checks for JWT
-# CSRF_COOKIE_DOMAIN = "127.0.0.1"
-# SESSION_COOKIE_HTTPONLY = True
-# SESSION_COOKIE_NAME = "sessionid"
-# SESSION_COOKIE_DOMAIN = "127.0.0.1"
+# Google OAuth2
+GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = config('GOOGLE_CLIENT_SECRET')
+GOOGLE_REDIRECT_URI = config('GOOGLE_REDIRECT_URI')
 
+# Email configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
+EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+
+# Other required settings
+ROOT_URLCONF = 'backend.urls'
+WSGI_APPLICATION = 'backend.wsgi.application'
+AUTH_USER_MODEL = 'myapp.User'
+LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'UTC'
+USE_I18N = True
+USE_TZ = True
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Templates
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            os.path.join(BASE_DIR, 'templates'),  # Add this line
-        ],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -188,35 +135,4 @@ TEMPLATES = [
             ],
         },
     },
-   ]
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com' 
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-
-
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'handlers': {
-#         'console': {
-#             'level': 'DEBUG',
-#             'class': 'logging.StreamHandler',
-#         },
-#     },
-#     'loggers': {
-#         'django': {
-#             'handlers': ['console'],
-#             'level': 'DEBUG',
-#             'propagate': True,
-#         },
-#         'myapp': {  # This will catch our logger
-#             'handlers': ['console'],
-#             'level': 'DEBUG',
-#             'propagate': True,
-#         },
-#     },
-# }
+]

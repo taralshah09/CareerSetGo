@@ -8,7 +8,13 @@ const FeaturedJobs = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/recent-jobs/');
+        const response = await fetch('http://127.0.0.1:8000/api/recent-jobs/', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': localStorage.getItem('access_token') ? `Bearer ${localStorage.getItem('access_token')}` : '',
+          },
+        });
         const data = await response.json();
         console.log(data);  // Check if data is received correctly
         setJobs(data);  // Update the state with the fetched jobs

@@ -12,23 +12,24 @@ const FindJob = () => {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            // Include token if user is authenticated
             'Authorization': localStorage.getItem('access_token') ? `Bearer ${localStorage.getItem('access_token')}` : '',
           },
         });
-
+    
         if (response.ok) {
           const data = await response.json();
-          setJobs(data.jobs);  // Update state with fetched job data
+          console.log("API Response:", data); // Log the API response
+          setJobs(data.recommendations || []); // Fallback to an empty array if data.recommendations is undefined
         } else {
           const errorData = await response.json();
           console.error('Error fetching jobs:', errorData);
+          setJobs([]); // Set jobs to an empty array on error
         }
       } catch (error) {
         console.error('Error fetching jobs:', error);
+        setJobs([]); // Set jobs to an empty array on error
       }
     };
-
 
     fetchJobs(); // Fetch jobs when the component mounts
   }, []);
@@ -65,10 +66,10 @@ const FindJob = () => {
       </div>
       <div className="jobs-container">
         <div className="jobs-feed">
-          {jobs.length > 0 ? (
+          {Array.isArray(jobs) && jobs.length > 0 ? (
             jobs.map((job) => (
               <Link key={`${job.job_id}`} to={`/job/${job.job_id}`} style={{ textDecoration: "none", color: "black" }} state={{ job }}>
-                <div className="job" key={job.job_id} >
+                <div className="job" key={job.job_id}>
                   <div className="job-header">
                     <div className="job-header-left">
                       <img src="../images/c1.png" alt="Company Logo" />
@@ -91,10 +92,8 @@ const FindJob = () => {
                       <span>{job.salary ? `$${job.salary}` : "Not disclosed"}</span>
                     </div>
                   </div>
-
                 </div>
               </Link>
-
             ))
           ) : (
             <p>No jobs available</p>

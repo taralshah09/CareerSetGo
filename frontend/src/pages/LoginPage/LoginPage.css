@@ -1,0 +1,64 @@
+/* src/pages/LoginPage/LoginPage.css */
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f5f7fa;
+  }
+  
+  .login-container {
+    background: white;
+    padding: 2rem 3rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+  }
+  
+  .login-title {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    color: #1a73e8;
+  }
+  
+  .login-subtitle {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 2rem;
+  }
+  
+  .google-login-wrapper {
+    margin: 1.5rem 0;
+  }
+  
+  .loading-spinner {
+    margin-top: 1rem;
+    color: #1a73e8;
+    font-weight: 500;
+  }
+  
+  .error-message {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background-color: #ffebee;
+    color: #c62828;
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+  
+  .login-footer {
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
+    color: #888;
+  }
+  
+  .login-footer a {
+    color: #1a73e8;
+    text-decoration: none;
+  }
+  
+  .login-footer a:hover {
+    text-decoration: underline;
+  }
