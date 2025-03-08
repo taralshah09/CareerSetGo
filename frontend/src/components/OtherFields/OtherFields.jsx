@@ -40,38 +40,34 @@ const OtherFields = () => {
                         'Authorization': `Bearer ${token}`,
                     },
                 });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    setProfileData(data);
-                    setFormData(prev => ({
-                        ...prev,
-                        fullName: data.fullname || '',
-                        headline: data.title || '',
-                        experience: data.experience || '',
-                        education: data.education || '',
-                        personalWebsite: data.personal_website || '',
-                        nationality: data.nationality || '',
-                        dateOfBirth: data.date_of_birth || '',
-                        gender: data.gender || '',
-                        maritalStatus: data.marital_status || '',
-                        biography: data.biography || '',
-                        // skills: Array.isArray(data.skills) ? data.skills : [],
-                        skills: Array.isArray(data.skills)
-                            ? data.skills
-                            : typeof data.skills === 'string'
-                                ? JSON.parse(data.skills)
-                                : [],
-                        domainOfInterest: data.domain_of_interest ? data.domain_of_interest.split(',') : [],
-                        certifications: data.certifications ? data.certifications.split(',') : [''],
-                        preferredWorkEnvironment: data.preferred_work_environment || '',
-                        availabilityStatus: data.availability_status || '',
-                        languages: data.languages || '',
-                        location: data.location || ''
-                    }));
-                }
+                console.log('Raw response:', response.data);  // Log raw data
+                setProfileData(response.data);
+                setFormData(prev => ({
+                    ...prev,
+                    fullName: response.data.fullname || '',
+                    headline: response.data.title || '',
+                    experience: response.data.experience || '',
+                    education: response.data.education || '',
+                    personal_website: response.data.personal_website || '',
+                    nationality: response.data.nationality || '',
+                    date_of_birth: response.data.date_of_birth || '',
+                    gender: response.data.gender || '',
+                    marital_status: response.data.marital_status || '',
+                    biography: response.data.biography || '',
+                    skills: Array.isArray(response.data.skills)
+                        ? response.data.skills
+                        : typeof response.data.skills === 'string'
+                            ? JSON.parse(response.data.skills)
+                            : [],
+                    domain_of_interest: response.data.domain_of_interest ? response.data.domain_of_interest.split(',') : [],
+                    certifications: response.data.certifications ? response.data.certifications.split(',') : [''],
+                    preferred_work_environment: response.data.preferred_work_environment || '',
+                    availability_status: response.data.availability_status || '',
+                    languages: response.data.languages || '',
+                    location: response.data.location || ''
+                }));
             } catch (error) {
-                console.error('Error fetching profile data:', error);
+                console.error('Error fetching profile:', error.response?.data || error.message);
             }
         };
         fetchProfileData();
@@ -180,25 +176,18 @@ const OtherFields = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         const token = localStorage.getItem('access_token');
-
-        // Format date to YYYY-MM-DD if it exists
+    
         const formatDate = (dateString) => {
             if (!dateString) return null;
             const date = new Date(dateString);
-            return date.toISOString().split('T')[0]; // This will format to YYYY-MM-DD
+            return date.toISOString().split('T')[0];
         };
-
-        // Ensure skills are in the correct format for DRF serializer
+    
         const formattedSkills = formData.skills.map(skill => {
-            // Handle both string and object formats
             if (typeof skill === 'string') {
-                return {
-                    name: skill,
-                    score: 0,
-                    verified: false
-                };
+                return { name: skill, score: 0, verified: false };
             }
             return {
                 name: skill.name || skill,
@@ -206,9 +195,7 @@ const OtherFields = () => {
                 verified: skill.verified || false
             };
         });
-
-
-        // Create an object that matches the Django serializer's expected structure
+    
         const dataToSend = {
             fullname: formData.fullName,
             title: formData.headline,
@@ -220,7 +207,7 @@ const OtherFields = () => {
             gender: formData.gender,
             marital_status: formData.maritalStatus,
             biography: formData.biography,
-            skills: formData.skills,  // Send as list of dictionaries
+            skills: formattedSkills,
             domain_of_interest: formData.domainOfInterest.join(','),
             certifications: formData.certifications.join(','),
             preferred_work_environment: formData.preferredWorkEnvironment,
@@ -228,12 +215,8 @@ const OtherFields = () => {
             languages: formData.languages,
             location: formData.location
         };
-
-        console.log("data to send : " + dataToSend.skills)
-
-        // Create FormData for file uploads
+    
         const formDataToSend = new FormData();
-
         Object.keys(dataToSend).forEach(key => {
             if (key === 'skills') {
                 formDataToSend.append(key, JSON.stringify(dataToSend[key]));
@@ -241,67 +224,39 @@ const OtherFields = () => {
                 formDataToSend.append(key, dataToSend[key]);
             }
         });
-
+    
         if (formData.resume) {
             formDataToSend.append('resume', formData.resume);
         }
-
+    
         try {
-            const response = await api.get('/api/user/profile/', {
-                method: 'PATCH',
+            const response = await api.patch('/api/user/profile/', formDataToSend, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
+                    // No need for 'Content-Type': FormData sets it automatically
                 },
-                body: formDataToSend,
             });
-
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Profile updated successfully:', data);
-
-                // Show success toast
-                toast.success('Profile updated successfully!', {
-                    position: "top-right",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "light",
-                    style: {
-                        backgroundColor: '#4CAF50',
-                        color: 'white'
-                    }
-                });
-            } else {
-                const errorData = await response.json();
-                console.error('Error updating profile:', errorData);
-
-                // Show error toast
-                toast.error('Failed to update profile. Please try again.', {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "light"
-                });
-            }
+    
+            console.log('Profile updated successfully:', response.data);
+            toast.success('Profile updated successfully!', {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                theme: "light",
+                style: { backgroundColor: '#4CAF50', color: 'white' }
+            });
         } catch (error) {
-            console.error('Error submitting profile:', error);
-
-            // Show error toast for network/unexpected errors
-            toast.error('An unexpected error occurred. Please try again later.', {
+            console.error('Error submitting profile:', error.response?.data || error.message);
+            toast.error('Failed to update profile. Please try again.', {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
                 draggable: true,
-                progress: undefined,
                 theme: "light"
             });
         }

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './Personal.css';
+import api from '../../api/axios';
 
 const Personal = () => {
     const navigate = useNavigate();
@@ -12,6 +13,7 @@ const Personal = () => {
         experience: '',
         education: '',
         personal_website: '',
+        profile_picture: null,
     });
     const [profilePicture, setProfilePicture] = useState('');
     const [resumeFile, setResumeFile] = useState(null);
@@ -32,8 +34,8 @@ const Personal = () => {
                     },
                 });
 
-                if (response.ok) {
-                    const data = await response.json();
+                if (response.status === 200) {
+                    const data = response.data;
                     setProfileData({
                         fullname: data.fullname || '',
                         title: data.title || '',
@@ -70,15 +72,19 @@ const Personal = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const token = localStorage.getItem('access_token');
-        const formData = new FormData();
 
-        // Only append non-empty fields to FormData
-        Object.keys(profileData).forEach((key) => {
-            if (profileData[key] && profileData[key].trim && profileData[key].trim() !== '') {
-                formData.append(key, profileData[key]);
-            }
-        });
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            console.error('No access token found');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('fullname', profileData.fullname);
+        formData.append('title', profileData.title);
+        formData.append('experience', profileData.experience);
+        formData.append('education', profileData.education);
+        formData.append('personal_website', profileData.personal_website);
 
         if (profileData.profile_picture) {
             formData.append('profile_picture', profileData.profile_picture);
@@ -89,72 +95,34 @@ const Personal = () => {
         }
 
         try {
-            const response = await api.get('/api/user/profile/', {
-                method: 'PATCH',
+            const response = await api.patch('/api/user/profile/', formData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
                 },
-                body: formData,
             });
 
-            if (response.ok) {
-                const updatedProfile = await response.json();
-
-                // Show success toast notification
-                toast.success('Profile updated successfully!', {
-                    position: "top-right",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                });
-
-                // Update state with the newly submitted data
-                setProfileData({
-                    fullname: updatedProfile.fullname || '',
-                    title: updatedProfile.title || '',
-                    experience: updatedProfile.experience || '',
-                    education: updatedProfile.education || '',
-                    website: updatedProfile.personal_website,
-                });
-
-                if (updatedProfile.profile_picture) {
-                    setProfilePicture(updatedProfile.profile_picture);
-                }
-
-                // Navigate after a short delay to ensure the toast is visible
-                setTimeout(() => {
-                    navigate('/dashboard');
-                }, 1000);
-            } else {
-                const errorData = await response.json();
-                console.error('Error updating profile:', errorData);
-
-                // Show error toast notification
-                toast.error('Failed to update profile', {
-                    position: "top-right",
-                    autoClose: 3000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                });
-            }
-        } catch (error) {
-            console.error('Error submitting profile:', error);
-
-            // Show error toast notification for network/server errors
-            toast.error('Something went wrong. Please try again.', {
-                position: "top-right",
+            console.log('Profile updated successfully:', response.data);
+            toast.success('Profile updated successfully!', {
+                position: 'top-right',
                 autoClose: 3000,
                 hideProgressBar: false,
                 closeOnClick: true,
                 pauseOnHover: true,
                 draggable: true,
-                progress: undefined,
+                theme: 'light',
+                style: { backgroundColor: '#4CAF50', color: 'white' },
+            });
+        } catch (error) {
+            console.error('Error submitting profile:', error.response?.data || error.message);
+            toast.error('Failed to update profile. Please try again.', {
+                position: 'top-right',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                theme: 'light',
             });
         }
     };
@@ -294,7 +262,6 @@ const Personal = () => {
                             <button type="submit">Save Changes</button>
                         </div>
                     </div>
-
                 </form>
             </div>
         </div>

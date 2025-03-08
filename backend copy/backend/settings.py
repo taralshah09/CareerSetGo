@@ -56,11 +56,11 @@ CORS_ALLOWED_ORIGINS = config('CORS_ORIGINS',
 CORS_ALLOW_CREDENTIALS = True
 
 # Database configuration for Render
+DATABASE_URL = config('DATABASE_URL')
+# DATABASE_URL = os.getenv('DATABASE_URL', config.get('POSTGRESQL', 'DATABASE_URL'))
+print("DATABASE_URL:", DATABASE_URL)  # Debugging line
 DATABASES = {
-    'default': dj_database_url.config(
-        default=config('DATABASE_URL', default='sqlite:///' + str(BASE_DIR / 'db.sqlite3')),
-        conn_max_age=600
-    )
+    'default': dj_database_url.parse(DATABASE_URL)
 }
 
 # Static files
@@ -99,9 +99,12 @@ SIMPLE_JWT = {
 }
 
 # Google OAuth2
-GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID')
-GOOGLE_CLIENT_SECRET = config('GOOGLE_CLIENT_SECRET')
+# GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID')
+# GOOGLE_CLIENT_SECRET = config('GOOGLE_CLIENT_SECRET')
 GOOGLE_REDIRECT_URI = config('GOOGLE_REDIRECT_URI')
+# Google OAuth
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', config('CLIENT_ID'))
+GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET', config('CLIENT_SECRET'))
 
 # Email configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
