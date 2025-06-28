@@ -40,7 +40,7 @@ const FavJobCard = ({ logo, jobTitle, location, image: imageUrl, jobTiming, sala
         <Avatar
           src={logo}
           variant="rounded"
-          sx={{ width: 60, height: 60, marginLeft: 2 }}
+          // sx={{ width: 60, height: 60, marginLeft: 2 }}
         />
         <CardContent sx={{ flexGrow: 1 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
